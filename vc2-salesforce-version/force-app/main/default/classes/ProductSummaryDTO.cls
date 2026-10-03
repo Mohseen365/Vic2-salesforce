@@ -1,4 +1,4 @@
-public class ProductSummaryDTO {
+public with sharing class ProductSummaryDTO {
     @AuraEnabled public Id productEconomyId { get; set; }
     @AuraEnabled public String productCode { get; set; }
     @AuraEnabled public String productName { get; set; }

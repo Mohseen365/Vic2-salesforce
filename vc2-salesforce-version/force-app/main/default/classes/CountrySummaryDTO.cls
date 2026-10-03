@@ -1,4 +1,4 @@
-public class CountrySummaryDTO {
+public with sharing class CountrySummaryDTO {
     @AuraEnabled public Id countryEconomyId { get; set; }
     @AuraEnabled public String countryTag { get; set; }
     @AuraEnabled public String countryName { get; set; }

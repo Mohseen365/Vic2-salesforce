@@ -58,6 +58,7 @@ public with sharing class EconomyImportBatch implements Database.Batchable<sObje
                     Import_Status__c = 'FAILED',
                     Import_Diagnostic_Message__c = this.errorMessage
                 );
+                EconomyImportService.publishImportEvent(this.analysisId, 'FAILED', this.errorMessage, null);
             }
         }
     }
@@ -69,11 +70,13 @@ public with sharing class EconomyImportBatch implements Database.Batchable<sObje
                 EconomyAnalysisService.recalculateAnalysis(this.analysisId);
             } catch (Exception ex) {
                 if (Schema.sObjectType.Economy_Analysis__c.isUpdateable()) {
+                    String diag = ex.getMessage() + '\n' + ex.getStackTraceString();
                     update new Economy_Analysis__c(
                         Id = this.analysisId,
                         Import_Status__c = 'FAILED',
-                        Import_Diagnostic_Message__c = ex.getMessage() + '\n' + ex.getStackTraceString()
+                        Import_Diagnostic_Message__c = diag
                     );
+                    EconomyImportService.publishImportEvent(this.analysisId, 'FAILED', diag, null);
                 }
             }
         }

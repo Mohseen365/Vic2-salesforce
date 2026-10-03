@@ -3,7 +3,7 @@
  * Country_Product_Economy__c, Country_Economy__c, and Economy_Analysis__c entities.
  * Kept pure and side-effect free before DML persistence.
  */
-public class EconomyCalculationResult {
+public with sharing class EconomyCalculationResult {
 
     /**
      * @description Calculation results for a single Country_Product_Economy__c junction.

@@ -1,4 +1,4 @@
-public class AnalysisComparisonDTO {
+public with sharing class AnalysisComparisonDTO {
 
     public class CountryDelta {
         @AuraEnabled public String countryTag { get; set; }

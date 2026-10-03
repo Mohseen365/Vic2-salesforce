@@ -26,6 +26,7 @@ public with sharing class EconomyAnalysisService {
                     Id = analysis.Id,
                     Import_Status__c = 'CALCULATING'
                 );
+                EconomyImportService.publishImportEvent(analysis.Id, 'CALCULATING', null, null);
             }
         }
 
@@ -106,6 +107,7 @@ public with sharing class EconomyAnalysisService {
                 Total_World_Exports__c = analysis.Total_World_Exports__c,
                 Import_Status__c = 'COMPLETED'
             );
+            EconomyImportService.publishImportEvent(analysis.Id, 'COMPLETED', null, null);
         }
     }
 

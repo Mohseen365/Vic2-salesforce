@@ -1,4 +1,4 @@
-public class AnalysisSummaryDTO {
+public with sharing class AnalysisSummaryDTO {
     @AuraEnabled public Id analysisId { get; set; }
     @AuraEnabled public String saveFileName { get; set; }
     @AuraEnabled public String sourceSaveFileName { get; set; }
