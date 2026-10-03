@@ -40,6 +40,15 @@
             </div>
         </lightning-card>
 
+        <!-- Stale / Pending Analysis Warning Banner -->
+        <template if:true={isStaleOrPending}>
+            <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert" data-testid="stale-warning">
+                <span class="slds-assistive-text">warning</span>
+                <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                <h2>Selected save file(s) are currently processing or updating. Comparison cannot be computed until import is complete.</h2>
+            </div>
+        </template>
+
         <!-- Loading State -->
         <template if:true={isLoading}>
             <div class="slds-p-around_large slds-text-align_center">

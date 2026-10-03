@@ -24,7 +24,22 @@ const PRODUCT_DELTA_COLUMNS = [
 ];
 
 export default class AnalysisCompare extends LightningElement {
-    @api initialBaseAnalysisId;
+    _initialBaseAnalysisId;
+
+    @api
+    get initialBaseAnalysisId() {
+        return this._initialBaseAnalysisId;
+    }
+    set initialBaseAnalysisId(value) {
+        this._initialBaseAnalysisId = value;
+        if (value) {
+            this.baseAnalysisId = value;
+            if (this.compareAnalysisId === value) {
+                this.compareAnalysisId = undefined;
+            }
+            this.fetchComparisonData();
+        }
+    }
 
     baseAnalysisId;
     compareAnalysisId;
@@ -52,6 +67,9 @@ export default class AnalysisCompare extends LightningElement {
             } else if (!this.baseAnalysisId && data.length > 0) {
                 this.baseAnalysisId = data[0].Id;
             }
+            if (this.baseAnalysisId && this.compareAnalysisId) {
+                this.fetchComparisonData();
+            }
         } else if (error) {
             this.recentAnalyses = [];
             this.errorMessage = this.extractErrorMessage(error);
@@ -71,6 +89,19 @@ export default class AnalysisCompare extends LightningElement {
             this.baseAnalysisId &&
             this.compareAnalysisId &&
             this.baseAnalysisId === this.compareAnalysisId
+        );
+    }
+
+    get isStaleOrPending() {
+        if (!this.recentAnalyses || !this.recentAnalyses.length) return false;
+        const baseObj = this.recentAnalyses.find(a => a.Id === this.baseAnalysisId);
+        const compareObj = this.recentAnalyses.find(a => a.Id === this.compareAnalysisId);
+        const baseStatus = baseObj ? baseObj.Import_Status__c : null;
+        const compareStatus = compareObj ? compareObj.Import_Status__c : null;
+        const isPending = (status) => status === 'PROCESSING' || status === 'CALCULATING' || status === 'RECEIVED';
+        return Boolean(
+            (this.baseAnalysisId && isPending(baseStatus)) ||
+            (this.compareAnalysisId && isPending(compareStatus))
         );
     }
 
@@ -140,7 +171,7 @@ export default class AnalysisCompare extends LightningElement {
     }
 
     async fetchComparisonData() {
-        if (!this.baseAnalysisId || !this.compareAnalysisId || this.baseAnalysisId === this.compareAnalysisId) {
+        if (!this.baseAnalysisId || !this.compareAnalysisId || this.baseAnalysisId === this.compareAnalysisId || this.isStaleOrPending) {
             this.comparisonResult = undefined;
             return;
         }

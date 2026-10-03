@@ -1,74 +1,80 @@
 # Phase 11 (Deferred UI Closure — Global Overview & Compare Saves) Completion & Handoff Report
 
 ## Summary of Accomplishments
-
-- **Implemented `c-global-economy-dashboard` (`globalEconomyDashboard`) LWC Bundle:**
-  - KPI Card Grid: Total World GDP, World Population, World Imports, World Exports, Top Great Power, Products Monitored.
-  - Top 10 World Powers by GDP `lightning-datatable` (Rank, Tag, Name, GDP, GDP Share %, GDP/100k) with View button firing `countryselect`.
-  - Top 10 Commodities by Supply `lightning-datatable` (Code, Name, Price, World Supply, Real Demand, Inflation %) with View button firing `productselect`.
-  - Embedded `<c-economic-charts-container>` for global SVG visualizations.
-  - Stale/pending analysis warning banner (`PROCESSING` / `CALCULATING`), error card, empty state, and loading spinner.
-- **Implemented `c-analysis-compare` (`analysisCompare`) LWC Bundle:**
-  - Base Analysis and Comparison Analysis combobox pickers populated via `getRecentAnalyses`.
-  - Identical selection guard with inline warning alert when Base Analysis == Comparison Analysis.
-  - World summary block displaying Base GDP, Compare GDP, and World GDP Growth % with SLDS trend badge (`slds-theme_success` / green for >= 0%, `slds-theme_warning` / yellow-red for < 0%).
-  - Country Delta `lightning-datatable` (Tag, Name, Base GDP, Compare GDP, Change £, Change %, Rank Change) with sortable columns.
-  - Commodity Delta `lightning-datatable` (Code, Name, Base Price, Compare Price, Price Change %, Base Supply, Compare Supply, Supply Change %) with sortable columns.
-- **Apex Controller Facade Addition:**
-  - `@AuraEnabled(cacheable=true) public static AnalysisComparisonDTO compareAnalyses(Id baseAnalysisId, Id compareAnalysisId)` added to `EconomyAnalysisController.cls`.
-  - Extended `EconomyAnalysisControllerTest.cls` with `testCompareAnalyses` maintaining 100% test coverage.
-- **Shell Integration in `c-economy-analyzer-shell`:**
-  - Replaced Global Overview tab placeholder with `c-global-economy-dashboard`.
-  - Replaced Compare Saves tab placeholder with `c-analysis-compare`.
-  - Wired `oncountryselect` and `onproductselect` event handlers in `economyAnalyzerShell.js` to switch active workspace tabs and set selected country/product IDs.
-- **Jest Unit Test Suite:**
-  - Created `globalEconomyDashboard.test.js` and `analysisCompare.test.js`.
-  - Updated `economyAnalyzerShell.test.js`.
-  - All 11 LWC Jest suites (72 unit tests) pass at 100%.
-- **Documentation Updated:**
-  - Updated root `AGENTS.md`, `vc2-salesforce-version/AGENTS.md`, and `vc2-salesforce-version/README.md` reflecting all 5 shell tabs fully wired.
-
----
+- Implemented and fully integrated `c-global-economy-dashboard` and `c-analysis-compare` LWC bundles into the main workspace shell `c-economy-analyzer-shell`.
+- Replaced all tab placeholders in the shell workspace tabset. The tabset now presents: 🌐 Global Overview | 🏛️ Country Explorer | 📦 Product Market | 📈 Analytics & Visualizations | 📊 Compare Saves.
+- Integrated row-action navigation hooks on Global Overview top-N tables (`countryselect` and `productselect`) to navigate seamlessly to Country Explorer or Product Market with selected records.
+- Added reactive active-analysis synchronization (`initialBaseAnalysisId` setter) and stale/pending import status detection (`isStaleOrPending`) in `c-analysis-compare`.
+- Verified 100% test pass rate across 11 LWC Jest suites (74 unit tests) and 13 Apex test classes.
+- Re-verified end-to-end parity against Phase 0 golden dataset (`egypt_golden_bundle.json`) with 0 discrepancies.
 
 ## Technical Details & UI State
 
-### Component Hierarchy & Data Flow
-- `c-economy-analyzer-shell`
-  - `c-global-economy-dashboard` (Global Overview Tab)
-    - `c-economic-charts-container`
-  - `c-country-dashboard` (Country Explorer Tab)
-    - `c-economic-charts-container`
-  - `c-product-list-view` / `c-product-dashboard` (Product Market Tab)
-    - `c-economic-charts-container`
-  - `c-economic-charts-container` (Analytics Tab)
-  - `c-analysis-compare` (Compare Saves Tab)
+### Component Hierarchy & Data Flow Diagram
+```
+c-economy-analyzer-shell (Selected Analysis Context)
+ ├── c-economy-analysis-header (Analysis Overview Banner)
+ ├── c-save-game-watcher-status (Real-time Platform Event Listener)
+ ├── c-economic-export-modal (Client/Server CSV Exporter)
+ └── lightning-tabset [variant="scoped"]
+      ├── 🌐 Global Overview: c-global-economy-dashboard
+      │    ├── World KPI Cards (GDP, Pop, Imports, Exports, Top GP, Products Monitored)
+      │    ├── Top 10 World Powers datatable (emitting countryselect)
+      │    ├── Top 10 Commodities datatable (emitting productselect)
+      │    └── Embedded Visualizations: c-economic-charts-container
+      ├── 🏛️ Country Explorer: c-country-dashboard & c-economic-charts-container
+      ├── 📦 Product Market: c-product-list-view / c-product-dashboard & c-economic-charts-container
+      ├── 📈 Analytics & Visualizations: c-economic-charts-container
+      └── 📊 Compare Saves: c-analysis-compare
+           ├── Dual Save Analysis Combobox Pickers (Base vs Compare)
+           ├── Stale / Processing Analysis Warning Banner (isStaleOrPending)
+           ├── Identical Selection Guard Banner (isIdenticalSelection)
+           ├── World GDP Delta Summary & Trend Badge
+           ├── Country Economic Deltas datatable
+           └── Commodity Market Deltas datatable
+```
 
-### Apex Methods Consumed
-- `EconomyAnalysisController.getRecentAnalyses(limitCount)` → `List<Economy_Analysis__c>`
-- `EconomyAnalysisController.getAnalysisSummary(analysisId)` → `AnalysisSummaryDTO`
-- `EconomyAnalysisController.getCountrySummaries(analysisId)` → `List<CountrySummaryDTO>`
-- `EconomyAnalysisController.getProductSummaries(analysisId)` → `List<ProductSummaryDTO>`
-- `EconomyAnalysisController.compareAnalyses(baseAnalysisId, compareAnalysisId)` → `AnalysisComparisonDTO`
+### Apex Controller Methods Consumed
+- `EconomyAnalysisController.getAnalysisSummary(analysisId)` → Returns `AnalysisSummaryDTO`
+- `EconomyAnalysisController.getCountrySummaries(analysisId)` → Returns `List<CountrySummaryDTO>`
+- `EconomyAnalysisController.getProductSummaries(analysisId)` → Returns `List<ProductSummaryDTO>`
+- `EconomyAnalysisController.getRecentAnalyses(limitCount)` → Returns `List<Economy_Analysis__c>`
+- `EconomyAnalysisController.compareAnalyses(baseAnalysisId, compareAnalysisId)` → Returns `AnalysisComparisonDTO`
+
+### Global Overview UI State
+- **KPI Cards:** Displays World GDP (£), World Population, World Imports (£), World Exports (£), Top Great Power (tag + country name), and Products Monitored count.
+- **Top 10 Tables:** Renders Top 10 World Powers by GDP and Top 10 Commodities by World Supply with explicit row action buttons ("View") emitting `countryselect` and `productselect` events.
+- **Embedded Charts:** Embeds `c-economic-charts-container` for multi-chart SVG visualizations.
+
+### Compare Saves UI State
+- **Pickers:** Two `lightning-combobox` controls populated via `getRecentAnalyses`. Base analysis defaults to shell's active analysis (`initialBaseAnalysisId`).
+- **Guards:** Shows inline warning if base and compare selection are identical (`isIdenticalSelection`) or if either analysis is in `PROCESSING`/`CALCULATING`/`RECEIVED` state (`isStaleOrPending`).
+- **World Summary:** Displays Base World GDP, Compare World GDP, and World GDP Growth % with SLDS trend badge (`slds-theme_success` for positive growth, `slds-theme_warning` for negative).
+- **Delta Tables:** Renders sortable country delta datatable (default sorted by absolute GDP change) and product delta datatable (default sorted by absolute price change).
+
+### Shell Integration & Routing
+- Tab order updated to: **🌐 Global Overview | 🏛️ Country Explorer | 📦 Product Market | 📈 Analytics & Visualizations | 📊 Compare Saves**.
+- Row actions in Global Overview dispatch `countryselect` or `productselect`, switching active tab to Country Explorer or Product Market and pre-selecting the record.
 
 ### Accessibility Features
-- All SLDS elements follow WCAG 2.1 standards (`aria-label`, `<title>` tooltips, `slds-assistive-text`, role attributes).
+- All tables feature title tooltips, SLDS assistive text fallbacks, ARIA tags, and SLDS grid system standards.
 
----
+### Handling of Loading, Empty, Error, and Stale States
+- **Loading:** Render `lightning-spinner` while wired data or comparison Apex promises resolve.
+- **Empty:** Display friendly prompt card when no analysis or comparison is selected.
+- **Error:** Display inline SLDS error card capturing Apex error messages without raw stack traces.
+- **Stale / Pending:** Display SLDS warning alert banner when analysis import status is `PROCESSING`, `CALCULATING`, or `RECEIVED`.
+
+### Test Results Summary
+- **LWC Jest Suites:** 11 passed out of 11 total (74 unit tests).
+- **Apex Test Classes:** 13 passed out of 13 total (100% pass rate & 100% coverage).
+- **Parity Comparison:** PASS (0 discrepancies against Phase 0 golden dataset).
 
 ## Final Roadmap Status
-
-- **Declaration:** All five workspace tabs in `c-economy-analyzer-shell` are fully implemented, tested, and operational.
-- **Shell Workspace Tabs:**
-  1. 🌐 **Global Overview** (`c-global-economy-dashboard`)
-  2. 🏛️ **Country Explorer** (`c-country-dashboard`)
-  3. 📦 **Product Market** (`c-product-list-view` / `c-product-dashboard`)
-  4. 📈 **Analytics & Visualizations** (`c-economic-charts-container`)
-  5. 📊 **Compare Saves** (`c-analysis-compare`)
-- **Zero Economic Formula Changes:** Zero calculation engine or DTO mathematical formulas were modified.
-
----
+- All five shell workspace tabs are fully operational.
+- All "deferred item" placeholders are resolved.
+- No remaining open technical debt or pending roadmap items.
 
 ## Maintenance Notes for Future Work
-
-- Future multi-save trend analysis beyond two-snapshot comparison can reuse `AnalysisComparisonDTO` and `EconomyAnalysisService.compareAnalyses`.
-- Parity harness `python3 vc2-salesforce-version/e2e/parity/compare.py` remains runnable to verify non-regression.
+- No economic semantics or calculation formulas were altered during Phase 11.
+- All new `@AuraEnabled` endpoints remain `cacheable=true` and enforce strict FLS/CRUD security controls (`with sharing`, `isAccessible()`).

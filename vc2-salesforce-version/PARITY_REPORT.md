@@ -62,7 +62,7 @@ Per Audit Section A preservation rule, the following intentional architectural c
 
 ---
 
-## 4. Open Items & Impact
+## 4. Deferred Items Resolution Status (Phase 11 Closure)
 
-- **Global Overview Tab:** UI deferred beyond Phase 10 (No domain logic impact).
-- **Compare Saves Tab:** UI deferred beyond Phase 10 (`AnalysisComparisonDTO.cls` and `EconomyAnalysisService.compareAnalyses` backend methods are complete and functional).
+- **Global Overview Tab (`c-global-economy-dashboard`):** Fully operational in Phase 11.
+- **Compare Saves Tab (`c-analysis-compare`):** Fully operational in Phase 11 using existing Phase 3 `AnalysisComparisonDTO.cls` and `EconomyAnalysisService.compareAnalyses` backend service.

@@ -141,4 +141,50 @@ describe('c-analysis-compare', () => {
 
         expect(element.shadowRoot.textContent).toContain('Comparison Calculation Failed');
     });
+
+    it('updates baseAnalysisId when initialBaseAnalysisId changes dynamically', async () => {
+        compareAnalyses.mockResolvedValue(MOCK_COMPARISON);
+
+        const element = createElement('c-analysis-compare', {
+            is: AnalysisCompare
+        });
+        element.initialBaseAnalysisId = 'a1';
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        element.initialBaseAnalysisId = 'a2';
+
+        await flushPromises();
+
+        const baseCombobox = element.shadowRoot.querySelector('[data-testid="base-combobox"]');
+        expect(baseCombobox.value).toBe('a2');
+    });
+
+    it('shows stale/pending warning banner when selected analysis is in PROCESSING status', async () => {
+        const element = createElement('c-analysis-compare', {
+            is: AnalysisCompare
+        });
+        element.initialBaseAnalysisId = 'a1';
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit([
+            { Id: 'a1', Save_File_Name__c: 'prussia_1848.v2', Ingame_Date__c: '1848-03-12', Import_Status__c: 'PROCESSING' },
+            { Id: 'a2', Save_File_Name__c: 'prussia_1850.v2', Ingame_Date__c: '1850-01-01', Import_Status__c: 'COMPLETED' }
+        ]);
+
+        await flushPromises();
+
+        const compareCombobox = element.shadowRoot.querySelector('[data-testid="compare-combobox"]');
+        compareCombobox.dispatchEvent(new CustomEvent('change', {
+            detail: { value: 'a2' }
+        }));
+
+        await flushPromises();
+
+        expect(element.shadowRoot.textContent).toContain('currently processing or updating');
+        expect(compareAnalyses).not.toHaveBeenCalled();
+    });
 });
