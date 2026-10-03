@@ -17,18 +17,18 @@ This directory contains the complete Salesforce-native conversion of the Victori
 ### Apex Controller & Service Architecture
 - **Facade Controller:** `EconomyAnalysisController.cls` (exposes `@AuraEnabled(cacheable=true)` methods for LWCs and `exportCsv` fallback).
 - **Calculation Engine:** `EconomyCalculationEngine.cls` (pure domain calculation engine, zero SOQL/DML).
-- **Service Layer:** `EconomyAnalysisService.cls` (manages analysis lifecycle and recalculations).
+- **Service Layer:** `EconomyAnalysisService.cls` (manages analysis lifecycle, recalculations, and save snapshot comparisons).
 - **Selector Layer:** `EconomyAnalysisSelector.cls`, `CountrySelector.cls`, `ProductSelector.cls` (bulkified SOQL projections with security enforcement).
 - **Import Pipeline:** `EconomyImportRestResource.cls`, `EconomyImportService.cls`, `EconomyImportBatch.cls`.
 
-### LWC Bundle Hierarchy
-- `c-economy-analyzer-shell`: Main application workspace shell.
-- `c-economy-analysis-header`: Analysis KPI header banner.
-- `c-country-dashboard`: Country explorer datatable and KPI cards.
-- `c-product-list-view` & `c-product-dashboard`: Commodity market table and detail view.
-- `c-economic-charts-container`: Pure SVG LWC visualization container.
-- `c-save-game-watcher-status`: Streaming Platform Event watcher.
-- `c-economic-export-modal` & `c/economicExportUtils`: Client/Apex RFC 4180 CSV export suite.
+### LWC Bundle Hierarchy & Workspace Tabs
+All five tabs in `c-economy-analyzer-shell` are fully operational:
+1. 🌐 **Global Overview (`c-global-economy-dashboard`)**: World KPI cards, Top 10 World Powers table, Top 10 Commodities table, embedded SVG charts container, and row navigation hooks.
+2. 🏛️ **Country Explorer (`c-country-dashboard`)**: Country metrics, search filtering, trade breakdown datatable, and regional SVG charts.
+3. 📦 **Product Market (`c-product-list-view` & `c-product-dashboard`)**: Commodity grid, search filtering, supply/demand breakdown, and country trade sub-table.
+4. 📈 **Analytics & Visualizations (`c-economic-charts-container`)**: Pure SVG LWC multi-chart suite.
+5. 📊 **Compare Saves (`c-analysis-compare`)**: Dual save snapshot selection, world GDP growth trend badge, country delta datatable, and commodity delta datatable.
+6. **Support Components**: `c-economy-analysis-header`, `c-save-game-watcher-status`, `c-economic-export-modal`, `c/economicExportUtils`.
 
 ---
 
@@ -48,7 +48,7 @@ This directory contains the complete Salesforce-native conversion of the Victori
 cd vc2-salesforce-version
 npm run test:lwc
 ```
-*Runs all 9 LWC Jest suites (60 unit tests) at 100% pass rate.*
+*Runs all 11 LWC Jest suites (72 unit tests) at 100% pass rate.*
 
 ### End-to-End Parity Verification Harness
 ```bash

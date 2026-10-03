@@ -18,8 +18,8 @@ private class EconomyAnalysisControllerTest {
         );
         insert product;
 
-        // Analysis Header
-        Economy_Analysis__c analysis = new Economy_Analysis__c(
+        // Analysis Header 1
+        Economy_Analysis__c analysis1 = new Economy_Analysis__c(
             Save_File_Name__c = 'prussia_1848.v2',
             Source_Save_File_Name__c = 'prussia_1848.v2',
             Ingame_Date__c = Date.newInstance(1848, 3, 12),
@@ -30,11 +30,25 @@ private class EconomyAnalysisControllerTest {
             Import_Status__c = 'COMPLETED',
             Unique_Snapshot_Key__c = 'prussia_1848.v2'
         );
-        insert analysis;
+        insert analysis1;
 
-        // Country Snapshot
-        Country_Economy__c countryEco = new Country_Economy__c(
-            Economy_Analysis__c = analysis.Id,
+        // Analysis Header 2
+        Economy_Analysis__c analysis2 = new Economy_Analysis__c(
+            Save_File_Name__c = 'prussia_1850.v2',
+            Source_Save_File_Name__c = 'prussia_1850.v2',
+            Ingame_Date__c = Date.newInstance(1850, 1, 1),
+            Analysis_Timestamp__c = Datetime.now(),
+            Player_Country_Tag__c = 'PRU',
+            Total_World_Imports__c = 1500.0,
+            Total_World_Exports__c = 1800.0,
+            Import_Status__c = 'COMPLETED',
+            Unique_Snapshot_Key__c = 'prussia_1850.v2'
+        );
+        insert analysis2;
+
+        // Country Snapshot 1
+        Country_Economy__c countryEco1 = new Country_Economy__c(
+            Economy_Analysis__c = analysis1.Id,
             Country__c = country.Id,
             Country_Tag__c = 'PRU',
             Population__c = 1000000,
@@ -45,11 +59,26 @@ private class EconomyAnalysisControllerTest {
             Gold_Income__c = 50.0,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU'
         );
-        insert countryEco;
+        insert countryEco1;
 
-        // Product Snapshot
-        Product_Economy__c prodEco = new Product_Economy__c(
-            Economy_Analysis__c = analysis.Id,
+        // Country Snapshot 2
+        Country_Economy__c countryEco2 = new Country_Economy__c(
+            Economy_Analysis__c = analysis2.Id,
+            Country__c = country.Id,
+            Country_Tag__c = 'PRU',
+            Population__c = 1100000,
+            Workforce__c = 270000,
+            Employment__c = 260000,
+            GDP__c = 600000.0,
+            GDP_Rank__c = 1,
+            Gold_Income__c = 60.0,
+            Unique_Snapshot_Key__c = 'prussia_1850.v2_PRU'
+        );
+        insert countryEco2;
+
+        // Product Snapshot 1
+        Product_Economy__c prodEco1 = new Product_Economy__c(
+            Economy_Analysis__c = analysis1.Id,
             Product__c = product.Id,
             Product_Code__c = 'small_arms',
             Price__c = 12.0,
@@ -58,12 +87,25 @@ private class EconomyAnalysisControllerTest {
             Real_Demand__c = 80.0,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_small_arms'
         );
-        insert prodEco;
+        insert prodEco1;
 
-        // Junction Snapshot
-        Country_Product_Economy__c cpe = new Country_Product_Economy__c(
-            Country_Economy__c = countryEco.Id,
-            Product_Economy__c = prodEco.Id,
+        // Product Snapshot 2
+        Product_Economy__c prodEco2 = new Product_Economy__c(
+            Economy_Analysis__c = analysis2.Id,
+            Product__c = product.Id,
+            Product_Code__c = 'small_arms',
+            Price__c = 15.0,
+            Base_Price__c = 10.0,
+            Total_World_Supply__c = 120.0,
+            Real_Demand__c = 90.0,
+            Unique_Snapshot_Key__c = 'prussia_1850.v2_small_arms'
+        );
+        insert prodEco2;
+
+        // Junction Snapshot 1
+        Country_Product_Economy__c cpe1 = new Country_Product_Economy__c(
+            Country_Economy__c = countryEco1.Id,
+            Product_Economy__c = prodEco1.Id,
             Product__c = product.Id,
             Product_Code__c = 'small_arms',
             Sold_Domestic__c = 50.0,
@@ -72,7 +114,7 @@ private class EconomyAnalysisControllerTest {
             GDP_Contribution__c = 600.0,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_small_arms'
         );
-        insert cpe;
+        insert cpe1;
     }
 
     @isTest
@@ -82,14 +124,13 @@ private class EconomyAnalysisControllerTest {
         List<Economy_Analysis__c> defaultAnalyses = EconomyAnalysisController.getRecentAnalyses(null);
         Test.stopTest();
 
-        System.assertEquals(1, analyses.size(), 'Should return 1 recent analysis');
-        System.assertEquals('prussia_1848.v2', analyses[0].Save_File_Name__c, 'Save file name should match');
-        System.assertEquals(1, defaultAnalyses.size(), 'Default limit should return 1 analysis');
+        System.assertEquals(2, analyses.size(), 'Should return 2 recent analyses');
+        System.assertEquals(2, defaultAnalyses.size(), 'Default limit should return 2 analyses');
     }
 
     @isTest
     static void testGetAnalysisSummary() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
 
         Test.startTest();
         AnalysisSummaryDTO dto = EconomyAnalysisController.getAnalysisSummary(analysis.Id);
@@ -106,7 +147,7 @@ private class EconomyAnalysisControllerTest {
 
     @isTest
     static void testGetCountrySummaries() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
 
         Test.startTest();
         List<CountrySummaryDTO> countryDtos = EconomyAnalysisController.getCountrySummaries(analysis.Id);
@@ -121,8 +162,8 @@ private class EconomyAnalysisControllerTest {
 
     @isTest
     static void testGetCountrySummary() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
-        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c WHERE Economy_Analysis__c = :analysis.Id LIMIT 1];
 
         Test.startTest();
         CountrySummaryDTO dto = EconomyAnalysisController.getCountrySummary(analysis.Id, countryEco.Id);
@@ -139,7 +180,7 @@ private class EconomyAnalysisControllerTest {
 
     @isTest
     static void testGetCountryProductSummaries() {
-        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c LIMIT 1];
+        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c WHERE Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU' LIMIT 1];
 
         Test.startTest();
         List<CountryProductSummaryDTO> productDtos = EconomyAnalysisController.getCountryProductSummaries(countryEco.Id);
@@ -154,7 +195,7 @@ private class EconomyAnalysisControllerTest {
 
     @isTest
     static void testGetProductSummaries() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
 
         Test.startTest();
         List<ProductSummaryDTO> productDtos = EconomyAnalysisController.getProductSummaries(analysis.Id);
@@ -169,8 +210,8 @@ private class EconomyAnalysisControllerTest {
 
     @isTest
     static void testGetProductSummary() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
-        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c WHERE Economy_Analysis__c = :analysis.Id LIMIT 1];
 
         Test.startTest();
         ProductSummaryDTO dto = EconomyAnalysisController.getProductSummary(analysis.Id, prodEco.Id);
@@ -187,7 +228,7 @@ private class EconomyAnalysisControllerTest {
 
     @isTest
     static void testGetCountryProductSummariesByProduct() {
-        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c LIMIT 1];
+        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c WHERE Unique_Snapshot_Key__c = 'prussia_1848.v2_small_arms' LIMIT 1];
 
         Test.startTest();
         List<CountryProductSummaryDTO> productDtos = EconomyAnalysisController.getCountryProductSummariesByProduct(prodEco.Id);
@@ -201,8 +242,28 @@ private class EconomyAnalysisControllerTest {
     }
 
     @isTest
+    static void testCompareAnalyses() {
+        Economy_Analysis__c a1 = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+        Economy_Analysis__c a2 = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1850.v2' LIMIT 1];
+
+        Test.startTest();
+        AnalysisComparisonDTO comparison = EconomyAnalysisController.compareAnalyses(a1.Id, a2.Id);
+        AnalysisComparisonDTO nullComparison = EconomyAnalysisController.compareAnalyses(a1.Id, null);
+        AnalysisComparisonDTO sameComparison = EconomyAnalysisController.compareAnalyses(a1.Id, a1.Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, comparison, 'Comparison DTO should not be null');
+        System.assertEquals(a1.Id, comparison.baseAnalysisId, 'Base analysis ID should match');
+        System.assertEquals(a2.Id, comparison.compareAnalysisId, 'Compare analysis ID should match');
+        System.assertEquals(500000.0, comparison.baseGdp, 'Base GDP should match');
+        System.assertEquals(600000.0, comparison.compareGdp, 'Compare GDP should match');
+        System.assertEquals(null, nullComparison, 'Null analysis ID should return null');
+        System.assertEquals(null, sameComparison, 'Same analysis ID comparison should return null');
+    }
+
+    @isTest
     static void testExportCsvScopes() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
 
         Test.startTest();
         String summaryCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Summary');

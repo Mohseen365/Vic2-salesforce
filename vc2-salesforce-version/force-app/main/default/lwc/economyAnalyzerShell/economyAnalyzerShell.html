@@ -67,21 +67,21 @@
 
         <!-- Main Workspace Tabset -->
         <lightning-tabset variant="scoped" active-tab-value="country-explorer" data-testid="tabset" onopenexport={handleOpenExport}>
-            <!-- Global Overview Placeholder Tab -->
+            <!-- Global Overview View Tab (Phase 11) -->
             <lightning-tab label="🌐 Global Overview" value="global-overview" data-testid="tab-global">
-                <div class="slds-p-around_large slds-text-align_center tab-placeholder">
-                    <lightning-card title="Global Overview" icon-name="custom:custom62">
-                        <p class="slds-p-around_medium slds-text-heading_small slds-text-color_weak">
-                            Global Overview summary metrics are available above. Detailed multi-save historical tracking coming in a later phase.
-                        </p>
-                    </lightning-card>
-                </div>
+                <c-global-economy-dashboard
+                    analysis-id={selectedAnalysisId}
+                    oncountryselect={handleGlobalCountrySelect}
+                    onproductselect={handleGlobalProductSelect}
+                    data-testid="global-economy-dashboard-component">
+                </c-global-economy-dashboard>
             </lightning-tab>
 
             <!-- Country Explorer View Tab (Phase 5) -->
             <lightning-tab label="🏛️ Country Explorer" value="country-explorer" data-testid="tab-country">
                 <c-country-dashboard
                     analysis-id={selectedAnalysisId}
+                    selected-country-economy-id={selectedCountryEconomyId}
                     data-testid="country-dashboard-component">
                 </c-country-dashboard>
                 <div class="slds-m-top_medium">
@@ -126,15 +126,12 @@
                 </c-economic-charts-container>
             </lightning-tab>
 
-            <!-- Compare Saves Placeholder Tab -->
+            <!-- Compare Saves Tab (Phase 11) -->
             <lightning-tab label="📊 Compare Saves" value="compare-saves" data-testid="tab-compare">
-                <div class="slds-p-around_large slds-text-align_center tab-placeholder">
-                    <lightning-card title="Compare Saves" icon-name="custom:custom90">
-                        <p class="slds-p-around_medium slds-text-heading_small slds-text-color_weak">
-                            Compare Saves delta analysis is coming in a later phase.
-                        </p>
-                    </lightning-card>
-                </div>
+                <c-analysis-compare
+                    initial-base-analysis-id={selectedAnalysisId}
+                    data-testid="analysis-compare-component">
+                </c-analysis-compare>
             </lightning-tab>
         </lightning-tabset>
     </div>

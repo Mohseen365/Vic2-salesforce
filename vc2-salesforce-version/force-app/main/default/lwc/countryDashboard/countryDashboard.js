@@ -12,8 +12,8 @@ const COLUMNS = [
 
 export default class CountryDashboard extends LightningElement {
     @api analysisId;
+    @api selectedCountryEconomyId;
 
-    selectedCountryEconomyId;
     searchKey = '';
     sortedBy = 'productCode';
     sortedDirection = 'asc';
@@ -86,7 +86,6 @@ export default class CountryDashboard extends LightningElement {
 
     get unemploymentRateDecimal() {
         if (!this.selectedCountry) return 0.0;
-        // If unemploymentRate is 0.042 (decimal), percent-fixed expects 4.2
         const rate = this.selectedCountry.unemploymentRate || 0.0;
         return rate <= 1.0 ? rate * 100.0 : rate;
     }

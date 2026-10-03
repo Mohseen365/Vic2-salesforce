@@ -4,6 +4,7 @@ import getRecentAnalyses from '@salesforce/apex/EconomyAnalysisController.getRec
 
 export default class EconomyAnalyzerShell extends LightningElement {
     selectedAnalysisId;
+    selectedCountryEconomyId;
     selectedProductEconomyId;
     analysesData = [];
     errorData;
@@ -77,7 +78,28 @@ export default class EconomyAnalyzerShell extends LightningElement {
 
     handleAnalysisChange(event) {
         this.selectedAnalysisId = event.detail.value;
+        this.selectedCountryEconomyId = undefined;
         this.selectedProductEconomyId = undefined;
+    }
+
+    handleGlobalCountrySelect(event) {
+        if (event && event.detail) {
+            this.selectedCountryEconomyId = event.detail.countryEconomyId;
+        }
+        const tabset = this.template.querySelector('[data-testid="tabset"]');
+        if (tabset) {
+            tabset.activeTabValue = 'country-explorer';
+        }
+    }
+
+    handleGlobalProductSelect(event) {
+        if (event && event.detail) {
+            this.selectedProductEconomyId = event.detail.productEconomyId;
+        }
+        const tabset = this.template.querySelector('[data-testid="tabset"]');
+        if (tabset) {
+            tabset.activeTabValue = 'product-market';
+        }
     }
 
     handleProductSelect(event) {

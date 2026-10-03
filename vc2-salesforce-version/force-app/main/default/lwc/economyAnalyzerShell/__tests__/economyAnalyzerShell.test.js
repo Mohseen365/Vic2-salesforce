@@ -86,6 +86,59 @@ describe('c-economy-analyzer-shell', () => {
         expect(countryCharts.analysisId).toBe('a00000000000001AAA');
     });
 
+    it('renders mounted Global Overview and Compare Saves components', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const globalDash = element.shadowRoot.querySelector('[data-testid="global-economy-dashboard-component"]');
+        expect(globalDash).not.toBeNull();
+        expect(globalDash.analysisId).toBe('a00000000000001AAA');
+
+        const compareComp = element.shadowRoot.querySelector('[data-testid="analysis-compare-component"]');
+        expect(compareComp).not.toBeNull();
+        expect(compareComp.initialBaseAnalysisId).toBe('a00000000000001AAA');
+    });
+
+    it('handles countryselect and productselect events from Global Overview tab', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const globalDash = element.shadowRoot.querySelector('[data-testid="global-economy-dashboard-component"]');
+        const tabset = element.shadowRoot.querySelector('[data-testid="tabset"]');
+
+        globalDash.dispatchEvent(new CustomEvent('countryselect', {
+            detail: { countryEconomyId: 'c1', countryTag: 'PRU' },
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        expect(tabset.activeTabValue).toBe('country-explorer');
+
+        globalDash.dispatchEvent(new CustomEvent('productselect', {
+            detail: { productEconomyId: 'p1', productCode: 'grain' },
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        expect(tabset.activeTabValue).toBe('product-market');
+    });
+
     it('handles watcher statuschange event and triggers refresh on COMPLETED status', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
