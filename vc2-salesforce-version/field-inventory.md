@@ -80,6 +80,7 @@ This document provides the authoritative inventory of all Custom Objects, Custom
 | Field API Name | Label | Type | Precision/Scale/Length | Formula / Relationship / Summary Details | Attributes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `Analysis_Timestamp__c` | Analysis Timestamp | DateTime | - | - | None |
+| `Import_Diagnostic_Message__c` | Import Diagnostic Message | LongTextArea | 32768 | - | None |
 | `Import_Status__c` | Import Status | Picklist | - | - | None |
 | `Ingame_Date__c` | Ingame Date | Date | - | - | Required |
 | `Player_Country_Tag__c` | Player Country Tag | Text | 10 | - | None |
@@ -89,6 +90,7 @@ This document provides the authoritative inventory of all Custom Objects, Custom
 | `Total_World_GDP__c` | Total World GDP | Summary | - | SUM(`Country_Economy__c.GDP__c`) | None |
 | `Total_World_Imports__c` | Total World Imports (£) | Currency | 18, 2 | - | None |
 | `Total_World_Population__c` | Total World Population | Summary | - | SUM(`Country_Economy__c.Population__c`) | None |
+| `Unique_Snapshot_Key__c` | Unique Snapshot Key | Text | 255 | - | External ID, Unique |
 
 ---
 
