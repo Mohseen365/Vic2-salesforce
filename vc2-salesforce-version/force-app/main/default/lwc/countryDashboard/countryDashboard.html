@@ -16,6 +16,14 @@
                         data-testid="country-combobox">
                     </lightning-combobox>
                 </template>
+                <lightning-button
+                    label="Export Countries"
+                    icon-name="utility:download"
+                    title="Export Countries Dataset"
+                    onclick={handleOpenExport}
+                    class="slds-m-left_small"
+                    data-testid="export-countries-button">
+                </lightning-button>
             </div>
 
             <div class="slds-card__body slds-card__body_inner">

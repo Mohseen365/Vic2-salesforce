@@ -87,4 +87,12 @@ export default class EconomyAnalyzerShell extends LightningElement {
     handleProductBack() {
         this.selectedProductEconomyId = undefined;
     }
+
+    handleOpenExport(event) {
+        const scope = (event && event.detail) ? event.detail.scope : 'Countries';
+        const modal = this.template.querySelector('c-economic-export-modal');
+        if (modal) {
+            modal.openModal(scope);
+        }
+    }
 }

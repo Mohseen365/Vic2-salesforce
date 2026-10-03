@@ -123,6 +123,28 @@ describe('c-product-dashboard', () => {
         expect(backHandler).toHaveBeenCalled();
     });
 
+    it('dispatches openexport event when Export Products button is clicked', async () => {
+        const element = createElement('c-product-dashboard', {
+            is: ProductDashboard
+        });
+        element.analysisId = 'a00000000000001AAA';
+        element.productEconomyId = 'p00000000000001AAA';
+        document.body.appendChild(element);
+
+        mockGetProductSummaryAdapter.emit(MOCK_PRODUCT_DETAIL);
+        await flushPromises();
+
+        const exportHandler = jest.fn();
+        element.addEventListener('openexport', exportHandler);
+
+        const exportBtn = element.shadowRoot.querySelector('[data-testid="export-products-button"]');
+        expect(exportBtn).not.toBeNull();
+        exportBtn.click();
+
+        expect(exportHandler).toHaveBeenCalledTimes(1);
+        expect(exportHandler.mock.calls[0][0].detail).toEqual({ scope: 'Products' });
+    });
+
     it('renders error message when product wire fails', async () => {
         const element = createElement('c-product-dashboard', {
             is: ProductDashboard

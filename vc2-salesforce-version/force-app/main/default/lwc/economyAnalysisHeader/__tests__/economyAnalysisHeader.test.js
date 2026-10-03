@@ -132,6 +132,28 @@ describe('c-economy-analysis-header', () => {
         expect(refreshApex).toHaveBeenCalled();
     });
 
+    it('dispatches openexport event when Export button is clicked', async () => {
+        const element = createElement('c-economy-analysis-header', {
+            is: EconomyAnalysisHeader
+        });
+        element.analysisId = 'a00000000000001AAA';
+        document.body.appendChild(element);
+
+        getAnalysisSummaryAdapter.emit(MOCK_SUMMARY);
+
+        await flushPromises();
+
+        const exportHandler = jest.fn();
+        element.addEventListener('openexport', exportHandler);
+
+        const exportBtn = element.shadowRoot.querySelector('[data-testid="export-button"]');
+        expect(exportBtn).not.toBeNull();
+        exportBtn.click();
+
+        expect(exportHandler).toHaveBeenCalledTimes(1);
+        expect(exportHandler.mock.calls[0][0].detail).toEqual({ scope: 'Summary' });
+    });
+
     it('renders error message when wire returns error', async () => {
         const element = createElement('c-economy-analysis-header', {
             is: EconomyAnalysisHeader

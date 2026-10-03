@@ -167,6 +167,15 @@ export default class CountryDashboard extends LightningElement {
         this.searchKey = event.target.value;
     }
 
+    handleOpenExport() {
+        const evt = new CustomEvent('openexport', {
+            detail: { scope: 'Countries' },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(evt);
+    }
+
     handleSort(event) {
         const { fieldName: sortedBy, sortDirection: sortedDirection } = event.detail;
         this.sortedBy = sortedBy;

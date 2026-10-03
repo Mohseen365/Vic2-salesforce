@@ -32,6 +32,16 @@
                     data-testid="refresh-button">
                 </lightning-button-icon>
             </template>
+            <template if:true={summary}>
+                <lightning-button
+                    label="Export"
+                    icon-name="utility:download"
+                    title="Export Economic Data"
+                    onclick={handleOpenExport}
+                    class="slds-m-left_x-small"
+                    data-testid="export-button">
+                </lightning-button>
+            </template>
         </div>
 
         <!-- Loading State -->

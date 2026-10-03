@@ -1,7 +1,15 @@
 <template>
     <div class="product-dashboard-container">
         <lightning-card title={cardTitle} icon-name="custom:custom93">
-            <div slot="actions">
+            <div slot="actions" class="slds-grid slds-grid_vertical-align-center">
+                <lightning-button
+                    label="Export Products"
+                    icon-name="utility:download"
+                    title="Export Products Dataset"
+                    onclick={handleOpenExport}
+                    class="slds-m-right_x-small"
+                    data-testid="export-products-button">
+                </lightning-button>
                 <lightning-button
                     label="Back to Commodity List"
                     icon-name="utility:back"
