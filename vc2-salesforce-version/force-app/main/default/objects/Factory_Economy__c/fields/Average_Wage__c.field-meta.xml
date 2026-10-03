@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>GDP_Per_Capita__c</fullName>
-    <label>GDP Per Capita (£/100k)</label>
+    <fullName>Average_Wage__c</fullName>
+    <label>Average Wage (£/person)</label>
     <type>Currency</type>
     <precision>18</precision>
-    <scale>2</scale>
-    <formula>IF(Core_Population__c &gt; 0, GDP__c / Core_Population__c, 0.0)</formula>
+    <scale>4</scale>
+    <formula>IF(Employees__c &gt; 0, Wages_Paid__c / Employees__c, 0.0)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
 </CustomField>

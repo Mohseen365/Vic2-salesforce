@@ -4,14 +4,25 @@ import xml.etree.ElementTree as ET
 BASE_DIR = "vc2-salesforce-version/force-app/main/default/objects"
 NS = "{http://soap.sforce.com/2006/04/metadata}"
 
+# Compute counts dynamically
+total_objects = 0
+total_fields = 0
+for obj in sorted(os.listdir(BASE_DIR)):
+    obj_path = os.path.join(BASE_DIR, obj)
+    if os.path.isdir(obj_path):
+        total_objects += 1
+        fields_dir = os.path.join(obj_path, "fields")
+        if os.path.isdir(fields_dir):
+            total_fields += len([f for f in os.listdir(fields_dir) if f.endswith(".field-meta.xml")])
+
 md_lines = [
     "# Victoria 2 Economy Analyzer — Salesforce Field Inventory",
     "",
-    "This document provides the authoritative inventory of all Custom Objects, Custom Fields, Data Types, Precisions, Formulas, External IDs, and Relationships created in **Phase 1 (Data Model Setup)**.",
+    "This document provides the authoritative inventory of all Custom Objects, Custom Fields, Data Types, Precisions, Formulas, External IDs, and Relationships created in the application.",
     "",
     "## Summary Metrics",
-    "- **Custom Objects:** 8",
-    "- **Custom Fields:** 72",
+    f"- **Custom Objects:** {total_objects}",
+    f"- **Custom Fields:** {total_fields}",
     "",
     "---",
     ""
@@ -26,7 +37,8 @@ for obj in sorted(os.listdir(BASE_DIR)):
     tree = ET.parse(obj_xml)
     root = tree.getroot()
     label = root.find(f"{NS}label").text
-    sharing = root.find(f"{NS}sharingModel").text
+    sharing_node = root.find(f"{NS}sharingModel")
+    sharing = sharing_node.text if sharing_node is not None else "N/A (Custom Event)"
 
     md_lines.append(f"## Custom Object: `{obj}` ({label})")
     md_lines.append(f"- **Sharing Model:** `{sharing}`")
