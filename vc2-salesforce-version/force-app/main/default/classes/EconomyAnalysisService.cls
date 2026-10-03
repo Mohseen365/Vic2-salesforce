@@ -287,4 +287,122 @@ public with sharing class EconomyAnalysisService {
 
         return comparison;
     }
+
+    /**
+     * @description Retrieves multi-save world trend time series analysis DTO.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param analysisIds List of Economy_Analysis__c Ids (capped at 12).
+     * @return WorldTrendDTO.
+     */
+    public static WorldTrendDTO getWorldTrend(List<Id> analysisIds) {
+        WorldTrendDTO dto = new WorldTrendDTO();
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return dto;
+        }
+
+        List<Economy_Analysis__c> records = EconomyAnalysisSelector.selectWorldTrend(analysisIds);
+        for (Economy_Analysis__c ea : records) {
+            WorldTrendDTO.TrendPointDTO pt = new WorldTrendDTO.TrendPointDTO();
+            pt.analysisId = ea.Id;
+            pt.saveFileName = ea.Save_File_Name__c;
+            pt.ingameDate = ea.Ingame_Date__c;
+            pt.totalWorldGdp = (ea.Total_World_GDP__c != null) ? ea.Total_World_GDP__c : 0.0;
+            pt.totalWorldPopulation = (ea.Total_World_Population__c != null) ? ea.Total_World_Population__c : 0;
+            pt.totalWorldImports = (ea.Total_World_Imports__c != null) ? ea.Total_World_Imports__c : 0.0;
+            pt.totalWorldExports = (ea.Total_World_Exports__c != null) ? ea.Total_World_Exports__c : 0.0;
+            dto.points.add(pt);
+        }
+
+        return dto;
+    }
+
+    /**
+     * @description Retrieves multi-save country trend time series analysis DTO.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param countryTags Set of country tags to filter by (optional).
+     * @param analysisIds List of Economy_Analysis__c Ids (capped at 12).
+     * @return CountryTrendDTO.
+     */
+    public static CountryTrendDTO getCountryTrend(Set<String> countryTags, List<Id> analysisIds) {
+        CountryTrendDTO dto = new CountryTrendDTO();
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return dto;
+        }
+
+        List<Country_Economy__c> records = EconomyAnalysisSelector.selectCountryTrend(countryTags, analysisIds);
+        Map<String, CountryTrendDTO.CountryTrendSeriesDTO> seriesMap = new Map<String, CountryTrendDTO.CountryTrendSeriesDTO>();
+
+        for (Country_Economy__c ce : records) {
+            String tag = ce.Country_Tag__c;
+            if (String.isBlank(tag)) {
+                continue;
+            }
+
+            if (!seriesMap.containsKey(tag)) {
+                CountryTrendDTO.CountryTrendSeriesDTO series = new CountryTrendDTO.CountryTrendSeriesDTO();
+                series.countryTag = tag;
+                series.countryName = (ce.Country__r != null && String.isNotBlank(ce.Country__r.Name)) ? ce.Country__r.Name : tag;
+                seriesMap.put(tag, series);
+            }
+
+            CountryTrendDTO.TrendPointDTO pt = new CountryTrendDTO.TrendPointDTO();
+            pt.analysisId = ce.Economy_Analysis__c;
+            pt.ingameDate = (ce.Economy_Analysis__r != null) ? ce.Economy_Analysis__r.Ingame_Date__c : null;
+            pt.gdp = (ce.GDP__c != null) ? ce.GDP__c : 0.0;
+            pt.gdpPerCapita = (ce.GDP_Per_Capita__c != null) ? ce.GDP_Per_Capita__c : 0.0;
+            pt.gdpRank = (ce.GDP_Rank__c != null) ? ce.GDP_Rank__c.intValue() : 0;
+            pt.imports = (ce.Total_Imports_Value__c != null) ? ce.Total_Imports_Value__c : 0.0;
+            pt.exports = (ce.Total_Exports_Value__c != null) ? ce.Total_Exports_Value__c : 0.0;
+
+            seriesMap.get(tag).points.add(pt);
+        }
+
+        dto.series.addAll(seriesMap.values());
+        return dto;
+    }
+
+    /**
+     * @description Retrieves multi-save product trend time series analysis DTO.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param productCodes Set of product codes to filter by (optional).
+     * @param analysisIds List of Economy_Analysis__c Ids (capped at 12).
+     * @return ProductTrendDTO.
+     */
+    public static ProductTrendDTO getProductTrend(Set<String> productCodes, List<Id> analysisIds) {
+        ProductTrendDTO dto = new ProductTrendDTO();
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return dto;
+        }
+
+        List<Product_Economy__c> records = EconomyAnalysisSelector.selectProductTrend(productCodes, analysisIds);
+        Map<String, ProductTrendDTO.ProductTrendSeriesDTO> seriesMap = new Map<String, ProductTrendDTO.ProductTrendSeriesDTO>();
+
+        for (Product_Economy__c pe : records) {
+            String code = pe.Product_Code__c;
+            if (String.isBlank(code)) {
+                continue;
+            }
+
+            if (!seriesMap.containsKey(code)) {
+                ProductTrendDTO.ProductTrendSeriesDTO series = new ProductTrendDTO.ProductTrendSeriesDTO();
+                series.productCode = code;
+                series.productName = code;
+                seriesMap.put(code, series);
+            }
+
+            ProductTrendDTO.TrendPointDTO pt = new ProductTrendDTO.TrendPointDTO();
+            pt.analysisId = pe.Economy_Analysis__c;
+            pt.ingameDate = (pe.Economy_Analysis__r != null) ? pe.Economy_Analysis__r.Ingame_Date__c : null;
+            pt.price = (pe.Price__c != null) ? pe.Price__c : 0.0;
+            pt.totalWorldSupply = (pe.Total_World_Supply__c != null) ? pe.Total_World_Supply__c : 0.0;
+            pt.realDemand = (pe.Real_Demand__c != null) ? pe.Real_Demand__c : 0.0;
+            pt.inflationPercent = (pe.Inflation_Percent__c != null) ? pe.Inflation_Percent__c : 0.0;
+            pt.overproductionPercent = (pe.Overproduction_Percent__c != null) ? pe.Overproduction_Percent__c : 0.0;
+
+            seriesMap.get(code).points.add(pt);
+        }
+
+        dto.series.addAll(seriesMap.values());
+        return dto;
+    }
 }

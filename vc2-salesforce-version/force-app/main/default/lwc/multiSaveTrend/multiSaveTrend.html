@@ -1,0 +1,325 @@
+<template>
+    <div class="trend-container slds-card slds-p-around_medium">
+        <!-- Header -->
+        <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
+            <div class="slds-col slds-has-flexi-truncate">
+                <h2 class="slds-text-heading_medium slds-truncate" title="Multi-Save Time Series & Historical Trend Analysis">
+                    📉 Multi-Save Time Series & Historical Trends
+                </h2>
+                <p class="slds-text-body_small slds-text-color_weak">
+                    Compare world, country, and product metrics across 3 to 12 save game snapshots simultaneously.
+                </p>
+            </div>
+        </div>
+
+        <!-- Analysis Selection Toolbar (Dual Listbox) -->
+        <div class="slds-m-bottom_medium">
+            <lightning-dual-listbox
+                name="analysisPicker"
+                label="Select Save Game Snapshots (3–12)"
+                source-label="Available Snapshots"
+                selected-label="Selected Snapshots"
+                options={analysisOptions}
+                value={selectedAnalysisIds}
+                onchange={handleAnalysisPickerChange}
+                max="12"
+                data-testid="analysis-dual-listbox">
+            </lightning-dual-listbox>
+        </div>
+
+        <!-- Warning / Information Banner for Cap -->
+        <template if:true={isCapExceeded}>
+            <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
+                <span class="slds-assistive-text">warning</span>
+                <h2>Selection capped at 12 snapshots to comply with system performance budgets.</h2>
+            </div>
+        </template>
+
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-p-around_large slds-align_absolute-center">
+                <lightning-spinner alternative-text="Loading trend data..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error State -->
+        <template if:true={errorMessage}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
+                <span class="slds-assistive-text">error</span>
+                <h2>{errorMessage}</h2>
+            </div>
+        </template>
+
+        <!-- Empty State (< 3 snapshots selected) -->
+        <template if:true={isFewerThanThreeSelected}>
+            <div class="slds-illustration slds-illustration_small slds-p-around_large" data-testid="empty-state">
+                <div class="slds-text-longform slds-align_absolute-center">
+                    <h3 class="slds-text-heading_small">Please select at least 3 save game snapshots above to render time series trend charts.</h3>
+                </div>
+            </div>
+        </template>
+
+        <!-- Main Trend Workspace (Visible when >= 3 selected) -->
+        <template if:true={hasEnoughSnapshots}>
+            <!-- Navigation Chart Tabs -->
+            <lightning-tabset variant="scoped" active-tab-value="world-gdp" data-testid="trend-tabset">
+
+                <!-- 1. World GDP & Population Tab -->
+                <lightning-tab label="🌐 World GDP & Population" value="world-gdp" data-testid="tab-world-gdp">
+                    <div class="slds-card slds-p-around_medium chart-wrapper">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">World GDP & Total Population Timeline</h3>
+                        <template if:true={hasWorldTrendData}>
+                            <div class="svg-container">
+                                <svg viewBox="0 0 700 320" class="trend-chart-svg" role="img" aria-label="Line chart showing World GDP and Population over time">
+                                    <title>World GDP and Population Chart</title>
+                                    <!-- Axes & Grids -->
+                                    <line x1="60" y1="260" x2="640" y2="260" stroke="#DDDBDA" stroke-width="1" />
+                                    <line x1="60" y1="40" x2="60" y2="260" stroke="#DDDBDA" stroke-width="1" />
+
+                                    <!-- GDP Line (Blue) -->
+                                    <path d={worldGdpPath} fill="none" stroke="#0070D2" stroke-width="3" />
+                                    <!-- Population Line (Green) -->
+                                    <path d={worldPopPath} fill="none" stroke="#04844B" stroke-dasharray="4,4" stroke-width="3" />
+
+                                    <!-- Points -->
+                                    <template for:each={worldGdpPoints} for:item="pt">
+                                        <circle key={pt.id} cx={pt.cx} cy={pt.cy} r="5" fill="#0070D2" aria-label={pt.ariaLabel}>
+                                            <title>{pt.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                    <template for:each={worldPopPoints} for:item="pt">
+                                        <circle key={pt.id} cx={pt.cx} cy={pt.cy} r="5" fill="#04844B" aria-label={pt.ariaLabel}>
+                                            <title>{pt.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                </svg>
+                            </div>
+                            <!-- Legend -->
+                            <div class="slds-grid slds-grid_align-center slds-m-top_small legend-container">
+                                <span class="legend-item slds-m-right_medium"><span class="legend-badge gdp-color"></span> World GDP (£)</span>
+                                <span class="legend-item"><span class="legend-badge pop-color"></span> Population</span>
+                            </div>
+                        </template>
+
+                        <!-- Assistive Accessibility Data Table -->
+                        <div class="slds-assistive-text">
+                            <table>
+                                <caption>World GDP and Population Trend Table</caption>
+                                <thead>
+                                    <tr><th>Date</th><th>World GDP (£)</th><th>World Population</th></tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={worldTrendTableRows} for:item="row">
+                                        <tr key={row.id}><td>{row.date}</td><td>{row.gdp}</td><td>{row.pop}</td></tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+
+                <!-- 2. World Imports & Exports Tab -->
+                <lightning-tab label="📊 World Imports & Exports" value="world-trade" data-testid="tab-world-trade">
+                    <div class="slds-card slds-p-around_medium chart-wrapper">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">World Imports & Exports Timeline</h3>
+                        <template if:true={hasWorldTrendData}>
+                            <div class="svg-container">
+                                <svg viewBox="0 0 700 320" class="trend-chart-svg" role="img" aria-label="Line chart showing World Imports and Exports over time">
+                                    <title>World Trade Timeline Chart</title>
+                                    <line x1="60" y1="260" x2="640" y2="260" stroke="#DDDBDA" stroke-width="1" />
+                                    <line x1="60" y1="40" x2="60" y2="260" stroke="#DDDBDA" stroke-width="1" />
+
+                                    <!-- Imports Line (Purple) -->
+                                    <path d={worldImportsPath} fill="none" stroke="#9050E9" stroke-width="3" />
+                                    <!-- Exports Line (Orange) -->
+                                    <path d={worldExportsPath} fill="none" stroke="#DD7A00" stroke-width="3" />
+
+                                    <template for:each={worldImportsPoints} for:item="pt">
+                                        <circle key={pt.id} cx={pt.cx} cy={pt.cy} r="5" fill="#9050E9" aria-label={pt.ariaLabel}>
+                                            <title>{pt.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                    <template for:each={worldExportsPoints} for:item="pt">
+                                        <circle key={pt.id} cx={pt.cx} cy={pt.cy} r="5" fill="#DD7A00" aria-label={pt.ariaLabel}>
+                                            <title>{pt.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                </svg>
+                            </div>
+                            <div class="slds-grid slds-grid_align-center slds-m-top_small legend-container">
+                                <span class="legend-item slds-m-right_medium"><span class="legend-badge imports-color"></span> Total Imports (£)</span>
+                                <span class="legend-item"><span class="legend-badge exports-color"></span> Total Exports (£)</span>
+                            </div>
+                        </template>
+
+                        <div class="slds-assistive-text">
+                            <table>
+                                <caption>World Imports and Exports Table</caption>
+                                <thead>
+                                    <tr><th>Date</th><th>Imports (£)</th><th>Exports (£)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={worldTradeTableRows} for:item="row">
+                                        <tr key={row.id}><td>{row.date}</td><td>{row.imports}</td><td>{row.exports}</td></tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+
+                <!-- 3. Country GDP Timeline Tab -->
+                <lightning-tab label="🏛️ Country GDP Timeline" value="country-gdp" data-testid="tab-country-gdp">
+                    <div class="slds-card slds-p-around_medium chart-wrapper">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Country GDP Evolution</h3>
+                        <template if:true={hasCountryTrendData}>
+                            <div class="svg-container">
+                                <svg viewBox="0 0 700 320" class="trend-chart-svg" role="img" aria-label="Line chart showing GDP trends by country tag">
+                                    <title>Country GDP Evolution Chart</title>
+                                    <line x1="60" y1="260" x2="640" y2="260" stroke="#DDDBDA" stroke-width="1" />
+                                    <line x1="60" y1="40" x2="60" y2="260" stroke="#DDDBDA" stroke-width="1" />
+
+                                    <template for:each={countryGdpLines} for:item="line">
+                                        <path key={line.tag} d={line.path} fill="none" stroke={line.color} stroke-width="2.5" />
+                                    </template>
+
+                                    <template for:each={countryGdpDots} for:item="dot">
+                                        <circle key={dot.id} cx={dot.cx} cy={dot.cy} r="4" fill={dot.color} aria-label={dot.ariaLabel}>
+                                            <title>{dot.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                </svg>
+                            </div>
+                            <div class="slds-grid slds-grid_wrap slds-grid_align-center slds-m-top_small legend-container">
+                                <template for:each={countryLegends} for:item="leg">
+                                    <span key={leg.tag} class="legend-item slds-m-around_xx-small">
+                                        <span class="legend-badge" style={leg.style}></span> {leg.label}
+                                    </span>
+                                </template>
+                            </div>
+                        </template>
+
+                        <div class="slds-assistive-text">
+                            <table>
+                                <caption>Country GDP Evolution Data Table</caption>
+                                <thead>
+                                    <tr><th>Country</th><th>Date</th><th>GDP (£)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={countryGdpTableRows} for:item="row">
+                                        <tr key={row.id}><td>{row.tag}</td><td>{row.date}</td><td>{row.gdp}</td></tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+
+                <!-- 4. Product Price Timeline Tab -->
+                <lightning-tab label="📦 Product Price Timeline" value="product-price" data-testid="tab-product-price">
+                    <div class="slds-card slds-p-around_medium chart-wrapper">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Product Price Trends</h3>
+                        <template if:true={hasProductTrendData}>
+                            <div class="svg-container">
+                                <svg viewBox="0 0 700 320" class="trend-chart-svg" role="img" aria-label="Line chart showing product price evolution over time">
+                                    <title>Product Price Trends Chart</title>
+                                    <line x1="60" y1="260" x2="640" y2="260" stroke="#DDDBDA" stroke-width="1" />
+                                    <line x1="60" y1="40" x2="60" y2="260" stroke="#DDDBDA" stroke-width="1" />
+
+                                    <template for:each={productPriceLines} for:item="line">
+                                        <path key={line.code} d={line.path} fill="none" stroke={line.color} stroke-width="2.5" />
+                                    </template>
+
+                                    <template for:each={productPriceDots} for:item="dot">
+                                        <circle key={dot.id} cx={dot.cx} cy={dot.cy} r="4" fill={dot.color} aria-label={dot.ariaLabel}>
+                                            <title>{dot.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                </svg>
+                            </div>
+                            <div class="slds-grid slds-grid_wrap slds-grid_align-center slds-m-top_small legend-container">
+                                <template for:each={productLegends} for:item="leg">
+                                    <span key={leg.code} class="legend-item slds-m-around_xx-small">
+                                        <span class="legend-badge" style={leg.style}></span> {leg.code}
+                                    </span>
+                                </template>
+                            </div>
+                        </template>
+
+                        <div class="slds-assistive-text">
+                            <table>
+                                <caption>Product Price Evolution Table</caption>
+                                <thead>
+                                    <tr><th>Product Code</th><th>Date</th><th>Price (£)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={productPriceTableRows} for:item="row">
+                                        <tr key={row.id}><td>{row.code}</td><td>{row.date}</td><td>{row.price}</td></tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+
+                <!-- 5. Product Supply vs Demand Tab -->
+                <lightning-tab label="⚖️ Product Supply vs Demand" value="product-supply-demand" data-testid="tab-product-supply-demand">
+                    <div class="slds-card slds-p-around_medium chart-wrapper">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Product Supply vs Real Demand Timeline</h3>
+                        <template if:true={hasProductTrendData}>
+                            <div class="svg-container">
+                                <svg viewBox="0 0 700 320" class="trend-chart-svg" role="img" aria-label="Dual-line chart showing total world supply vs real demand for commodities">
+                                    <title>Supply vs Real Demand Timeline Chart</title>
+                                    <line x1="60" y1="260" x2="640" y2="260" stroke="#DDDBDA" stroke-width="1" />
+                                    <line x1="60" y1="40" x2="60" y2="260" stroke="#DDDBDA" stroke-width="1" />
+
+                                    <template for:each={supplyDemandLines} for:item="line">
+                                        <path key={line.id} d={line.path} fill="none" stroke={line.color} stroke-dasharray={line.dash} stroke-width="2.5" />
+                                    </template>
+
+                                    <template for:each={supplyDemandDots} for:item="dot">
+                                        <circle key={dot.id} cx={dot.cx} cy={dot.cy} r="4" fill={dot.color} aria-label={dot.ariaLabel}>
+                                            <title>{dot.ariaLabel}</title>
+                                        </circle>
+                                    </template>
+                                </svg>
+                            </div>
+                            <div class="slds-grid slds-grid_align-center slds-m-top_small legend-container">
+                                <span class="legend-item slds-m-right_medium"><span class="legend-badge supply-color"></span> Total Supply</span>
+                                <span class="legend-item"><span class="legend-badge demand-color"></span> Real Demand</span>
+                            </div>
+                        </template>
+
+                        <div class="slds-assistive-text">
+                            <table>
+                                <caption>Product Supply vs Real Demand Table</caption>
+                                <thead>
+                                    <tr><th>Product</th><th>Date</th><th>Supply</th><th>Real Demand</th></tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={supplyDemandTableRows} for:item="row">
+                                        <tr key={row.id}><td>{row.code}</td><td>{row.date}</td><td>{row.supply}</td><td>{row.demand}</td></tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+
+            <!-- Country Delta Table (First vs Last Snapshot) -->
+            <div class="slds-card slds-m-top_medium slds-p-around_medium">
+                <h3 class="slds-text-heading_small slds-m-bottom_small">
+                    📈 Country Growth Delta (Earliest Selected Snapshot vs Latest Selected Snapshot)
+                </h3>
+                <lightning-datatable
+                    key-field="countryTag"
+                    data={countryDeltaRows}
+                    columns={deltaColumns}
+                    hide-checkbox-column
+                    data-testid="country-delta-datatable">
+                </lightning-datatable>
+            </div>
+        </template>
+    </div>
+</template>

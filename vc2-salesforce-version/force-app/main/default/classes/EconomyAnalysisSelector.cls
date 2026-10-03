@@ -4,6 +4,19 @@
  */
 public with sharing class EconomyAnalysisSelector {
 
+    private static List<Id> capAnalysisIds(List<Id> analysisIds) {
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return new List<Id>();
+        }
+        List<Id> capped = new List<Id>();
+        for (Integer i = 0; i < Math.min(analysisIds.size(), 12); i++) {
+            if (analysisIds[i] != null) {
+                capped.add(analysisIds[i]);
+            }
+        }
+        return capped;
+    }
+
     /**
      * @description Selects a single Economy_Analysis__c record by Id.
      * @param analysisId Id of the analysis record.
@@ -232,5 +245,122 @@ public with sharing class EconomyAnalysisSelector {
 
         SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
         return new Map<Id, Product_Economy__c>((List<Product_Economy__c>) decision.getRecords());
+    }
+
+    /**
+     * @description Selects Economy_Analysis__c world trends across multiple snapshot Ids.
+     * LDV Budget: Capped at 12 analysis Ids per request.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param analysisIds List of Economy_Analysis__c Ids.
+     * @return List of Economy_Analysis__c records.
+     */
+    public static List<Economy_Analysis__c> selectWorldTrend(List<Id> analysisIds) {
+        if (!Schema.sObjectType.Economy_Analysis__c.isAccessible()) {
+            return new List<Economy_Analysis__c>();
+        }
+        List<Id> cappedIds = capAnalysisIds(analysisIds);
+        if (cappedIds.isEmpty()) {
+            return new List<Economy_Analysis__c>();
+        }
+
+        List<Economy_Analysis__c> records = [
+            SELECT Id, Name, Save_File_Name__c, Source_Save_File_Name__c, Ingame_Date__c,
+                   Analysis_Timestamp__c, Total_World_GDP__c, Total_World_Population__c,
+                   Total_World_Imports__c, Total_World_Exports__c
+            FROM Economy_Analysis__c
+            WHERE Id IN :cappedIds
+            ORDER BY Ingame_Date__c ASC, Analysis_Timestamp__c ASC
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Economy_Analysis__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects Country_Economy__c trends across multiple snapshot Ids.
+     * LDV Budget: Capped at 12 analysis Ids per request.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param countryTags Set of country tags to filter by (optional).
+     * @param analysisIds List of Economy_Analysis__c Ids.
+     * @return List of Country_Economy__c records.
+     */
+    public static List<Country_Economy__c> selectCountryTrend(Set<String> countryTags, List<Id> analysisIds) {
+        if (!Schema.sObjectType.Country_Economy__c.isAccessible()) {
+            return new List<Country_Economy__c>();
+        }
+        List<Id> cappedIds = capAnalysisIds(analysisIds);
+        if (cappedIds.isEmpty()) {
+            return new List<Country_Economy__c>();
+        }
+
+        List<Country_Economy__c> records;
+        if (countryTags != null && !countryTags.isEmpty()) {
+            records = [
+                SELECT Id, Name, Economy_Analysis__c, Country_Tag__c, GDP__c, GDP_Per_Capita__c,
+                       GDP_Rank__c, Total_Imports_Value__c, Total_Exports_Value__c,
+                       Economy_Analysis__r.Ingame_Date__c, Country__r.Tag__c, Country__r.Name
+                FROM Country_Economy__c
+                WHERE Economy_Analysis__c IN :cappedIds AND Country_Tag__c IN :countryTags
+                ORDER BY Economy_Analysis__r.Ingame_Date__c ASC, Country_Tag__c ASC
+                LIMIT 5000
+            ];
+        } else {
+            records = [
+                SELECT Id, Name, Economy_Analysis__c, Country_Tag__c, GDP__c, GDP_Per_Capita__c,
+                       GDP_Rank__c, Total_Imports_Value__c, Total_Exports_Value__c,
+                       Economy_Analysis__r.Ingame_Date__c, Country__r.Tag__c, Country__r.Name
+                FROM Country_Economy__c
+                WHERE Economy_Analysis__c IN :cappedIds
+                ORDER BY Economy_Analysis__r.Ingame_Date__c ASC, Country_Tag__c ASC
+                LIMIT 5000
+            ];
+        }
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Country_Economy__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects Product_Economy__c trends across multiple snapshot Ids.
+     * LDV Budget: Capped at 12 analysis Ids per request.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param productCodes Set of product codes to filter by (optional).
+     * @param analysisIds List of Economy_Analysis__c Ids.
+     * @return List of Product_Economy__c records.
+     */
+    public static List<Product_Economy__c> selectProductTrend(Set<String> productCodes, List<Id> analysisIds) {
+        if (!Schema.sObjectType.Product_Economy__c.isAccessible()) {
+            return new List<Product_Economy__c>();
+        }
+        List<Id> cappedIds = capAnalysisIds(analysisIds);
+        if (cappedIds.isEmpty()) {
+            return new List<Product_Economy__c>();
+        }
+
+        List<Product_Economy__c> records;
+        if (productCodes != null && !productCodes.isEmpty()) {
+            records = [
+                SELECT Id, Name, Economy_Analysis__c, Product_Code__c, Price__c, Base_Price__c,
+                       Total_World_Supply__c, Real_Demand__c, Max_Demand__c, Inflation_Percent__c,
+                       Overproduction_Percent__c, Economy_Analysis__r.Ingame_Date__c, Product__r.Code__c
+                FROM Product_Economy__c
+                WHERE Economy_Analysis__c IN :cappedIds AND Product_Code__c IN :productCodes
+                ORDER BY Economy_Analysis__r.Ingame_Date__c ASC, Product_Code__c ASC
+                LIMIT 5000
+            ];
+        } else {
+            records = [
+                SELECT Id, Name, Economy_Analysis__c, Product_Code__c, Price__c, Base_Price__c,
+                       Total_World_Supply__c, Real_Demand__c, Max_Demand__c, Inflation_Percent__c,
+                       Overproduction_Percent__c, Economy_Analysis__r.Ingame_Date__c, Product__r.Code__c
+                FROM Product_Economy__c
+                WHERE Economy_Analysis__c IN :cappedIds
+                ORDER BY Economy_Analysis__r.Ingame_Date__c ASC, Product_Code__c ASC
+                LIMIT 5000
+            ];
+        }
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Product_Economy__c>) decision.getRecords();
     }
 }
