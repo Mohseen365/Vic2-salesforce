@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Salesforce version of Victoria 2 Economy Analyzer",
   "scripts": {
-    "test:lwc": "NODE_PATH=/home/jules/.npm/_npx/6d9b76e62e48e4a9/node_modules /home/jules/.npm/_npx/6d9b76e62e48e4a9/node_modules/.bin/sfdx-lwc-jest"
+    "test:lwc": "sfdx-lwc-jest"
   }
 }

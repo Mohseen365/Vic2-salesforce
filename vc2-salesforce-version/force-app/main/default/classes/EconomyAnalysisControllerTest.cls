@@ -153,6 +153,54 @@ private class EconomyAnalysisControllerTest {
     }
 
     @isTest
+    static void testGetProductSummaries() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+
+        Test.startTest();
+        List<ProductSummaryDTO> productDtos = EconomyAnalysisController.getProductSummaries(analysis.Id);
+        List<ProductSummaryDTO> nullList = EconomyAnalysisController.getProductSummaries(null);
+        Test.stopTest();
+
+        System.assertEquals(1, productDtos.size(), 'Should return 1 product summary DTO');
+        System.assertEquals('small_arms', productDtos[0].productCode, 'Product code should match');
+        System.assertEquals(12.0, productDtos[0].price, 'Price should match');
+        System.assertEquals(0, nullList.size(), 'Null analysis Id should return empty list');
+    }
+
+    @isTest
+    static void testGetProductSummary() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c LIMIT 1];
+
+        Test.startTest();
+        ProductSummaryDTO dto = EconomyAnalysisController.getProductSummary(analysis.Id, prodEco.Id);
+        ProductSummaryDTO nullDto = EconomyAnalysisController.getProductSummary(analysis.Id, null);
+        ProductSummaryDTO nullAnalysisDto = EconomyAnalysisController.getProductSummary(null, prodEco.Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, dto, 'ProductSummaryDTO should not be null');
+        System.assertEquals(prodEco.Id, dto.productEconomyId, 'ProductEconomyId should match');
+        System.assertEquals('small_arms', dto.productCode, 'Product code should match');
+        System.assertEquals(null, nullDto, 'Null product ID should return null');
+        System.assertEquals(null, nullAnalysisDto, 'Null analysis ID should return null');
+    }
+
+    @isTest
+    static void testGetCountryProductSummariesByProduct() {
+        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c LIMIT 1];
+
+        Test.startTest();
+        List<CountryProductSummaryDTO> productDtos = EconomyAnalysisController.getCountryProductSummariesByProduct(prodEco.Id);
+        List<CountryProductSummaryDTO> nullList = EconomyAnalysisController.getCountryProductSummariesByProduct(null);
+        Test.stopTest();
+
+        System.assertEquals(1, productDtos.size(), 'Should return 1 country-product DTO for product');
+        System.assertEquals('PRU', productDtos[0].countryTag, 'Country tag should be PRU');
+        System.assertEquals(600.0, productDtos[0].gdpContribution, 'GDP contribution should match');
+        System.assertEquals(0, nullList.size(), 'Null product ID should return empty list');
+    }
+
+    @isTest
     static void testRestrictedUserAccess() {
         User minUser = createMinimumAccessUser();
         System.runAs(minUser) {

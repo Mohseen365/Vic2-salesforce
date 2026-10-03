@@ -1,5 +1,7 @@
 public class CountryProductSummaryDTO {
     @AuraEnabled public Id junctionId { get; set; }
+    @AuraEnabled public String countryTag { get; set; }
+    @AuraEnabled public String countryName { get; set; }
     @AuraEnabled public String productCode { get; set; }
     @AuraEnabled public String productName { get; set; }
     @AuraEnabled public Decimal soldDomestic { get; set; }
@@ -35,6 +37,14 @@ public class CountryProductSummaryDTO {
     public CountryProductSummaryDTO(Country_Product_Economy__c cpe) {
         if (cpe != null) {
             this.junctionId = cpe.Id;
+            if (cpe.Country_Economy__r != null) {
+                this.countryTag = cpe.Country_Economy__r.Country_Tag__c;
+                if (cpe.Country_Economy__r.Country__r != null && String.isNotBlank(cpe.Country_Economy__r.Country__r.Name)) {
+                    this.countryName = cpe.Country_Economy__r.Country__r.Name;
+                } else {
+                    this.countryName = cpe.Country_Economy__r.Country_Tag__c;
+                }
+            }
             this.productCode = cpe.Product_Code__c;
             this.productName = cpe.Product_Code__c;
             this.soldDomestic = cpe.Sold_Domestic__c;

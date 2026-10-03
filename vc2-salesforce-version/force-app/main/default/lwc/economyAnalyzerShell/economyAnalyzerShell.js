@@ -3,6 +3,7 @@ import getRecentAnalyses from '@salesforce/apex/EconomyAnalysisController.getRec
 
 export default class EconomyAnalyzerShell extends LightningElement {
     selectedAnalysisId;
+    selectedProductEconomyId;
     analysesData = [];
     errorData;
     isLoading = false;
@@ -48,5 +49,14 @@ export default class EconomyAnalyzerShell extends LightningElement {
 
     handleAnalysisChange(event) {
         this.selectedAnalysisId = event.detail.value;
+        this.selectedProductEconomyId = undefined;
+    }
+
+    handleProductSelect(event) {
+        this.selectedProductEconomyId = event.detail.productEconomyId;
+    }
+
+    handleProductBack() {
+        this.selectedProductEconomyId = undefined;
     }
 }

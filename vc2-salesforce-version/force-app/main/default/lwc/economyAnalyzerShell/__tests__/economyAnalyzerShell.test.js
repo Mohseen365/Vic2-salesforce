@@ -89,7 +89,7 @@ describe('c-economy-analyzer-shell', () => {
         expect(header.analysisId).toBe('a00000000000002AAA');
     });
 
-    it('renders all four workspace tabs', async () => {
+    it('renders all four workspace tabs and product-list-component in product market tab by default', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
         });
@@ -108,5 +108,45 @@ describe('c-economy-analyzer-shell', () => {
         expect(tabCountry).not.toBeNull();
         expect(tabProduct).not.toBeNull();
         expect(tabCompare).not.toBeNull();
+
+        const productListComp = element.shadowRoot.querySelector('[data-testid="product-list-component"]');
+        expect(productListComp).not.toBeNull();
+    });
+
+    it('swaps from product list to product dashboard on productselect event and back on back event', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const productListComp = element.shadowRoot.querySelector('[data-testid="product-list-component"]');
+        expect(productListComp).not.toBeNull();
+
+        // Simulate product select event
+        productListComp.dispatchEvent(new CustomEvent('productselect', {
+            detail: { productEconomyId: 'p00000000000001AAA', productCode: 'small_arms' },
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        const productDashComp = element.shadowRoot.querySelector('[data-testid="product-dashboard-component"]');
+        expect(productDashComp).not.toBeNull();
+        expect(productDashComp.productEconomyId).toBe('p00000000000001AAA');
+
+        // Simulate back event
+        productDashComp.dispatchEvent(new CustomEvent('back', {
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        expect(element.shadowRoot.querySelector('[data-testid="product-list-component"]')).not.toBeNull();
     });
 });

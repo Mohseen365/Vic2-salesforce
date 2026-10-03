@@ -71,15 +71,23 @@
                 </c-country-dashboard>
             </lightning-tab>
 
-            <!-- Product Market Placeholder Tab -->
+            <!-- Product Market Tab (Phase 6) -->
             <lightning-tab label="📦 Product Market" value="product-market" data-testid="tab-product">
-                <div class="slds-p-around_large slds-text-align_center tab-placeholder">
-                    <lightning-card title="Product Market" icon-name="custom:custom93">
-                        <p class="slds-p-around_medium slds-text-heading_small slds-text-color_weak">
-                            Product Market commodity listings & supply/demand breakdown are coming in Phase 6.
-                        </p>
-                    </lightning-card>
-                </div>
+                <template if:true={selectedProductEconomyId}>
+                    <c-product-dashboard
+                        analysis-id={selectedAnalysisId}
+                        product-economy-id={selectedProductEconomyId}
+                        onback={handleProductBack}
+                        data-testid="product-dashboard-component">
+                    </c-product-dashboard>
+                </template>
+                <template if:false={selectedProductEconomyId}>
+                    <c-product-list-view
+                        analysis-id={selectedAnalysisId}
+                        onproductselect={handleProductSelect}
+                        data-testid="product-list-component">
+                    </c-product-list-view>
+                </template>
             </lightning-tab>
 
             <!-- Compare Saves Placeholder Tab -->

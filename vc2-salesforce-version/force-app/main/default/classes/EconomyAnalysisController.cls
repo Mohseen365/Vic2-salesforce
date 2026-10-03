@@ -67,4 +67,44 @@ public with sharing class EconomyAnalysisController {
         }
         return EconomyAnalysisService.getCountryProductSummaries(countryEconomyId);
     }
+
+    /**
+     * @description Retrieves product summary DTOs for all commodities in an analysis.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of ProductSummaryDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<ProductSummaryDTO> getProductSummaries(Id analysisId) {
+        if (analysisId == null) {
+            return new List<ProductSummaryDTO>();
+        }
+        return EconomyAnalysisService.getProductSummaries(analysisId);
+    }
+
+    /**
+     * @description Retrieves product summary DTO for a specific commodity snapshot.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @param productEconomyId Target Product_Economy__c Id.
+     * @return ProductSummaryDTO or null.
+     */
+    @AuraEnabled(cacheable=true)
+    public static ProductSummaryDTO getProductSummary(Id analysisId, Id productEconomyId) {
+        if (analysisId == null || productEconomyId == null) {
+            return null;
+        }
+        return EconomyAnalysisService.getProductSummary(analysisId, productEconomyId);
+    }
+
+    /**
+     * @description Retrieves country-product trade breakdown DTOs for a specific product snapshot.
+     * @param productEconomyId Target Product_Economy__c Id.
+     * @return List of CountryProductSummaryDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<CountryProductSummaryDTO> getCountryProductSummariesByProduct(Id productEconomyId) {
+        if (productEconomyId == null) {
+            return new List<CountryProductSummaryDTO>();
+        }
+        return EconomyAnalysisService.getCountryProductSummariesByProduct(productEconomyId);
+    }
 }

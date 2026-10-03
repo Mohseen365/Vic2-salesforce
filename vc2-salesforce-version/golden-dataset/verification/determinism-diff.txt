@@ -1,4 +1,2 @@
-Determinism Check Execution Status: 1
-FAIL: Harness execution in temp dir failed with exit code 1
-Error: Could not find or load main class org.victoria2.tools.vic2sgea.export.GoldenDatasetExporterMain
-Caused by: java.lang.ClassNotFoundException: org.victoria2.tools.vic2sgea.export.GoldenDatasetExporterMain
+Determinism Check Execution Status: 0
+PASS: Byte-for-byte deterministic match confirmed across all generated exporter artifacts.
