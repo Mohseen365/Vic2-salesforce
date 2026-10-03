@@ -57,7 +57,7 @@
                 <div class="slds-p-around_large slds-text-align_center tab-placeholder">
                     <lightning-card title="Global Overview" icon-name="custom:custom62">
                         <p class="slds-p-around_medium slds-text-heading_small slds-text-color_weak">
-                            Global Overview charts & world trade balance visualizations are coming in a later phase.
+                            Global Overview summary metrics are available above. Detailed multi-save historical tracking coming in a later phase.
                         </p>
                     </lightning-card>
                 </div>
@@ -69,6 +69,12 @@
                     analysis-id={selectedAnalysisId}
                     data-testid="country-dashboard-component">
                 </c-country-dashboard>
+                <div class="slds-m-top_medium">
+                    <c-economic-charts-container
+                        analysis-id={selectedAnalysisId}
+                        data-testid="country-charts-component">
+                    </c-economic-charts-container>
+                </div>
             </lightning-tab>
 
             <!-- Product Market Tab (Phase 6) -->
@@ -88,6 +94,21 @@
                         data-testid="product-list-component">
                     </c-product-list-view>
                 </template>
+                <div class="slds-m-top_medium">
+                    <c-economic-charts-container
+                        analysis-id={selectedAnalysisId}
+                        product-economy-id={selectedProductEconomyId}
+                        data-testid="product-charts-component">
+                    </c-economic-charts-container>
+                </div>
+            </lightning-tab>
+
+            <!-- Analytics & Visualizations Tab (Phase 7 Dedicated View) -->
+            <lightning-tab label="📈 Analytics & Visualizations" value="analytics" data-testid="tab-analytics">
+                <c-economic-charts-container
+                    analysis-id={selectedAnalysisId}
+                    data-testid="dedicated-charts-component">
+                </c-economic-charts-container>
             </lightning-tab>
 
             <!-- Compare Saves Placeholder Tab -->

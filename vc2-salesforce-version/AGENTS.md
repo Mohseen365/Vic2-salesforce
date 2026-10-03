@@ -2,7 +2,7 @@
 
 ## Project Overview & Handoff State
 
-- **Current Status:** Phase 6 (LWC Product & Market Dashboard) is **VERIFIED AND COMPLETE**.
+- **Current Status:** Phase 7 (Analytics & Visualizations) is **VERIFIED AND COMPLETE**.
 - **Golden Dataset Reference Location:** `vc2-salesforce-version/golden-dataset/`
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
 
@@ -70,8 +70,29 @@
 
 ---
 
-## Rules for Phase 7 (Analytics & Visualizations)
+## Phase 7 Visualizations & Charting Decision
 
-- Integrate Chart.js or LWC-native SVG visualizations for GDP shares, trade balances, and overproduction distributions in `c-economic-charts-container`.
-- Consume existing DTO endpoints (`CountrySummaryDTO`, `ProductSummaryDTO`, `AnalysisSummaryDTO`).
-- Maintain `with sharing` and FLS compliance across all new components.
+- **Charting Approach Decision:** Option A (SVG-Native LWC Renderer). Zero external JavaScript dependencies, zero CSP risk, 100% Jest testable.
+- **Components Implemented:**
+  1. `c-economic-charts-container`: Responsive tabset container hosting 5 SVG charts:
+     - GDP Share Distribution (Donut Chart, Top 10 + Others slice)
+     - Trade Balance (Grouped Bar Chart, Top 10 Countries Imports vs Exports)
+     - Country GDP Comparison (Horizontal Bar Chart, Top 10)
+     - Product Supply vs Demand (Grouped Bar Chart, Top 15 Commodities)
+     - Inflation vs Overproduction (Scatter Plot, Inflation % vs Overproduction %)
+  2. Integration into `c-economy-analyzer-shell` across Country Explorer, Product Market, and dedicated Analytics tabs.
+- **Top-N Caps & Display Semantics:**
+  - Country GDP/Trade truncation capped at Top 10.
+  - Commodity Supply/Demand truncation capped at Top 15.
+  - Display-only slicing (`(country.gdp / totalGdp) * 100`) performed in JavaScript per Audit Section G.
+- **Accessibility & UX:**
+  - Accessible fallback `<table>` elements with `slds-assistive-text` for screen readers.
+  - Interactive SVG `<title>` tooltips and `aria-label` attributes on every slice, bar, and point.
+
+---
+
+## Rules for Phase 8 (Security, Hardening & Watcher Utility)
+
+- Enforce security hardening across all Apex controllers, services, and selectors.
+- Review and apply CRUD/FLS checks and standard Salesforce security rules.
+- Ensure all permissions, user access boundaries, and background job watcher utilities are hardened.
