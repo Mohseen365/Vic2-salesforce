@@ -106,4 +106,13 @@ export default class EconomyAnalysisHeader extends LightningElement {
         }
         return Promise.resolve();
     }
+
+    handleOpenExport() {
+        const evt = new CustomEvent('openexport', {
+            detail: { scope: 'Summary' },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(evt);
+    }
 }

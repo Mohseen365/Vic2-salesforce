@@ -2,7 +2,7 @@
 
 ## Project Overview & Handoff State
 
-- **Current Status:** Phase 8 (Security, Hardening & Watcher Utility) is **VERIFIED AND COMPLETE**.
+- **Current Status:** Phase 9 (Export Functionality) is **VERIFIED AND COMPLETE**.
 - **Golden Dataset Reference Location:** `vc2-salesforce-version/golden-dataset/`
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
 
@@ -19,60 +19,50 @@
 
 ---
 
-## Delivered Permission Sets & Platform Event Inventory (Phase 8)
+## Delivered Export Architecture & Utility Inventory (Phase 9)
 
-1. **`Economy_Analyzer_User` Permission Set:**
-   - Standard user read-only permission set.
-   - Read access to all 8 custom snapshot and master SObjects.
-   - Access to facade and selector Apex classes (`EconomyAnalysisController`, `EconomyAnalysisService`, `EconomyAnalysisSelector`, `CountrySelector`, `ProductSelector`, `EconomyCalculationEngine`).
+1. **`c-economic-export-modal` (`economicExportModal`) LWC:**
+   - Interactive SLDS export dialog mapping legacy `ExportController` / `CsvExporter`.
+   - Scope Selector: `Summary`, `Countries`, `Products`, `CountryProducts`, `Provinces`.
+   - Format Selector: `CSV` (RFC 4180).
+   - Preview row count indicator with routing threshold: client-side generation for ≤ 5,000 rows, server-side Apex stream for > 5,000 rows.
+   - Trigger browser download with auto-revoked blob URL and SLDS toasts.
 
-2. **`Economy_Analyzer_Admin` Permission Set:**
-   - Administrative permission set with full CRUD and Modify All permissions.
-   - Grants import endpoint invocation access (`EconomyImportRestResource`, `EconomyImportService`, `EconomyImportBatch`).
+2. **`c/economicExportUtils` (`economicExportUtils.js`) Service Module:**
+   - Pure, RFC 4180-compliant CSV generator (`toCsv`, `escapeCsvValue`).
+   - Scope builder functions: `buildAnalysisCsv`, `buildCountriesCsv`, `buildProductsCsv`, `buildCountryProductsCsv`, `buildProvincesCsv`.
+   - Filename generator helper: `${saveFileName}_${scope}_${ingameDate}.csv`.
 
-3. **`Economy_Import_Event__e` Platform Event:**
-   - Fields: `Analysis_Id__c` (Text 18), `Status__c` (Text 20: `RECEIVED`, `PROCESSING`, `CALCULATING`, `COMPLETED`, `FAILED`), `Diagnostic_Message__c` (Text 255), `Record_Count__c` (Number 18,0).
-   - Publish points: `EconomyImportService` and `EconomyImportBatch` publish status events during import transitions with non-blocking error handling.
-
-4. **`c-save-game-watcher-status` (`saveGameWatcherStatus`) LWC:**
-   - Real-time watcher status component replacing legacy JavaFX `WatchersController`.
-   - Subscribes to `/event/Economy_Import_Event__e` via `lightning/empApi`.
-   - Emits custom `statuschange` events, displays SLDS status pills and toasts on `COMPLETED` and `FAILED`.
-   - Mounted in `c-economy-analyzer-shell` header to auto-refresh wired Apex data on completion.
+3. **Apex CSV Fallback Engine:**
+   - Method: `EconomyAnalysisController.exportCsv(analysisId, scope)`
+   - Full security enforcement (`with sharing`, `WITH SECURITY_ENFORCED`, FLS checks).
 
 ---
 
-## Delivered LWC Component Inventory (Phases 5, 6, 7 & 8)
+## Delivered LWC Component Inventory (Phases 5, 6, 7, 8 & 9)
 
 1. **`c-economy-analyzer-shell` (`economyAnalyzerShell`)**:
    - Root workspace container mapping `WindowController`.
-   - Mounts `c-save-game-watcher-status` in header toolbar.
-   - Analysis switcher `lightning-combobox` populated via `@wire(getRecentAnalyses)`.
-   - Tabset hosting Global Overview, Country Explorer (`c-country-dashboard`), Product Market (`c-product-list-view` / `c-product-dashboard`), Analytics & Visualizations (`c-economic-charts-container`), and Compare Saves tabs.
+   - Mounts `c-save-game-watcher-status` and `c-economic-export-modal`.
+   - Handles `openexport` events from header and child dashboards.
 
 2. **`c-economy-analysis-header` (`economyAnalysisHeader`)**:
-   - Application header banner mapping `Main`.
-   - `@wire(getAnalysisSummary, { analysisId: '$analysisId' })` displaying `AnalysisSummaryDTO` metrics.
-   - KPI tiles: Total World GDP, Global Population, World Imports, World Exports.
-   - Status badge reflecting `Import_Status__c` (`COMPLETED`, `PROCESSING`, `CALCULATING`, `RECEIVED`, `FAILED`).
-   - `@api handleRefresh()` method safely triggering `refreshApex`.
+   - Header banner mapping `Main`.
+   - KPI tiles and status badges with Export button firing `openexport` (scope: `Summary`).
 
 3. **`c-country-dashboard` (`countryDashboard`)**:
    - Country explorer dashboard mapping `CountryController`.
-   - `@wire(getCountrySummaries, { analysisId: '$analysisId' })` populating country selection combobox with auto-selection.
-   - KPI cards for GDP, GDP Rank, GDP Per Capita, Population, Workforce, Employment, Unemployment Rate, Imports, Exports, Gold Income.
-   - `@wire(getCountryProductSummaries, { countryEconomyId: '$selectedCountryEconomyId' })` driving `lightning-datatable` trade breakdown.
+   - Includes Export Countries button firing `openexport` (scope: `Countries`).
 
-4. **`c-product-list-view` (`productListView`)**:
-   - Commodity list table view mapping `ProductListController`.
-   - `@wire(getProductSummaries, { analysisId: '$analysisId' })` rendering `lightning-datatable` of all products.
-
-5. **`c-product-dashboard` (`productDashboard`)**:
+4. **`c-product-dashboard` (`productDashboard`)**:
    - Commodity detail view mapping `ProductController`.
-   - `@wire(getProductSummary, { analysisId: '$analysisId', productEconomyId: '$productEconomyId' })` rendering detail KPI cards.
+   - Includes Export Products button firing `openexport` (scope: `Products`).
+
+5. **`c-save-game-watcher-status` (`saveGameWatcherStatus`)**:
+   - Platform Event listener driving real-time status updates (Phase 8).
 
 6. **`c-economic-charts-container` (`economicChartsContainer`)**:
-   - Responsive SVG-native LWC charting container (Phase 7).
+   - SVG-native LWC charting container (Phase 7).
 
 ---
 
@@ -83,12 +73,12 @@
 3. **Precious Metals / Gold Special Handling:** RGO income (`last_income / 1000`) is tracked in `Gold_Income__c` and added directly to country GDP; `precious_metal` product skips world market exports (`Export_Value__c = 0.0`).
 4. **Ranking Tie-Breaker:** GDP sorting is deterministic: primary sort `GDP__c` descending, tie-breaker `Country_Tag__c` ascending.
 5. **Idempotency Strategy:** Single-pass upserts on `Unique_Snapshot_Key__c` across analysis headers and child snapshot objects prevent duplicate records on re-import.
-6. **Economic Semantics Safeguard:** Zero economic calculation formulas or DTO shapes were modified during Phase 8 security hardening.
+6. **Economic Semantics Safeguard:** Zero economic calculation formulas or DTO shapes were modified during Phase 9 export implementation.
 
 ---
 
-## Rules for Phase 9 (Export Functionality)
+## Rules for Phase 10 (End-to-End Testing & Optimization)
 
-- Reuse existing DTO definitions (`AnalysisSummaryDTO`, `CountrySummaryDTO`, `ProductSummaryDTO`, `CountryProductSummaryDTO`, `ProvinceSummaryDTO`).
-- Maintain zero external JavaScript dependencies and enforce client-side CSV generation patterns in LWC.
+- Maintain 100% test pass rate across all Apex test classes and LWC Jest suites.
+- Perform end-to-end integration verification and Large Data Volume (LDV) profiling.
 - Keep Global Overview and Compare Saves placeholder tabs intact until designated phases.

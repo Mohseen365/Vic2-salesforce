@@ -201,6 +201,27 @@ describe('c-country-dashboard', () => {
         expect(noProductsMsg).not.toBeNull();
     });
 
+    it('dispatches openexport event when Export Countries button is clicked', async () => {
+        const element = createElement('c-country-dashboard', {
+            is: CountryDashboard
+        });
+        element.analysisId = 'a00000000000001AAA';
+        document.body.appendChild(element);
+
+        mockGetCountrySummariesAdapter.emit(MOCK_COUNTRIES);
+        await flushPromises();
+
+        const exportHandler = jest.fn();
+        element.addEventListener('openexport', exportHandler);
+
+        const exportBtn = element.shadowRoot.querySelector('[data-testid="export-countries-button"]');
+        expect(exportBtn).not.toBeNull();
+        exportBtn.click();
+
+        expect(exportHandler).toHaveBeenCalledTimes(1);
+        expect(exportHandler.mock.calls[0][0].detail).toEqual({ scope: 'Countries' });
+    });
+
     it('displays error message when countries wire fails', async () => {
         const element = createElement('c-country-dashboard', {
             is: CountryDashboard

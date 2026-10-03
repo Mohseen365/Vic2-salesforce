@@ -133,4 +133,13 @@ export default class ProductDashboard extends LightningElement {
             composed: true
         }));
     }
+
+    handleOpenExport() {
+        const evt = new CustomEvent('openexport', {
+            detail: { scope: 'Products' },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(evt);
+    }
 }

@@ -52,15 +52,21 @@
         </div>
 
         <!-- Analysis Header Banner -->
-        <div class="slds-m-bottom_medium">
+        <div class="slds-m-bottom_medium" onopenexport={handleOpenExport}>
             <c-economy-analysis-header
                 analysis-id={selectedAnalysisId}
                 data-testid="header-component">
             </c-economy-analysis-header>
         </div>
 
+        <!-- Export Modal -->
+        <c-economic-export-modal
+            analysis-id={selectedAnalysisId}
+            data-testid="export-modal-component">
+        </c-economic-export-modal>
+
         <!-- Main Workspace Tabset -->
-        <lightning-tabset variant="scoped" active-tab-value="country-explorer" data-testid="tabset">
+        <lightning-tabset variant="scoped" active-tab-value="country-explorer" data-testid="tabset" onopenexport={handleOpenExport}>
             <!-- Global Overview Placeholder Tab -->
             <lightning-tab label="🌐 Global Overview" value="global-overview" data-testid="tab-global">
                 <div class="slds-p-around_large slds-text-align_center tab-placeholder">

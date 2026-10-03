@@ -158,6 +158,21 @@ describe('c-economy-analyzer-shell', () => {
         expect(dedicatedCharts.analysisId).toBe('a00000000000001AAA');
     });
 
+    it('renders mounted export modal component', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const exportModal = element.shadowRoot.querySelector('[data-testid="export-modal-component"]');
+        expect(exportModal).not.toBeNull();
+        expect(exportModal.analysisId).toBe('a00000000000001AAA');
+    });
+
     it('swaps from product list to product dashboard on productselect event and back on back event', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell

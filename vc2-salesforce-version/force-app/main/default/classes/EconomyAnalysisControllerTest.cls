@@ -201,6 +201,37 @@ private class EconomyAnalysisControllerTest {
     }
 
     @isTest
+    static void testExportCsvScopes() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+
+        Test.startTest();
+        String summaryCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Summary');
+        String countriesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Countries');
+        String productsCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Products');
+        String cpCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'CountryProducts');
+        String provincesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Provinces');
+        String nullCsv = EconomyAnalysisController.exportCsv(null, 'Summary');
+        String invalidScopeCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'InvalidScope');
+        Test.stopTest();
+
+        System.assert(summaryCsv.contains('Analysis ID,Save File Name'), 'Summary CSV should contain headers');
+        System.assert(summaryCsv.contains('prussia_1848.v2'), 'Summary CSV should contain save file name');
+
+        System.assert(countriesCsv.contains('Tag,Official Name'), 'Countries CSV should contain headers');
+        System.assert(countriesCsv.contains('PRU'), 'Countries CSV should contain country tag');
+
+        System.assert(productsCsv.contains('Product Code,Product Name'), 'Products CSV should contain headers');
+        System.assert(productsCsv.contains('small_arms'), 'Products CSV should contain product code');
+
+        System.assert(cpCsv.contains('Country Tag,Product Code'), 'CountryProducts CSV should contain headers');
+
+        System.assert(provincesCsv.contains('Province ID,Country Tag'), 'Provinces CSV should contain headers');
+
+        System.assertEquals('', nullCsv, 'Null analysis ID should return empty CSV string');
+        System.assertEquals('', invalidScopeCsv, 'Invalid scope should return empty CSV string');
+    }
+
+    @isTest
     static void testRestrictedUserAccess() {
         User minUser = createMinimumAccessUser();
         System.runAs(minUser) {
