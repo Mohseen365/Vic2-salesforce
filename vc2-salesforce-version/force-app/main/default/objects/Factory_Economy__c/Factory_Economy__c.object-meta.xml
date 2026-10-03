@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Factory Economy</label>
+    <pluralLabel>Factory Economies</pluralLabel>
+    <sharingModel>ControlledByParent</sharingModel>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <nameField>
+        <displayFormat>FE-{00000000}</displayFormat>
+        <label>Factory Economy Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+</CustomObject>
