@@ -24,5 +24,21 @@
   "validation_status": "PASS",
   "known_limitations": [
     "Floating-point calculations use 32-bit single precision floats in legacy Java codebase."
-  ]
+  ],
+  "save_game_analyzer_record_counts": {
+    "country": 118,
+    "provinces": 2703,
+    "factory": 714,
+    "artisans": 4406,
+    "states": 124,
+    "goods": 48
+  },
+  "save_game_analyzer_sha256": {
+    "country": "21620bd0f09b6c612178e57e84d34a7c28949a105481a3373975e0bbbfc2de70",
+    "provinces": "3afda6ca970e6ff10cbf068a3527e0a5d8c47cb1b80d8df422980f8a816026e2",
+    "factory": "9e7dd6fd1521edaf37edc55aa5114e58812ca2a50ffce268f9e168d790756196",
+    "artisans": "66885f202fe3d34eeddab96440a90b6bf3fdfc11c49cf5c01b5db71715779383",
+    "states": "2ab43872ad30f74230b1bfda85f24c4e218206c59da2b0266d18332ca086fbf3",
+    "goods": "95f7b4f4b9cb96d65141e595878263f6e41b6887eb6f1867b4e334872e5ad0e0"
+  }
 }
