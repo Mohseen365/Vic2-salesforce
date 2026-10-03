@@ -1,80 +1,53 @@
-# Phase 1 (Data Model Setup) Completion & Handoff Report
+# Phase 1 (Semantic Contract Freeze) Completion & Handoff Report
 
 ## Summary of Accomplishments
-- Created standard Salesforce DX project configuration: `vc2-salesforce-version/sfdx-project.json`
-- Created **8 Custom Objects** with valid XML metadata definitions under `vc2-salesforce-version/force-app/main/default/objects/`:
-  - `Country__c` (Master Data)
-  - `Product__c` (Master Data)
-  - `Province__c` (Master Data)
-  - `Economy_Analysis__c` (Snapshot Header)
-  - `Country_Economy__c` (Snapshot Detail)
-  - `Product_Economy__c` (Snapshot Detail)
-  - `Country_Product_Economy__c` (Snapshot Detail Junction)
-  - `Province_Economy__c` (Snapshot Detail)
-- Created **72 Custom Fields** matching 100% of golden dataset raw and derived requirements.
-- Configured Formula Fields with division-by-zero guards (`IF(Denominator > 0, ..., 0.0)`):
-  - `Product_Economy__c.Overproduction_Percent__c`: `IF(Real_Demand__c > 0, (Total_World_Supply__c / Real_Demand__c) * 100, 0.0)`
-  - `Country_Economy__c.GDP_Per_Capita__c`: `IF(Population__c > 0, (GDP__c / Population__c) * 100000, 0.0)`
-  - `Country_Economy__c.GDP_Share_Percent__c`: `IF(Economy_Analysis__r.Total_World_GDP__c > 0, GDP__c / Economy_Analysis__r.Total_World_GDP__c, 0.0)`
-  - `Country_Economy__c.Unemployment_Rate__c`: `IF(Workforce__c > 0, (Workforce__c - Employment__c) / Workforce__c, 0.0)`
-  - `Country_Economy__c.Unemployment_Rate_RGO__c`: `IF(Workforce_RGO__c > 0, (Workforce_RGO__c - Employment_RGO__c) / Workforce_RGO__c, 0.0)`
-  - `Country_Economy__c.Unemployment_Rate_Factory__c`: `IF(Workforce_Factory__c > 0, (Workforce_Factory__c - Employment_Factory__c) / Workforce_Factory__c, 0.0)`
-  - `Product_Economy__c.Inflation_Percent__c`: `IF(Base_Price__c > 0, (Price__c - Base_Price__c) / Base_Price__c, 0.0)`
-- Configured Roll-Up Summary Fields:
-  - `Economy_Analysis__c.Total_World_GDP__c` (SUM `Country_Economy__c.GDP__c`)
-  - `Economy_Analysis__c.Total_World_Population__c` (SUM `Country_Economy__c.Population__c`)
-  - `Country_Economy__c.Total_Imports_Value__c` (SUM `Country_Product_Economy__c.Import_Value__c`)
-  - `Country_Economy__c.Total_Exports_Value__c` (SUM `Country_Product_Economy__c.Export_Value__c`)
-- Set up Unique External IDs for idempotent upserts:
-  - `Country__c.Tag__c`
-  - `Product__c.Code__c`
-  - `Province__c.External_Province_Id__c`
-  - `Economy_Analysis__c.Save_File_Name__c`
-  - `Country_Economy__c.Unique_Snapshot_Key__c`
-  - `Product_Economy__c.Unique_Snapshot_Key__c`
-  - `Country_Product_Economy__c.Unique_Snapshot_Key__c`
-  - `Province_Economy__c.Unique_Snapshot_Key__c`
-- Produced `field-inventory.md` documenting every object, field, type, precision, formula, and relationship.
+- Created `vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md` establishing the canonical semantic contract for the `Save_Game_Analyzer` Salesforce migration.
+- Updated root `AGENTS.md` and `vc2-salesforce-version/AGENTS.md` with Phase 1 status, pointers to the semantic contract, frozen summaries, open architecture gates, and Phase 2 guidelines.
+- Frozen all four key contracts:
+  1. **Canonical Units Table:** Daily £ vs Annual £ (`GDP = Daily * 365`), explicit zero-guards (`Employees == 0 → 0.0`), and negative AGDP clamps (`AGDP < -1000 → 0.0`).
+  2. **Artisan Aggregation Granularity:** Aggregated at `Province × Product per snapshot` using key `<AnalysisId>_<ExternalProvId>_<ProductCode>`.
+  3. **Factory Occurrence Key:** Frozen formula `<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>` matching legacy `Factory.py` traversal ordering.
+  4. **Master vs. Snapshot Relationship Model:** Identity key separation for master (`State__c`, `Province__c`) vs snapshot (`State_Economy__c`, `Province_Economy__c`) objects.
+- Cataloged and resolved audit vs. source code discrepancies in §4 of the contract (confirming Python source is authoritative).
+- Recorded open architecture-review gates in §5 of the contract.
+- Confirmed zero changes were made to Apex, metadata (`force-app/`), LWCs, or unit tests.
+- Re-verified parity harness (`compare.py`), reporting 0 discrepancies.
 
-## Technical Details & Schema State
+---
 
-### Object Relationship Structure
-```text
-Country__c (Master) <-------- Province__c (Master)
-    ^                             ^
-    | (Lookup)                    | (Lookup)
-Country_Economy__c <--------- Province_Economy__c
-    | (Master-Detail)             | (Master-Detail)
-    v                             v
-Economy_Analysis__c --------> Country_Economy__c
-    ^                             ^
-    | (Master-Detail)             | (Master-Detail)
-Product_Economy__c <-------- Country_Product_Economy__c
-    | (Lookup)                    | (Lookup)
-Product__c (Master) <---------+
-```
+## Technical Details & Contract State
+- **Contract Document Pointer:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
+- **Canonical Unit Table Summary:** 27 metrics defined across Factory, RGO, Artisan, Province, State, and Country entities. Key correction from source inspection: `Country.py` computes per-capita GDP using core `Population`, not `Total_Population`.
+- **Artisan Aggregation Key:** `<AnalysisId>_<ExternalProvId>_<ProductCode>` (e.g. `a1B..._1720_fabric`). Reduces row count from ~10,000+ to ~4,406 while preserving 100% of physical and monetary totals.
+- **Factory Occurrence Key:** `<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>` (e.g. `a1B..._EGY_Cairo_glass_factory_1`).
+- **Master vs Snapshot Identity Keys:**
+  - Master State: `State_Code__c = <CountryTag>_<StateName>` (`EGY_Cairo`)
+  - Snapshot State: `Unique_Snapshot_Key__c = <AnalysisId>_<StateCode>` (`a1B..._EGY_Cairo`)
+  - Master Province: `External_Province_Id__c = <ProvId>` (`1720`)
+  - Snapshot Province: `Unique_Snapshot_Key__c = <AnalysisId>_<ProvId>` (`a1B..._1720`)
+- **Discrepancy Log:** 3 discrepancies cataloged and resolved (Country GDP per capita denominator, Artisan output fallback price, State factory locale string clean-up).
+- **Open Architecture Gates:**
+  - `GATE-1`: Modded Commodity & Artisan Type Mappings (Target: Phase 4)
+  - `GATE-2`: State Name Variance across Mods (Target: Phase 3)
+  - `GATE-3`: Asynchronous Import Queue Scope (Target: Phase 6)
 
-### Field Precision Matrix
-- Prices & Quantities: **Precision 18, Scale 4**
-- Total Currencies & Percentages: **Precision 18, Scale 2** or **Precision 6, Scale 2**
-- Population & Workforce Integers: **Precision 18, Scale 0**
+---
 
-### Resolved Formula Text Summary
-- `Product_Economy__c.Overproduction_Percent__c`: `IF(Real_Demand__c > 0, (Total_World_Supply__c / Real_Demand__c) * 100, 0.0)`
-- `Country_Economy__c.GDP_Per_Capita__c`: `IF(Population__c > 0, (GDP__c / Population__c) * 100000, 0.0)`
-- `Country_Economy__c.GDP_Share_Percent__c`: `IF(Economy_Analysis__r.Total_World_GDP__c > 0, GDP__c / Economy_Analysis__r.Total_World_GDP__c, 0.0)`
+## Verification Evidence
+- `vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md` created and verified non-empty.
+- Every unit traces to a named Python source file and line citation in `Save_Game_Analyzer/`.
+- Every formula contains an explicit zero-guard or clamp matching legacy Python source behavior.
+- Zero files under `force-app/` were modified or created.
+- Parity harness (`python3 vc2-salesforce-version/e2e/parity/compare.py`) output: **PASS (0 discrepancies)**.
+- Metadata validator (`python3 vc2-salesforce-version/scripts/validate_metadata.py`) output: **PASS (100% valid XML)**.
 
-### Validation Result
-- All 8 custom objects and 72 custom fields passed automated XML syntax, schema structure, and relationship completeness verification (`scripts/verify_schema_completeness.py`).
+---
 
-### Documentation Artifacts
-- Inventory location: `vc2-salesforce-version/field-inventory.md`
-- Execution scripts: `vc2-salesforce-version/scripts/`
-
-## Critical Context for Phase 2 (Core Apex Service & Calculation Engine)
-- **Apex-Written Fields:**
-  - `Country_Product_Economy__c.GDP_Contribution__c`: Write via `Math.max(sold_units - intermediate_consumption, 0) * product.price`.
-  - `Country_Economy__c.GDP__c`: Write via `sum(Country_Product_Economy__c.GDP_Contribution__c) + Gold_Income__c`.
-  - `Country_Economy__c.GDP_Rank__c`: Calculated and assigned sequentially after GDP sorting.
-  - `Economy_Analysis__c.Total_World_Imports__c` & `Total_World_Exports__c`: Written by Apex service (since Salesforce prohibits roll-up summary fields from rolling up other roll-up summary fields).
-- **External ID Lookup Strategy:** Use `Unique_Snapshot_Key__c` formatted as `{SaveFileName}_{Tag/ProductCode}` to enable single-pass bulk upserts during import.
+## Critical Context for Phase 2 (Golden Dataset Extension)
+- Phase 2 must emit golden JSON fixtures for `states.json`, `factories.json`, and `artisans.json` using raw Python execution output.
+- Identity keys in Phase 2 must conform strictly to Phase 1 frozen keys (`State_Code__c`, `OccurrenceIndex`, `Province × Product`).
+- Phase 2 must not alter any Apex code or Salesforce metadata under `force-app/`.
+- **Prerequisites for Phase 2:**
+  - [x] Phase 1 semantic contract frozen and verified.
+  - [x] `SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md` published.
+  - [x] `AGENTS.md` updated with Phase 1 status and Phase 2 rules.
