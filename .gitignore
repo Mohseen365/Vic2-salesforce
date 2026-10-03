@@ -2,3 +2,7 @@
 .kilo/
 node_modules/
 **/node_modules/
+common/
+history/
+Save_Game_Analyzer/savegames/
+Save_Game_Analyzer/outputs/

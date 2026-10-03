@@ -1,0 +1,194 @@
+[
+  {
+    "Good": "ammunition",
+    "Price": "18.83130"
+  },
+  {
+    "Good": "small_arms",
+    "Price": "35.49854"
+  },
+  {
+    "Good": "artillery",
+    "Price": "82.35181"
+  },
+  {
+    "Good": "canned_food",
+    "Price": "14.73877"
+  },
+  {
+    "Good": "barrels",
+    "Price": "98.00000"
+  },
+  {
+    "Good": "aeroplanes",
+    "Price": "110.00000"
+  },
+  {
+    "Good": "cotton",
+    "Price": "2.17017"
+  },
+  {
+    "Good": "dye",
+    "Price": "11.94995"
+  },
+  {
+    "Good": "wool",
+    "Price": "0.69000"
+  },
+  {
+    "Good": "silk",
+    "Price": "12.61255"
+  },
+  {
+    "Good": "coal",
+    "Price": "2.65033"
+  },
+  {
+    "Good": "sulphur",
+    "Price": "7.08105"
+  },
+  {
+    "Good": "iron",
+    "Price": "5.29175"
+  },
+  {
+    "Good": "timber",
+    "Price": "0.96005"
+  },
+  {
+    "Good": "tropical_wood",
+    "Price": "6.10068"
+  },
+  {
+    "Good": "rubber",
+    "Price": "25.80835"
+  },
+  {
+    "Good": "oil",
+    "Price": "44.50171"
+  },
+  {
+    "Good": "precious_metal",
+    "Price": "8.00000"
+  },
+  {
+    "Good": "steel",
+    "Price": "6.84210"
+  },
+  {
+    "Good": "cement",
+    "Price": "16.67065"
+  },
+  {
+    "Good": "machine_parts",
+    "Price": "73.85645"
+  },
+  {
+    "Good": "glass",
+    "Price": "3.15024"
+  },
+  {
+    "Good": "fuel",
+    "Price": "29.19409"
+  },
+  {
+    "Good": "fertilizer",
+    "Price": "10.92090"
+  },
+  {
+    "Good": "explosives",
+    "Price": "21.32129"
+  },
+  {
+    "Good": "clipper_convoy",
+    "Price": "43.93188"
+  },
+  {
+    "Good": "steamer_convoy",
+    "Price": "71.59644"
+  },
+  {
+    "Good": "electric_gear",
+    "Price": "16.00000"
+  },
+  {
+    "Good": "fabric",
+    "Price": "2.04022"
+  },
+  {
+    "Good": "lumber",
+    "Price": "1.05005"
+  },
+  {
+    "Good": "paper",
+    "Price": "3.44003"
+  },
+  {
+    "Good": "cattle",
+    "Price": "1.97998"
+  },
+  {
+    "Good": "fish",
+    "Price": "1.51001"
+  },
+  {
+    "Good": "fruit",
+    "Price": "1.78998"
+  },
+  {
+    "Good": "grain",
+    "Price": "2.20001"
+  },
+  {
+    "Good": "tobacco",
+    "Price": "1.16006"
+  },
+  {
+    "Good": "tea",
+    "Price": "3.21060"
+  },
+  {
+    "Good": "coffee",
+    "Price": "2.29019"
+  },
+  {
+    "Good": "opium",
+    "Price": "3.22003"
+  },
+  {
+    "Good": "automobiles",
+    "Price": "70.00000"
+  },
+  {
+    "Good": "telephones",
+    "Price": "16.00000"
+  },
+  {
+    "Good": "wine",
+    "Price": "11.21149"
+  },
+  {
+    "Good": "liquor",
+    "Price": "7.81137"
+  },
+  {
+    "Good": "regular_clothes",
+    "Price": "5.98016"
+  },
+  {
+    "Good": "luxury_clothes",
+    "Price": "103.92798"
+  },
+  {
+    "Good": "furniture",
+    "Price": "5.10019"
+  },
+  {
+    "Good": "luxury_furniture",
+    "Price": "88.14844"
+  },
+  {
+    "Good": "radio",
+    "Price": "16.00000"
+  }
+]
