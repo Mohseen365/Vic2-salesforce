@@ -89,7 +89,7 @@ public class ReportHelpers {
      * @param object object with employment child tag
      * @return total count of employees on object, or 0 if object is not valid
      */
-    static int getEmployeeCount(GenericObject object) {
+    public static int getEmployeeCount(GenericObject object) {
         int count = 0;
 
         try {
