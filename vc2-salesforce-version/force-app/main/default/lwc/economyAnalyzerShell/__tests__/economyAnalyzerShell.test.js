@@ -131,7 +131,7 @@ describe('c-economy-analyzer-shell', () => {
         expect(header.analysisId).toBe('a00000000000002AAA');
     });
 
-    it('renders all workspace tabs including dedicated Analytics tab', async () => {
+    it('renders all workspace tabs including dedicated Analytics tab and supports full tab switching', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
         });
@@ -141,17 +141,38 @@ describe('c-economy-analyzer-shell', () => {
 
         await flushPromises();
 
+        const tabset = element.shadowRoot.querySelector('[data-testid="tabset"]');
         const tabGlobal = element.shadowRoot.querySelector('[data-testid="tab-global"]');
         const tabCountry = element.shadowRoot.querySelector('[data-testid="tab-country"]');
         const tabProduct = element.shadowRoot.querySelector('[data-testid="tab-product"]');
         const tabAnalytics = element.shadowRoot.querySelector('[data-testid="tab-analytics"]');
         const tabCompare = element.shadowRoot.querySelector('[data-testid="tab-compare"]');
 
+        expect(tabset).not.toBeNull();
         expect(tabGlobal).not.toBeNull();
         expect(tabCountry).not.toBeNull();
         expect(tabProduct).not.toBeNull();
         expect(tabAnalytics).not.toBeNull();
         expect(tabCompare).not.toBeNull();
+
+        // Verify active tab default and switch tabs
+        expect(tabset.activeTabValue).toBe('country-explorer');
+
+        tabset.activeTabValue = 'global-overview';
+        await flushPromises();
+        expect(tabset.activeTabValue).toBe('global-overview');
+
+        tabset.activeTabValue = 'product-market';
+        await flushPromises();
+        expect(tabset.activeTabValue).toBe('product-market');
+
+        tabset.activeTabValue = 'analytics';
+        await flushPromises();
+        expect(tabset.activeTabValue).toBe('analytics');
+
+        tabset.activeTabValue = 'compare-saves';
+        await flushPromises();
+        expect(tabset.activeTabValue).toBe('compare-saves');
 
         const dedicatedCharts = element.shadowRoot.querySelector('[data-testid="dedicated-charts-component"]');
         expect(dedicatedCharts).not.toBeNull();
@@ -208,5 +229,30 @@ describe('c-economy-analyzer-shell', () => {
         await flushPromises();
 
         expect(element.shadowRoot.querySelector('[data-testid="product-list-component"]')).not.toBeNull();
+    });
+
+    it('captures openexport event from child components and routes to export modal', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const headerComp = element.shadowRoot.querySelector('[data-testid="header-component"]');
+        expect(headerComp).not.toBeNull();
+
+        headerComp.dispatchEvent(new CustomEvent('openexport', {
+            detail: { scope: 'Countries' },
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        const exportModal = element.shadowRoot.querySelector('[data-testid="export-modal-component"]');
+        expect(exportModal).not.toBeNull();
     });
 });
