@@ -109,6 +109,20 @@ public with sharing class EconomyAnalysisController {
     }
 
     /**
+     * @description Compares two analysis snapshots and returns structured delta DTO.
+     * @param baseAnalysisId Baseline Economy_Analysis__c Id.
+     * @param compareAnalysisId Comparison Economy_Analysis__c Id.
+     * @return AnalysisComparisonDTO or null.
+     */
+    @AuraEnabled(cacheable=true)
+    public static AnalysisComparisonDTO compareAnalyses(Id baseAnalysisId, Id compareAnalysisId) {
+        if (baseAnalysisId == null || compareAnalysisId == null || baseAnalysisId == compareAnalysisId) {
+            return null;
+        }
+        return EconomyAnalysisService.compareAnalyses(baseAnalysisId, compareAnalysisId);
+    }
+
+    /**
      * @description Generates a CSV string for the specified analysis and scope.
      * Used as Apex fallback for high row-count datasets or server-side CSV generation.
      * @param analysisId Target Economy_Analysis__c Id.
