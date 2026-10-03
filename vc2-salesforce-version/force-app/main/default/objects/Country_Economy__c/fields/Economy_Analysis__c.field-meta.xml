@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Economy_Analysis__c</fullName>
+    <label>Economy Analysis</label>
+    <type>MasterDetail</type>
+    <referenceTo>Economy_Analysis__c</referenceTo>
+    <relationshipName>Country_Economies</relationshipName>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>
