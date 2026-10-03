@@ -1,0 +1,200 @@
+<template>
+    <div class="country-dashboard-container">
+        <!-- Top Toolbar & Country Selector -->
+        <lightning-card title="Country Explorer" icon-name="custom:custom13">
+            <div slot="actions" class="slds-grid slds-grid_vertical-align-center">
+                <template if:true={countryOptions.length}>
+                    <lightning-combobox
+                        name="countrySelector"
+                        label="Select Country"
+                        variant="label-hidden"
+                        value={selectedCountryEconomyId}
+                        placeholder="Select a country..."
+                        options={countryOptions}
+                        onchange={handleCountryChange}
+                        class="country-selector-combobox"
+                        data-testid="country-combobox">
+                    </lightning-combobox>
+                </template>
+            </div>
+
+            <div class="slds-card__body slds-card__body_inner">
+                <!-- Loading State for Countries -->
+                <template if:true={isCountriesLoading}>
+                    <div class="slds-p-around_medium slds-is-relative spinner-container">
+                        <lightning-spinner alternative-text="Loading Countries..." size="medium" data-testid="countries-spinner"></lightning-spinner>
+                    </div>
+                </template>
+
+                <!-- Countries Wire Error -->
+                <template if:true={countriesError}>
+                    <div class="slds-p-around_medium" data-testid="countries-error">
+                        <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                            <h2>Failed to load country list: {countriesErrorMessage}</h2>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Empty Countries List -->
+                <template if:true={isCountriesEmpty}>
+                    <div class="slds-p-around_large slds-text-align_center" data-testid="no-countries-message">
+                        <div class="slds-text-heading_small slds-text-color_weak">No countries found for this economy analysis.</div>
+                    </div>
+                </template>
+
+                <!-- Selected Country Detail & KPIs -->
+                <template if:true={selectedCountry}>
+                    <!-- KPI Cards Grid -->
+                    <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_large" data-testid="kpi-cards-grid">
+                        <!-- GDP & Rank -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-5 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">GDP (Rank #{selectedCountry.gdpRank})</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-gdp">
+                                    <lightning-formatted-number value={selectedCountry.gdp} format-style="currency" currency-code="GBP" maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GDP Per Capita -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-5 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">GDP Per Capita</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-gdp-capita">
+                                    <lightning-formatted-number value={selectedCountry.gdpPerCapita} format-style="currency" currency-code="GBP" maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Population -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-5 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">Population</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-population">
+                                    <lightning-formatted-number value={selectedCountry.population} maximum-fraction-digits="0"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Workforce & Employment -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-5 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">Workforce / Employment</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-workforce">
+                                    <lightning-formatted-number value={selectedCountry.workforce} maximum-fraction-digits="0"></lightning-formatted-number>
+                                    /
+                                    <lightning-formatted-number value={selectedCountry.employment} maximum-fraction-digits="0"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unemployment Rate -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-5 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">Unemployment Rate</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-unemployment">
+                                    <lightning-formatted-number value={unemploymentRateDecimal} format-style="percent-fixed" maximum-fraction-digits="1"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Imports -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">Total Imports</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-imports">
+                                    <lightning-formatted-number value={selectedCountry.totalImports} format-style="currency" currency-code="GBP" maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Exports -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">Total Exports</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-exports">
+                                    <lightning-formatted-number value={selectedCountry.totalExports} format-style="currency" currency-code="GBP" maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gold Income -->
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-around_x-small">
+                            <div class="kpi-tile slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slds-text-title_caps slds-text-color_weak">Gold RGO Income</div>
+                                <div class="slds-text-heading_medium slds-m-top_x-small" data-testid="kpi-gold">
+                                    <lightning-formatted-number value={selectedCountry.goldIncome} format-style="currency" currency-code="GBP" maximum-fraction-digits="2"></lightning-formatted-number>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Trade Breakdown Section -->
+                    <div class="slds-card slds-card_boundary">
+                        <div class="slds-card__header slds-grid slds-grid_vertical-align-center slds-p-around_small">
+                            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                <div class="slds-media__body">
+                                    <h2 class="slds-card__header-title slds-text-heading_small">
+                                        Domestic Production & Product Trade Breakdown
+                                    </h2>
+                                </div>
+                            </header>
+                            <div class="slds-no-flex">
+                                <lightning-input
+                                    type="search"
+                                    placeholder="Search commodity code..."
+                                    variant="label-hidden"
+                                    value={searchKey}
+                                    onchange={handleSearchChange}
+                                    data-testid="search-input"
+                                    class="search-input">
+                                </lightning-input>
+                            </div>
+                        </div>
+
+                        <div class="slds-card__body">
+                            <!-- Products Loading Spinner -->
+                            <template if:true={isProductsLoading}>
+                                <div class="slds-p-around_medium slds-is-relative spinner-container">
+                                    <lightning-spinner alternative-text="Loading Products Breakdown..." size="medium" data-testid="products-spinner"></lightning-spinner>
+                                </div>
+                            </template>
+
+                            <!-- Products Wire Error -->
+                            <template if:true={productsError}>
+                                <div class="slds-p-around_medium" data-testid="products-error">
+                                    <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                                        <h2>Failed to load product breakdown: {productsErrorMessage}</h2>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Datatable -->
+                            <template if:true={hasProducts}>
+                                <div class="datatable-wrapper" data-testid="products-datatable-wrapper">
+                                    <lightning-datatable
+                                        key-field="junctionId"
+                                        data={filteredProducts}
+                                        columns={columns}
+                                        hide-checkbox-column
+                                        sorted-by={sortedBy}
+                                        sorted-direction={sortedDirection}
+                                        onsort={handleSort}
+                                        data-testid="products-datatable">
+                                    </lightning-datatable>
+                                </div>
+                            </template>
+
+                            <!-- Empty Filter / Empty Products Message -->
+                            <template if:true={isProductsEmpty}>
+                                <div class="slds-p-around_large slds-text-align_center" data-testid="no-products-message">
+                                    <div class="slds-text-heading_small slds-text-color_weak">No commodity records found matching search query.</div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+    </div>
+</template>

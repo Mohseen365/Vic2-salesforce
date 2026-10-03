@@ -18,7 +18,7 @@ public with sharing class EconomyAnalysisSelector {
             SELECT Id, Name, Save_File_Name__c, Source_Save_File_Name__c, Ingame_Date__c,
                    Analysis_Timestamp__c, Player_Country_Tag__c, Total_World_GDP__c,
                    Total_World_Population__c, Total_World_Imports__c, Total_World_Exports__c,
-                   Import_Status__c
+                   Import_Status__c, Import_Diagnostic_Message__c
             FROM Economy_Analysis__c
             WHERE Id = :analysisId
             LIMIT 1
@@ -45,7 +45,7 @@ public with sharing class EconomyAnalysisSelector {
             SELECT Id, Name, Save_File_Name__c, Source_Save_File_Name__c, Ingame_Date__c,
                    Analysis_Timestamp__c, Player_Country_Tag__c, Total_World_GDP__c,
                    Total_World_Population__c, Total_World_Imports__c, Total_World_Exports__c,
-                   Import_Status__c
+                   Import_Status__c, Import_Diagnostic_Message__c
             FROM Economy_Analysis__c
             ORDER BY Analysis_Timestamp__c DESC, CreatedDate DESC
             LIMIT :effectiveLimit
@@ -72,7 +72,7 @@ public with sharing class EconomyAnalysisSelector {
                    GDP_Per_Capita__c, GDP_Share_Percent__c, Unemployment_Rate__c,
                    Unemployment_Rate_RGO__c, Unemployment_Rate_Factory__c,
                    Total_Imports_Value__c, Total_Exports_Value__c, Gold_Income__c,
-                   Unique_Snapshot_Key__c, Country__r.Tag__c, Country__r.Flag_URL__c
+                   Unique_Snapshot_Key__c, Country__r.Tag__c, Country__r.Flag_URL__c, Country__r.Name
             FROM Country_Economy__c
             WHERE Economy_Analysis__c = :analysisId
             ORDER BY GDP__c DESC, Country_Tag__c ASC

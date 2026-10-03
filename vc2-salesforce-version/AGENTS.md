@@ -2,7 +2,7 @@
 
 ## Project Overview & Handoff State
 
-- **Current Status:** Phase 4 (Import & Integration Pipeline) is **VERIFIED AND COMPLETE**.
+- **Current Status:** Phase 5 (LWC Country Dashboard) is **VERIFIED AND COMPLETE**.
 - **Golden Dataset Reference Location:** `vc2-salesforce-version/golden-dataset/`
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
 
@@ -19,23 +19,31 @@
 
 ---
 
-## Resolved Architecture Gates & Formulas
+## Phase 5 Delivered LWC Component Inventory
 
-1. **Product Overproduction Formula:**
-   - Authoritative Formula: `(Total_World_Supply__c / Real_Demand__c) * 100` (when `Real_Demand__c > 0`, else `0.0`).
-   - Source Method: `Product.getOverproduced()`
+1. **`c-economy-analyzer-shell` (`economyAnalyzerShell`)**:
+   - Root application container mapping `WindowController`.
+   - Analysis switcher `lightning-combobox` populated via `@wire(getRecentAnalyses)`.
+   - Tabset hosting Global Overview, Country Explorer (`c-country-dashboard`), Product Market, and Compare Saves tabs.
+   - Propagates `selectedAnalysisId` down to child header and country dashboard components.
 
-2. **GDP Contribution & Country GDP Formula:**
-   - Authoritative Formula: `sold_units = soldDomestic + thrownToMarket * actualSoldWorld / worldmarketPool`.
-   - `ProductStorage GDP (£) = max(sold_units - intermediate_consumption, 0) * product.price`.
-   - `Country Total GDP (£) = sum(ProductStorage.getGdpPounds()) + goldIncome`.
-   - Source Methods: `ProductStorage.innerCalculations()`, `Country.innerCalculations()`
+2. **`c-economy-analysis-header` (`economyAnalysisHeader`)**:
+   - Application header banner mapping `Main`.
+   - `@wire(getAnalysisSummary, { analysisId: '$analysisId' })` displaying `AnalysisSummaryDTO` metrics.
+   - KPI tiles: Total World GDP, Global Population, World Imports, World Exports.
+   - Status badge reflecting `Import_Status__c` (`COMPLETED`, `PROCESSING`, `CALCULATING`, `RECEIVED`, `FAILED`).
+   - Renders diagnostic message banner on `FAILED` status and pending recalculation warning with manual refresh button (`refreshApex`).
 
-3. **Parser Architecture & Import Endpoint:**
-   - Authoritative Endpoint: `POST /services/apexrest/economy/import` (`EconomyImportRestResource.cls`).
-   - Architecture: Option A (External Off-Heap EUG Parser Service transmitting normalized JSON DTOs to Salesforce REST endpoint `EconomyImportService`).
-   - Status Lifecycle: `RECEIVED` → `PROCESSING` → `CALCULATING` → `COMPLETED` (or `FAILED` with `Import_Diagnostic_Message__c`).
-   - Master Data Resolution: Dynamic creation of unknown master `Country__c`, `Product__c`, and `Province__c` records during import per Audit Section Q.
+3. **`c-country-dashboard` (`countryDashboard`)**:
+   - Country explorer dashboard mapping `CountryController`.
+   - `@wire(getCountrySummaries, { analysisId: '$analysisId' })` populating country selection combobox with auto-selection.
+   - KPI cards for GDP, GDP Rank, GDP Per Capita, Population, Workforce, Employment, Unemployment Rate, Imports, Exports, Gold Income.
+   - `@wire(getCountryProductSummaries, { countryEconomyId: '$selectedCountryEconomyId' })` driving `lightning-datatable` trade breakdown.
+   - Commodity search filter input dynamically filtering datatable rows.
+
+4. **`EconomyAnalysisController.cls` (Apex Facade)**:
+   - `@AuraEnabled(cacheable=true)` facade layer exposing cached read operations with 100% test coverage.
+   - `getRecentAnalyses(limitCount)`, `getAnalysisSummary(analysisId)`, `getCountrySummaries(analysisId)`, `getCountrySummary(analysisId, countryEconomyId)`, `getCountryProductSummaries(countryEconomyId)`.
 
 ---
 
@@ -48,6 +56,8 @@
   - `public static EconomyImportResponseDTO processImport(EconomyImportRequestDTO request, Boolean forceBatch)`
 - **`EconomyImportBatch.cls`**:
   - `Database.Batchable<sObject>` chunking framework for large snapshots exceeding 2,000 child records.
+- **`EconomyAnalysisController.cls`**:
+  - Facade controller for LWC `@wire` adapters.
 - **`EconomyAnalysisService.cls`**:
   - `public static void recalculateAnalysis(Id analysisId)`
   - `public static AnalysisSummaryDTO getAnalysisSummary(Id analysisId)`
@@ -70,8 +80,15 @@
 
 ---
 
-## Rules for Phase 5 (LWC Country Dashboard)
+## Known UI Limitations & Deferred Decisions
 
-- UI components consume DTOs returned by `EconomyAnalysisService` / `@AuraEnabled` controllers (`AnalysisSummaryDTO`, `CountrySummaryDTO`, `CountryProductSummaryDTO`).
-- Reflect import status (`Import_Status__c`) in UI header/status notifications.
-- All selectors enforce `with sharing` and `Security.stripInaccessible`.
+- Global Overview tab, Product Market tab, and Compare Saves tab display "Coming in a later phase" placeholder banners in Phase 5.
+- Chart.js / SVG donut chart visualizations are deferred to Phase 7.
+
+---
+
+## Rules for Phase 6 (LWC Product & Market Dashboard)
+
+- Extend `@AuraEnabled(cacheable=true)` facade methods in `EconomyAnalysisController.cls` for product endpoints (`getProductSummaries`, `getProductSummary`).
+- Reuse established LWC patterns: `@wire` adapters, SLDS KPI cards, `lightning-datatable` search filtering, and `registerApexTestWireAdapter` in Jest tests.
+- All selectors and controllers enforce `with sharing` and `Security.stripInaccessible`.
