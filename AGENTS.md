@@ -2,10 +2,22 @@
 
 ## Project Overview & Final Status
 
-- **Current Status:** Phase 11 (Deferred UI Closure — Global Overview & Compare Saves Tabs) **VERIFIED AND COMPLETE** — All UI tabs fully wired.
+- **Current Status:** Phase 12 (Post-Migration Closeout & Audit Compliance Attestation) **VERIFIED AND COMPLETE** — Migration formally closed.
+- **Audit Compliance:** 100% Compliant (All 18 Audit Document sections A through R satisfied, with 2 explicitly documented enterprise architectural deviations).
 - **Golden Dataset Reference Location:** `vc2-salesforce-version/golden-dataset/`
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
 - **Final Parity Verification Status:** `PASS` (0 discrepancies across all entity scopes)
+
+---
+
+## Core Documentation Artifacts & Pointers
+
+1. 📋 **Audit Compliance Matrix:** [`vc2-salesforce-version/AUDIT_COMPLIANCE_MATRIX.md`](./vc2-salesforce-version/AUDIT_COMPLIANCE_MATRIX.md)
+2. 📄 **Migration Completion Report:** [`vc2-salesforce-version/MIGRATION_COMPLETION_REPORT.md`](./vc2-salesforce-version/MIGRATION_COMPLETION_REPORT.md)
+3. 📖 **Maintenance Runbook:** [`vc2-salesforce-version/MAINTENANCE_RUNBOOK.md`](./vc2-salesforce-version/MAINTENANCE_RUNBOOK.md)
+4. ⚖️ **Parity Verification Report:** [`vc2-salesforce-version/PARITY_REPORT.md`](./vc2-salesforce-version/PARITY_REPORT.md)
+5. ⚡ **Performance & Governor Limit Report:** [`vc2-salesforce-version/PERFORMANCE_REPORT.md`](./vc2-salesforce-version/PERFORMANCE_REPORT.md)
+6. 🔒 **Security Hardening Report:** [`vc2-salesforce-version/SECURITY_HARDENING_REPORT.md`](./vc2-salesforce-version/SECURITY_HARDENING_REPORT.md)
 
 ---
 
@@ -33,6 +45,6 @@ All five workspace tabs in `c-economy-analyzer-shell` are fully operational:
 
 ## Maintenance & Test Execution Guidelines
 
-- **Run LWC Jest Suite:** `npm run test:lwc` (11 suites, 72 unit tests, 100% pass rate).
+- **Run LWC Jest Suite:** `npm run test:lwc` (11 suites, 74 unit tests, 100% pass rate).
 - **Run Parity Verification Harness:** `python3 vc2-salesforce-version/e2e/parity/compare.py`
 - **Run Metadata Validator:** `python3 vc2-salesforce-version/scripts/validate_metadata.py`
