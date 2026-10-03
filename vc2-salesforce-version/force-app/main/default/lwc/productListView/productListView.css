@@ -1,0 +1,11 @@
+.search-input {
+    min-width: 250px;
+}
+
+.spinner-container {
+    min-height: 150px;
+}
+
+.datatable-wrapper {
+    height: 480px;
+}

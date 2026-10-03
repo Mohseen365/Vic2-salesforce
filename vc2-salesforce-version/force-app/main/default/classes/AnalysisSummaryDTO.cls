@@ -10,6 +10,7 @@ public class AnalysisSummaryDTO {
     @AuraEnabled public Decimal totalWorldImports { get; set; }
     @AuraEnabled public Decimal totalWorldExports { get; set; }
     @AuraEnabled public String importStatus { get; set; }
+    @AuraEnabled public String importDiagnosticMessage { get; set; }
 
     public AnalysisSummaryDTO() {
         this.totalWorldGdp = 0.0;
@@ -31,6 +32,7 @@ public class AnalysisSummaryDTO {
             this.totalWorldImports = ea.Total_World_Imports__c;
             this.totalWorldExports = ea.Total_World_Exports__c;
             this.importStatus = ea.Import_Status__c;
+            this.importDiagnosticMessage = ea.Import_Diagnostic_Message__c;
         }
     }
 }

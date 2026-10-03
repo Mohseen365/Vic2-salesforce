@@ -18,7 +18,7 @@ public with sharing class EconomyAnalysisSelector {
             SELECT Id, Name, Save_File_Name__c, Source_Save_File_Name__c, Ingame_Date__c,
                    Analysis_Timestamp__c, Player_Country_Tag__c, Total_World_GDP__c,
                    Total_World_Population__c, Total_World_Imports__c, Total_World_Exports__c,
-                   Import_Status__c
+                   Import_Status__c, Import_Diagnostic_Message__c
             FROM Economy_Analysis__c
             WHERE Id = :analysisId
             LIMIT 1
@@ -45,7 +45,7 @@ public with sharing class EconomyAnalysisSelector {
             SELECT Id, Name, Save_File_Name__c, Source_Save_File_Name__c, Ingame_Date__c,
                    Analysis_Timestamp__c, Player_Country_Tag__c, Total_World_GDP__c,
                    Total_World_Population__c, Total_World_Imports__c, Total_World_Exports__c,
-                   Import_Status__c
+                   Import_Status__c, Import_Diagnostic_Message__c
             FROM Economy_Analysis__c
             ORDER BY Analysis_Timestamp__c DESC, CreatedDate DESC
             LIMIT :effectiveLimit
@@ -72,7 +72,7 @@ public with sharing class EconomyAnalysisSelector {
                    GDP_Per_Capita__c, GDP_Share_Percent__c, Unemployment_Rate__c,
                    Unemployment_Rate_RGO__c, Unemployment_Rate_Factory__c,
                    Total_Imports_Value__c, Total_Exports_Value__c, Gold_Income__c,
-                   Unique_Snapshot_Key__c, Country__r.Tag__c, Country__r.Flag_URL__c
+                   Unique_Snapshot_Key__c, Country__r.Tag__c, Country__r.Flag_URL__c, Country__r.Name
             FROM Country_Economy__c
             WHERE Economy_Analysis__c = :analysisId
             ORDER BY GDP__c DESC, Country_Tag__c ASC
@@ -128,6 +128,34 @@ public with sharing class EconomyAnalysisSelector {
             FROM Country_Product_Economy__c
             WHERE Country_Economy__c = :countryEconomyId
             ORDER BY Product_Code__c ASC
+            LIMIT 5000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Country_Product_Economy__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects Country_Product_Economy__c records for a specific Product_Economy__c Id.
+     * @param productEconomyId Parent Product_Economy__c Id.
+     * @return List of Country_Product_Economy__c records.
+     */
+    public static List<Country_Product_Economy__c> selectCountryProductEconomiesByProduct(Id productEconomyId) {
+        if (productEconomyId == null || !Schema.sObjectType.Country_Product_Economy__c.isAccessible()) {
+            return new List<Country_Product_Economy__c>();
+        }
+
+        List<Country_Product_Economy__c> records = [
+            SELECT Id, Name, Country_Economy__c, Product_Economy__c, Product__c, Product_Code__c,
+                   Sold_Domestic__c, Bought_Quantity__c, Thrown_To_Market__c, Actual_Sold_World__c,
+                   Worldmarket_Pool__c, Intermediate_Consumption__c, Total_Supply_Pounds__c,
+                   Actual_Supply_Pounds__c, Actual_Demand_Pounds__c, Import_Value__c,
+                   Export_Value__c, Domestic_Sales_Value__c, GDP_Contribution__c,
+                   Unique_Snapshot_Key__c, Country_Economy__r.Country_Tag__c,
+                   Country_Economy__r.Country__r.Name, Country_Economy__r.Country__r.Flag_URL__c
+            FROM Country_Product_Economy__c
+            WHERE Product_Economy__c = :productEconomyId
+            ORDER BY GDP_Contribution__c DESC
             LIMIT 5000
         ];
 

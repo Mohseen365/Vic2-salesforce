@@ -150,6 +150,20 @@ public with sharing class EconomyAnalysisService {
     }
 
     /**
+     * @description Retrieves country-product junction summary DTOs for a specific product snapshot.
+     * @param productEconomyId Parent Product_Economy__c Id.
+     * @return List of CountryProductSummaryDTO.
+     */
+    public static List<CountryProductSummaryDTO> getCountryProductSummariesByProduct(Id productEconomyId) {
+        List<Country_Product_Economy__c> junctions = EconomyAnalysisSelector.selectCountryProductEconomiesByProduct(productEconomyId);
+        List<CountryProductSummaryDTO> dtos = new List<CountryProductSummaryDTO>();
+        for (Country_Product_Economy__c cpe : junctions) {
+            dtos.add(new CountryProductSummaryDTO(cpe));
+        }
+        return dtos;
+    }
+
+    /**
      * @description Retrieves product summary DTO for a specific commodity in an analysis.
      * @param analysisId Parent analysis Id.
      * @param productEconomyId Target Product_Economy__c Id.
