@@ -367,6 +367,28 @@ public with sharing class EconomyImportService {
         }
 
         update record;
+        publishImportEvent(analysisId, status, diagnosticMessage, null);
+    }
+
+    /**
+     * @description Publishes Economy_Import_Event__e platform event safely without throwing exceptions.
+     */
+    public static void publishImportEvent(Id analysisId, String status, String diagnosticMessage, Integer recordCount) {
+        if (analysisId == null || String.isBlank(status)) {
+            return;
+        }
+
+        try {
+            Economy_Import_Event__e eventRecord = new Economy_Import_Event__e(
+                Analysis_Id__c = String.valueOf(analysisId),
+                Status__c = status,
+                Diagnostic_Message__c = (diagnosticMessage != null) ? diagnosticMessage.left(255) : '',
+                Record_Count__c = (recordCount != null) ? Decimal.valueOf(recordCount) : null
+            );
+            EventBus.publish(eventRecord);
+        } catch (Exception ex) {
+            System.debug(LoggingLevel.WARN, 'Failed to publish Economy_Import_Event__e: ' + ex.getMessage());
+        }
     }
 
     /**

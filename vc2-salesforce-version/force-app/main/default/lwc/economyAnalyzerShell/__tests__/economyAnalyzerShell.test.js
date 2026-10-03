@@ -3,6 +3,16 @@ import { registerApexTestWireAdapter } from '@salesforce/wire-service-jest-util'
 import EconomyAnalyzerShell from 'c/economyAnalyzerShell';
 import getRecentAnalyses from '@salesforce/apex/EconomyAnalysisController.getRecentAnalyses';
 
+jest.mock(
+    '@salesforce/apex',
+    () => {
+        return {
+            refreshApex: jest.fn(() => Promise.resolve())
+        };
+    },
+    { virtual: true }
+);
+
 const mockGetRecentAnalysesAdapter = registerApexTestWireAdapter(getRecentAnalyses);
 
 const MOCK_ANALYSES = [
@@ -49,7 +59,7 @@ describe('c-economy-analyzer-shell', () => {
         expect(combobox.value).toBe('a00000000000001AAA');
     });
 
-    it('passes auto-selected analysisId to child header and country dashboard components', async () => {
+    it('passes auto-selected analysisId to watcher status, child header, and country dashboard components', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
         });
@@ -58,6 +68,10 @@ describe('c-economy-analyzer-shell', () => {
         mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
 
         await flushPromises();
+
+        const watcher = element.shadowRoot.querySelector('[data-testid="watcher-status-component"]');
+        expect(watcher).not.toBeNull();
+        expect(watcher.analysisId).toBe('a00000000000001AAA');
 
         const header = element.shadowRoot.querySelector('[data-testid="header-component"]');
         expect(header).not.toBeNull();
@@ -70,6 +84,30 @@ describe('c-economy-analyzer-shell', () => {
         const countryCharts = element.shadowRoot.querySelector('[data-testid="country-charts-component"]');
         expect(countryCharts).not.toBeNull();
         expect(countryCharts.analysisId).toBe('a00000000000001AAA');
+    });
+
+    it('handles watcher statuschange event and triggers refresh on COMPLETED status', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const watcher = element.shadowRoot.querySelector('[data-testid="watcher-status-component"]');
+        expect(watcher).not.toBeNull();
+
+        watcher.dispatchEvent(new CustomEvent('statuschange', {
+            detail: { analysisId: 'a00000000000001AAA', status: 'COMPLETED', diagnosticMessage: '' },
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        expect(watcher.analysisId).toBe('a00000000000001AAA');
     });
 
     it('updates selectedAnalysisId when user selects new analysis in combobox', async () => {

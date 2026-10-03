@@ -1,4 +1,4 @@
-public class ProvinceSummaryDTO {
+public with sharing class ProvinceSummaryDTO {
     @AuraEnabled public Id provinceEconomyId { get; set; }
     @AuraEnabled public String externalProvinceId { get; set; }
     @AuraEnabled public Decimal population { get; set; }
