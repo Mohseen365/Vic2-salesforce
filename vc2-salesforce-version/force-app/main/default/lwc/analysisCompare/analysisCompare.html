@@ -142,5 +142,14 @@
                 </div>
             </lightning-card>
         </template>
+
+        <!-- Multi-Save Historical Trend Section (Out of Original Audit Scope - Enhancement Track A) -->
+        <div class="slds-m-top_large">
+            <lightning-accordion allow-multiple-sections-open active-section-name="trends">
+                <lightning-accordion-section name="trends" label="📉 Multi-Save Time Series & Historical Trends (3+ Snapshots)">
+                    <c-multi-save-trend data-testid="multi-save-trend-component"></c-multi-save-trend>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </div>
     </div>
 </template>

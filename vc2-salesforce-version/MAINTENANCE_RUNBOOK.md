@@ -2,7 +2,7 @@
 
 **Target Audience:** Salesforce Developers, System Administrators, DevOps Engineers, and Future Maintainers
 **Target Repository:** `vc2-salesforce-version/`
-**Document Version:** 1.0 (Post-Migration Operational Guide)
+**Document Version:** 1.1 (Post-Migration & Enhancement Track A Operational Guide)
 
 ---
 
@@ -13,7 +13,7 @@
 cd vc2-salesforce-version
 npm run test:lwc
 ```
-*Executes all 11 LWC Jest test suites (74 unit tests) covering shell, headers, dashboards, charts, export utils, and compare LWCs.*
+*Executes all 12 LWC Jest test suites (78 unit tests) covering shell, headers, dashboards, charts, export utils, compare, and multi-save trend LWCs.*
 
 ### 1.2 Running Parity Verification Harness
 ```bash
@@ -136,6 +136,17 @@ All charts in `c-economic-charts-container` use pure SVG template rendering with
 2. Verify that total discrepancies remain `0`.
 3. If discrepancies are introduced, update `golden-dataset/formula-notes.md` or correct the formula to preserve domain parity.
 
+### 5.6 Adding a New Trend Chart (Enhancement Track A Extension Template)
+To extend `c-multi-save-trend` with a new time-series trend chart tab:
+1. **Apex DTO:** Update `WorldTrendDTO`, `CountryTrendDTO`, or `ProductTrendDTO` (or create a new trend DTO) to expose the required time-series metrics.
+2. **Apex Selector & Service:** Add or update selector SOQL queries in `EconomyAnalysisSelector.cls` (ensuring `Economy_Analysis__c IN :cappedIds` filter and `capAnalysisIds` 12-item limit) and map fields in `EconomyAnalysisService.cls`.
+3. **LWC JavaScript (`multiSaveTrend.js`):**
+   - Add a getter method (e.g., `get myCustomTrendPoints()`) mapping time-series points to `(cx, cy)` SVG coordinate space.
+   - Use `buildSvgPath(points)` helper to construct the SVG `<path d={...}>` attribute.
+   - Add an accessibility data table getter for screen readers.
+4. **LWC HTML (`multiSaveTrend.html`):** Add a new `<lightning-tab>` containing the `<svg>` visualization and assistive fallback table.
+5. **Jest Testing (`multiSaveTrend.test.js`):** Add test assertions verifying wire adapter mocked data renders the new SVG elements and assistive table.
+
 ---
 
 ## 6. Repository Layout & File Pointers
@@ -143,8 +154,8 @@ All charts in `c-economic-charts-container` use pure SVG template rendering with
 ```
 vc2-salesforce-version/
 ├── force-app/main/default/
-│   ├── classes/                          <-- All 13 Apex Classes and Test Classes
-│   ├── lwc/                              <-- All 11 LWC Bundles
+│   ├── classes/                          <-- All 17 Apex Classes and Test Classes
+│   ├── lwc/                              <-- All 12 LWC Bundles
 │   ├── objects/                          <-- 9 Custom SObject Definitions & Fields
 │   └── permissionsets/                   <-- Economy_Analyzer_User & Admin
 ├── golden-dataset/                       <-- Oracle Reference Dataset (egypt.v2)
@@ -155,7 +166,7 @@ vc2-salesforce-version/
 ├── AUDIT_COMPLIANCE_MATRIX.md            <-- Audit Section A–R Compliance Matrix
 ├── MIGRATION_COMPLETION_REPORT.md        <-- Final Stakeholder Migration Report
 ├── MAINTENANCE_RUNBOOK.md                <-- This Operational Runbook
-├── PARITY_REPORT.md                      <-- Field-Level Parity Tolerance Report
 ├── PERFORMANCE_REPORT.md                 <-- LDV Performance & Governor Limits Report
-└── SECURITY_HARDENING_REPORT.md          <-- Security & FLS Compliance Report
+├── SECURITY_HARDENING_REPORT.md          <-- Security & FLS Compliance Report
+└── enhancement-a-completion-report.md    <-- Enhancement Track A Completion Report
 ```

@@ -78,4 +78,17 @@ private class EconomyAnalysisSelectorTest {
         System.assertEquals(0, res1.size(), 'Null set should return empty map');
         System.assertEquals(0, res2.size(), 'Empty set should return empty map');
     }
+
+    @isTest
+    static void testSelectTrends_NullAndEmpty() {
+        Test.startTest();
+        List<Economy_Analysis__c> resWorld = EconomyAnalysisSelector.selectWorldTrend(null);
+        List<Country_Economy__c> resCountry = EconomyAnalysisSelector.selectCountryTrend(null, null);
+        List<Product_Economy__c> resProduct = EconomyAnalysisSelector.selectProductTrend(null, null);
+        Test.stopTest();
+
+        System.assertEquals(0, resWorld.size(), 'Null analysisIds should return empty list');
+        System.assertEquals(0, resCountry.size(), 'Null analysisIds should return empty list');
+        System.assertEquals(0, resProduct.size(), 'Null analysisIds should return empty list');
+    }
 }

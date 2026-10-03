@@ -123,6 +123,52 @@ public with sharing class EconomyAnalysisController {
     }
 
     /**
+     * @description Retrieves multi-save world trend time series analysis DTO.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param analysisIds List of Economy_Analysis__c Ids (capped at 12).
+     * @return WorldTrendDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static WorldTrendDTO getWorldTrend(List<Id> analysisIds) {
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return new WorldTrendDTO();
+        }
+        return EconomyAnalysisService.getWorldTrend(analysisIds);
+    }
+
+    /**
+     * @description Retrieves multi-save country trend time series analysis DTO.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param countryTags List of country tags to filter by (optional).
+     * @param analysisIds List of Economy_Analysis__c Ids (capped at 12).
+     * @return CountryTrendDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static CountryTrendDTO getCountryTrend(List<String> countryTags, List<Id> analysisIds) {
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return new CountryTrendDTO();
+        }
+        Set<String> tagSet = (countryTags != null) ? new Set<String>(countryTags) : new Set<String>();
+        return EconomyAnalysisService.getCountryTrend(tagSet, analysisIds);
+    }
+
+    /**
+     * @description Retrieves multi-save product trend time series analysis DTO.
+     * Out of Original Audit Scope — Enhancement Track A.
+     * @param productCodes List of product codes to filter by (optional).
+     * @param analysisIds List of Economy_Analysis__c Ids (capped at 12).
+     * @return ProductTrendDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static ProductTrendDTO getProductTrend(List<String> productCodes, List<Id> analysisIds) {
+        if (analysisIds == null || analysisIds.isEmpty()) {
+            return new ProductTrendDTO();
+        }
+        Set<String> codeSet = (productCodes != null) ? new Set<String>(productCodes) : new Set<String>();
+        return EconomyAnalysisService.getProductTrend(codeSet, analysisIds);
+    }
+
+    /**
      * @description Generates a CSV string for the specified analysis and scope.
      * Used as Apex fallback for high row-count datasets or server-side CSV generation.
      * @param analysisId Target Economy_Analysis__c Id.
