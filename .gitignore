@@ -1,2 +1,4 @@
 .sf/
 .kilo/
+node_modules/
+**/node_modules/

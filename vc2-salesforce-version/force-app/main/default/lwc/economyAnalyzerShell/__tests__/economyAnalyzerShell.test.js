@@ -66,6 +66,10 @@ describe('c-economy-analyzer-shell', () => {
         const countryDash = element.shadowRoot.querySelector('[data-testid="country-dashboard-component"]');
         expect(countryDash).not.toBeNull();
         expect(countryDash.analysisId).toBe('a00000000000001AAA');
+
+        const countryCharts = element.shadowRoot.querySelector('[data-testid="country-charts-component"]');
+        expect(countryCharts).not.toBeNull();
+        expect(countryCharts.analysisId).toBe('a00000000000001AAA');
     });
 
     it('updates selectedAnalysisId when user selects new analysis in combobox', async () => {
@@ -89,7 +93,7 @@ describe('c-economy-analyzer-shell', () => {
         expect(header.analysisId).toBe('a00000000000002AAA');
     });
 
-    it('renders all four workspace tabs and product-list-component in product market tab by default', async () => {
+    it('renders all workspace tabs including dedicated Analytics tab', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
         });
@@ -102,15 +106,18 @@ describe('c-economy-analyzer-shell', () => {
         const tabGlobal = element.shadowRoot.querySelector('[data-testid="tab-global"]');
         const tabCountry = element.shadowRoot.querySelector('[data-testid="tab-country"]');
         const tabProduct = element.shadowRoot.querySelector('[data-testid="tab-product"]');
+        const tabAnalytics = element.shadowRoot.querySelector('[data-testid="tab-analytics"]');
         const tabCompare = element.shadowRoot.querySelector('[data-testid="tab-compare"]');
 
         expect(tabGlobal).not.toBeNull();
         expect(tabCountry).not.toBeNull();
         expect(tabProduct).not.toBeNull();
+        expect(tabAnalytics).not.toBeNull();
         expect(tabCompare).not.toBeNull();
 
-        const productListComp = element.shadowRoot.querySelector('[data-testid="product-list-component"]');
-        expect(productListComp).not.toBeNull();
+        const dedicatedCharts = element.shadowRoot.querySelector('[data-testid="dedicated-charts-component"]');
+        expect(dedicatedCharts).not.toBeNull();
+        expect(dedicatedCharts.analysisId).toBe('a00000000000001AAA');
     });
 
     it('swaps from product list to product dashboard on productselect event and back on back event', async () => {
