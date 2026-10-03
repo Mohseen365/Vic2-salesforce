@@ -1,0 +1,2571 @@
+{
+  "dataset_version": "phase-0-egypt-v1",
+  "source_save": "egypt.v2",
+  "records": [
+    {
+      "entity": "Country_Economy__c",
+      "id": "FRM",
+      "metric": "GDP__c",
+      "expected_value": 24.594963,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "FRM",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 79.69852,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NZL",
+      "metric": "GDP__c",
+      "expected_value": 17.379854,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NZL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 4.5186605,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PEU",
+      "metric": "GDP__c",
+      "expected_value": 185.45108,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PEU",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.7830925,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NAS",
+      "metric": "GDP__c",
+      "expected_value": 44.13141,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NAS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 14.281455,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CLM",
+      "metric": "GDP__c",
+      "expected_value": 238.03603,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CLM",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 15.337689,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "OLD",
+      "metric": "GDP__c",
+      "expected_value": 150.04112,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "OLD",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 48.419106,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BRZ",
+      "metric": "GDP__c",
+      "expected_value": 1183.5093,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BRZ",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 14.73051,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "OMA",
+      "metric": "GDP__c",
+      "expected_value": 1.6188754,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "OMA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.238013,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HOL",
+      "metric": "GDP__c",
+      "expected_value": 5.8076363,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HOL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 2.7096956,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MYS",
+      "metric": "GDP__c",
+      "expected_value": 215.73416,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MYS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 14.673119,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KUT",
+      "metric": "GDP__c",
+      "expected_value": 8.60409,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KUT",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 4.235964,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "POR",
+      "metric": "GDP__c",
+      "expected_value": 616.6922,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "POR",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 14.532755,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "WUR",
+      "metric": "GDP__c",
+      "expected_value": 550.62006,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "WUR",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 47.240654,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ARG",
+      "metric": "GDP__c",
+      "expected_value": 57.864883,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ARG",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 4.865441,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MAK",
+      "metric": "GDP__c",
+      "expected_value": 2.3896854,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MAK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 2.4643044,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TOT",
+      "metric": "GDP__c",
+      "expected_value": 142429.83,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TOT",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 12.161445,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "WEI",
+      "metric": "GDP__c",
+      "expected_value": 116.71265,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "WEI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 43.005825,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D01",
+      "metric": "GDP__c",
+      "expected_value": 54.82872,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D01",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.789809,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D03",
+      "metric": "GDP__c",
+      "expected_value": 66.84687,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D03",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.250785,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D02",
+      "metric": "GDP__c",
+      "expected_value": 231.56528,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D02",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.436171,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D05",
+      "metric": "GDP__c",
+      "expected_value": 52.42846,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D05",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 13.70349,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D07",
+      "metric": "GDP__c",
+      "expected_value": 21.462618,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D07",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.7465963,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D06",
+      "metric": "GDP__c",
+      "expected_value": 92.617714,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "D06",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 9.82477,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "COB",
+      "metric": "GDP__c",
+      "expected_value": 138.79367,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "COB",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 40.317932,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "URU",
+      "metric": "GDP__c",
+      "expected_value": 7.587331,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "URU",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.425741,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BUK",
+      "metric": "GDP__c",
+      "expected_value": 84.74564,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BUK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 2.2394457,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BUN",
+      "metric": "GDP__c",
+      "expected_value": 189.22057,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BUN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.669908,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BUR",
+      "metric": "GDP__c",
+      "expected_value": 361.89758,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BUR",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 7.539137,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SWE",
+      "metric": "GDP__c",
+      "expected_value": 1989.6016,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SWE",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 40.43386,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "COL",
+      "metric": "GDP__c",
+      "expected_value": 6.658224,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "COL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.13924,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AST",
+      "metric": "GDP__c",
+      "expected_value": 185.35487,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AST",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 20.578157,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "USA",
+      "metric": "GDP__c",
+      "expected_value": 3849.1746,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "USA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 27.806177,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LIB",
+      "metric": "GDP__c",
+      "expected_value": 14.050238,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LIB",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.3740544,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SWI",
+      "metric": "GDP__c",
+      "expected_value": 474.07947,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SWI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 31.21441,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BEL",
+      "metric": "GDP__c",
+      "expected_value": 1420.5421,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BEL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 42.6127,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TIB",
+      "metric": "GDP__c",
+      "expected_value": 167.14561,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TIB",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 6.1724634,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "DAI",
+      "metric": "GDP__c",
+      "expected_value": 217.66006,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "DAI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.3823104,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SOK",
+      "metric": "GDP__c",
+      "expected_value": 23.044485,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SOK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.3857043,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BER",
+      "metric": "GDP__c",
+      "expected_value": 369.1978,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BER",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.364617,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KOR",
+      "metric": "GDP__c",
+      "expected_value": 780.3136,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KOR",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 7.502949,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HAI",
+      "metric": "GDP__c",
+      "expected_value": 26.358833,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HAI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.7379298,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "RUS",
+      "metric": "GDP__c",
+      "expected_value": 10215.959,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "RUS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.89291,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "UCA",
+      "metric": "GDP__c",
+      "expected_value": 75.29183,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "UCA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 7.0513024,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LIP",
+      "metric": "GDP__c",
+      "expected_value": 4.895148,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LIP",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 15.412934,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MCK",
+      "metric": "GDP__c",
+      "expected_value": 553.5033,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MCK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 4.9020767,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HAN",
+      "metric": "GDP__c",
+      "expected_value": 538.9864,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HAN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 24.868795,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HAM",
+      "metric": "GDP__c",
+      "expected_value": 82.01368,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HAM",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 70.66977,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ECU",
+      "metric": "GDP__c",
+      "expected_value": 91.17344,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ECU",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 11.559085,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ATJ",
+      "metric": "GDP__c",
+      "expected_value": 16.967957,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ATJ",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.8454745,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ITA",
+      "metric": "GDP__c",
+      "expected_value": 3746.7656,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ITA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 23.873186,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NEP",
+      "metric": "GDP__c",
+      "expected_value": 47.615192,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NEP",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.30955,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ALD",
+      "metric": "GDP__c",
+      "expected_value": 125.550186,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ALD",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 9.6639805,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "GXI",
+      "metric": "GDP__c",
+      "expected_value": 5059.905,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "GXI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.2757826,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "XIN",
+      "metric": "GDP__c",
+      "expected_value": 74.32448,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "XIN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.9529686,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PAN",
+      "metric": "GDP__c",
+      "expected_value": 1026.764,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PAN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 9.228059,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NET",
+      "metric": "GDP__c",
+      "expected_value": 1437.9001,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NET",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.499499,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TRA",
+      "metric": "GDP__c",
+      "expected_value": 85.81816,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TRA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 6.9268746,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PRG",
+      "metric": "GDP__c",
+      "expected_value": 34.056934,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PRG",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.015335,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CHI",
+      "metric": "GDP__c",
+      "expected_value": 12691.274,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CHI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.9358945,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SPA",
+      "metric": "GDP__c",
+      "expected_value": 2580.0942,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SPA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 12.705461,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CHL",
+      "metric": "GDP__c",
+      "expected_value": 205.87958,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CHL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 16.691765,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ELS",
+      "metric": "GDP__c",
+      "expected_value": 42.2729,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ELS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 16.309492,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KHI",
+      "metric": "GDP__c",
+      "expected_value": 13.986618,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KHI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 2.0603583,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TRN",
+      "metric": "GDP__c",
+      "expected_value": 46.695927,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TRN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.529933,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PRU",
+      "metric": "GDP__c",
+      "expected_value": 5973.621,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PRU",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 28.183393,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BOL",
+      "metric": "GDP__c",
+      "expected_value": 26.40453,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BOL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 16.777563,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "XBI",
+      "metric": "GDP__c",
+      "expected_value": 2063.0208,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "XBI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 6.6863337,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AUS",
+      "metric": "GDP__c",
+      "expected_value": 5708.517,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AUS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 16.131989,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "VNZ",
+      "metric": "GDP__c",
+      "expected_value": 141.35107,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "VNZ",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 14.7341385,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SIA",
+      "metric": "GDP__c",
+      "expected_value": 295.56805,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SIA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.566416,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEC",
+      "metric": "GDP__c",
+      "expected_value": 68.92675,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEC",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 33.297302,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CAM",
+      "metric": "GDP__c",
+      "expected_value": 0.31347942,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CAM",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 0.048639167,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEI",
+      "metric": "GDP__c",
+      "expected_value": 109.976944,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 45.26247,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ROM",
+      "metric": "GDP__c",
+      "expected_value": 819.0619,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ROM",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 14.052898,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SIK",
+      "metric": "GDP__c",
+      "expected_value": 0.5473498,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SIK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.0421741,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KAL",
+      "metric": "GDP__c",
+      "expected_value": 2.8918853,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KAL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.1026788,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SIN",
+      "metric": "GDP__c",
+      "expected_value": 33.66035,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SIN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 2.1810634,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "GRE",
+      "metric": "GDP__c",
+      "expected_value": 207.60855,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "GRE",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 19.252321,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KRA",
+      "metric": "GDP__c",
+      "expected_value": 24.326744,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "KRA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 17.96286,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ANH",
+      "metric": "GDP__c",
+      "expected_value": 21.331593,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ANH",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 17.741436,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "IND",
+      "metric": "GDP__c",
+      "expected_value": 75.10115,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "IND",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.062596,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEW",
+      "metric": "GDP__c",
+      "expected_value": 39.012287,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEW",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.3930337,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ENG",
+      "metric": "GDP__c",
+      "expected_value": 15961.109,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ENG",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 17.80257,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEX",
+      "metric": "GDP__c",
+      "expected_value": 845.95276,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MEX",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.800513,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AFG",
+      "metric": "GDP__c",
+      "expected_value": 64.09825,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AFG",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.4355328,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "WAL",
+      "metric": "GDP__c",
+      "expected_value": 98.25676,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "WAL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 17.615685,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ORI",
+      "metric": "GDP__c",
+      "expected_value": 40.896076,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "ORI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 6.8212423,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AWA",
+      "metric": "GDP__c",
+      "expected_value": 379.47604,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "AWA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 7.7630854,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SAX",
+      "metric": "GDP__c",
+      "expected_value": 552.69934,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "SAX",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 51.95715,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BHU",
+      "metric": "GDP__c",
+      "expected_value": 1.0235931,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BHU",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 0.9850197,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HDJ",
+      "metric": "GDP__c",
+      "expected_value": 4.716696,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HDJ",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.0224701,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CSA",
+      "metric": "GDP__c",
+      "expected_value": 552.61505,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "CSA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 7.624191,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "YNN",
+      "metric": "GDP__c",
+      "expected_value": 1835.734,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "YNN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.129935,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LUB",
+      "metric": "GDP__c",
+      "expected_value": 12.674718,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LUB",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 53.210403,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LUA",
+      "metric": "GDP__c",
+      "expected_value": 12.252981,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LUA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 4.0547004,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BIK",
+      "metric": "GDP__c",
+      "expected_value": 100.55425,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BIK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.087544,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAD",
+      "metric": "GDP__c",
+      "expected_value": 246.74356,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAD",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 32.36151,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MOL",
+      "metric": "GDP__c",
+      "expected_value": 71.468216,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MOL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 9.020302,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TUN",
+      "metric": "GDP__c",
+      "expected_value": 25.314013,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TUN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.794928,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "DEN",
+      "metric": "GDP__c",
+      "expected_value": 164.20956,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "DEN",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 8.925112,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MON",
+      "metric": "GDP__c",
+      "expected_value": 1.1442031,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MON",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 4.033429,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAL",
+      "metric": "GDP__c",
+      "expected_value": 14.56851,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 1.7809479,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LUX",
+      "metric": "GDP__c",
+      "expected_value": 31.774794,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "LUX",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 26.328047,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HEK",
+      "metric": "GDP__c",
+      "expected_value": 48.84129,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HEK",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 9.800404,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TUR",
+      "metric": "GDP__c",
+      "expected_value": 22681.332,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "TUR",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 11.942115,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BRA",
+      "metric": "GDP__c",
+      "expected_value": 41.525932,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BRA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 20.38823,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MGL",
+      "metric": "GDP__c",
+      "expected_value": 171.58437,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "MGL",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 6.7819476,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "JAI",
+      "metric": "GDP__c",
+      "expected_value": 228.45338,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "JAI",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 16.059044,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAS",
+      "metric": "GDP__c",
+      "expected_value": 10.342901,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 2.3774817,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BRE",
+      "metric": "GDP__c",
+      "expected_value": 4.421775,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BRE",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 10.876069,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "FRA",
+      "metric": "GDP__c",
+      "expected_value": 11182.592,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "FRA",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 27.47965,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NAG",
+      "metric": "GDP__c",
+      "expected_value": 153.95094,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "NAG",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 5.6716714,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAV",
+      "metric": "GDP__c",
+      "expected_value": 1218.1786,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "BAV",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 35.971397,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HES",
+      "metric": "GDP__c",
+      "expected_value": 669.53674,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HES",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 66.52604,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "JAP",
+      "metric": "GDP__c",
+      "expected_value": 3741.959,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "JAP",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 12.353602,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PER",
+      "metric": "GDP__c",
+      "expected_value": 1196.2155,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "PER",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 17.060259,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "JAS",
+      "metric": "GDP__c",
+      "expected_value": 12.4778805,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "JAS",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.2725947,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HND",
+      "metric": "GDP__c",
+      "expected_value": 8.871661,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.innerCalculations()"
+    },
+    {
+      "entity": "Country_Economy__c",
+      "id": "HND",
+      "metric": "GDP_Per_Capita__c",
+      "expected_value": 3.9915688,
+      "tolerance": 1.0E-4,
+      "source_class": "Country",
+      "source_method": "Country.getGdpPerCapita()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "wool",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 101.94944,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "fuel",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 1.4899484,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "small_arms",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 110.47882,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "cotton",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 84.73625,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "explosives",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 93.340225,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "tropical_wood",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 80.22478,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "radio",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.0,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "opium",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 97.87933,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "tea",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 65.53947,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "aeroplanes",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.0,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "furniture",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 92.77517,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "machine_parts",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 68.3565,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "luxury_clothes",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 41.412674,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "rubber",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 7.373038,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "tobacco",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 89.48441,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "grain",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.275375,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "timber",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 89.03985,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "artillery",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 110.0556,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "glass",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 84.861664,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "electric_gear",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.0,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "barrels",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.0,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "cattle",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 101.73844,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "fabric",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 77.81577,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "regular_clothes",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 94.5345,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "coal",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 75.560135,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "precious_metal",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 22777.941,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "wine",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 76.71107,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "steel",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 48.080612,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "fruit",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 101.55703,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "luxury_furniture",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 70.26589,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "telephones",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.0,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "liquor",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 67.218216,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "oil",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 7.284998,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "paper",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.66519,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "steamer_convoy",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 98.88952,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "clipper_convoy",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 97.79584,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "ammunition",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 86.5204,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "silk",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 62.068756,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "lumber",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 91.41956,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "sulphur",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 71.31079,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "automobiles",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.0,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "fertilizer",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 83.549225,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "dye",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 100.32984,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "canned_food",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 120.58637,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "cement",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 97.95322,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "coffee",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 84.842445,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "fish",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 98.960236,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "iron",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 43.73626,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    },
+    {
+      "entity": "Product_Economy__c",
+      "id": "total_pounds",
+      "metric": "Overproduction_Percent__c",
+      "expected_value": 78.00095,
+      "tolerance": 1.0E-4,
+      "source_class": "Product",
+      "source_method": "Product.getOverproduced()"
+    }
+  ]
+}

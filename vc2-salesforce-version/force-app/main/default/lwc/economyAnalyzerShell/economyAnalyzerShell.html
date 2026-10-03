@@ -1,0 +1,138 @@
+<template>
+    <div class="shell-container slds-p-around_medium">
+        <!-- Application Title & Analysis Switcher Toolbar -->
+        <div class="slds-page-header slds-m-bottom_medium shell-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:chart" size="medium"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title="Victoria 2 Economy Analyzer">
+                                            Victoria 2 Economy Analyzer
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                            <p class="slds-page-header__name-meta">Salesforce Enterprise Conversion</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                        <template if:true={selectedAnalysisId}>
+                            <div class="slds-m-right_medium">
+                                <c-save-game-watcher-status
+                                    analysis-id={selectedAnalysisId}
+                                    onstatuschange={handleWatcherStatusChange}
+                                    data-testid="watcher-status-component">
+                                </c-save-game-watcher-status>
+                            </div>
+                        </template>
+                        <template if:true={analysisOptions.length}>
+                            <lightning-combobox
+                                name="analysisSelector"
+                                label="Select Analysis"
+                                value={selectedAnalysisId}
+                                placeholder="Choose save file..."
+                                options={analysisOptions}
+                                onchange={handleAnalysisChange}
+                                class="analysis-combobox"
+                                data-testid="analysis-combobox">
+                            </lightning-combobox>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Header Banner -->
+        <div class="slds-m-bottom_medium" onopenexport={handleOpenExport}>
+            <c-economy-analysis-header
+                analysis-id={selectedAnalysisId}
+                data-testid="header-component">
+            </c-economy-analysis-header>
+        </div>
+
+        <!-- Export Modal -->
+        <c-economic-export-modal
+            analysis-id={selectedAnalysisId}
+            data-testid="export-modal-component">
+        </c-economic-export-modal>
+
+        <!-- Main Workspace Tabset -->
+        <lightning-tabset variant="scoped" active-tab-value="country-explorer" data-testid="tabset" onopenexport={handleOpenExport}>
+            <!-- Global Overview View Tab (Phase 11) -->
+            <lightning-tab label="🌐 Global Overview" value="global-overview" data-testid="tab-global">
+                <c-global-economy-dashboard
+                    analysis-id={selectedAnalysisId}
+                    oncountryselect={handleGlobalCountrySelect}
+                    onproductselect={handleGlobalProductSelect}
+                    data-testid="global-economy-dashboard-component">
+                </c-global-economy-dashboard>
+            </lightning-tab>
+
+            <!-- Country Explorer View Tab (Phase 5) -->
+            <lightning-tab label="🏛️ Country Explorer" value="country-explorer" data-testid="tab-country">
+                <c-country-dashboard
+                    analysis-id={selectedAnalysisId}
+                    selected-country-economy-id={selectedCountryEconomyId}
+                    data-testid="country-dashboard-component">
+                </c-country-dashboard>
+                <div class="slds-m-top_medium">
+                    <c-economic-charts-container
+                        analysis-id={selectedAnalysisId}
+                        data-testid="country-charts-component">
+                    </c-economic-charts-container>
+                </div>
+            </lightning-tab>
+
+            <!-- Product Market Tab (Phase 6) -->
+            <lightning-tab label="📦 Product Market" value="product-market" data-testid="tab-product">
+                <template if:true={selectedProductEconomyId}>
+                    <c-product-dashboard
+                        analysis-id={selectedAnalysisId}
+                        product-economy-id={selectedProductEconomyId}
+                        onback={handleProductBack}
+                        data-testid="product-dashboard-component">
+                    </c-product-dashboard>
+                </template>
+                <template if:false={selectedProductEconomyId}>
+                    <c-product-list-view
+                        analysis-id={selectedAnalysisId}
+                        onproductselect={handleProductSelect}
+                        data-testid="product-list-component">
+                    </c-product-list-view>
+                </template>
+                <div class="slds-m-top_medium">
+                    <c-economic-charts-container
+                        analysis-id={selectedAnalysisId}
+                        product-economy-id={selectedProductEconomyId}
+                        data-testid="product-charts-component">
+                    </c-economic-charts-container>
+                </div>
+            </lightning-tab>
+
+            <!-- Analytics & Visualizations Tab (Phase 7 Dedicated View) -->
+            <lightning-tab label="📈 Analytics & Visualizations" value="analytics" data-testid="tab-analytics">
+                <c-economic-charts-container
+                    analysis-id={selectedAnalysisId}
+                    data-testid="dedicated-charts-component">
+                </c-economic-charts-container>
+            </lightning-tab>
+
+            <!-- Compare Saves Tab (Phase 11) -->
+            <lightning-tab label="📊 Compare Saves" value="compare-saves" data-testid="tab-compare">
+                <c-analysis-compare
+                    initial-base-analysis-id={selectedAnalysisId}
+                    data-testid="analysis-compare-component">
+                </c-analysis-compare>
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

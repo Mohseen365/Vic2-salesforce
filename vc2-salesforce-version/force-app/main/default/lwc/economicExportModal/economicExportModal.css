@@ -1,0 +1,7 @@
+.preview-card {
+    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+}
+
+.slds-modal__container {
+    max-width: 32rem;
+}

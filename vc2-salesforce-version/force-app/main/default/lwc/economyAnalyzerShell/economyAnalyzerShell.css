@@ -1,0 +1,18 @@
+.shell-container {
+    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    min-height: 100vh;
+}
+
+.shell-page-header {
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+}
+
+.analysis-combobox {
+    min-width: 280px;
+}
+
+.tab-placeholder {
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+}

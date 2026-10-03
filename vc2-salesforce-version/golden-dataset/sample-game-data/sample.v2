@@ -1,0 +1,246 @@
+date="1836.1.1"
+player="ENG"
+start_date="1836.1.1"
+
+worldmarket={
+    price_pool={
+        grain=0.8
+        iron=2.5
+        precious_metal=10.0
+        small_arms=12.0
+    }
+    price_change={
+        grain=0.05
+        iron=-0.1
+        precious_metal=0.0
+        small_arms=0.2
+    }
+    demand={
+        grain=1000.0
+        iron=500.0
+        precious_metal=100.0
+        small_arms=200.0
+    }
+    real_demand={
+        grain=900.0
+        iron=450.0
+        precious_metal=80.0
+        small_arms=180.0
+    }
+    supply_pool={
+        grain=950.0
+        iron=500.0
+        precious_metal=60.0
+        small_arms=150.0
+    }
+    actual_sold={
+        grain=600.0
+        iron=300.0
+        precious_metal=0.0
+        small_arms=100.0
+    }
+    actual_sold_world={
+        grain=300.0
+        iron=150.0
+        precious_metal=0.0
+        small_arms=80.0
+    }
+    worldmarket_pool={
+        grain=350.0
+        iron=200.0
+        precious_metal=0.0
+        small_arms=100.0
+    }
+}
+
+ENG={
+    state={
+        state_buildings={
+            employment={
+                employees={
+                    building={
+                        count=5000
+                    }
+                }
+            }
+            stockpile={
+                iron=20.0
+            }
+            pops_paychecks=10000.0
+        }
+    }
+    saved_country_supply={
+        grain=400.0
+        iron=250.0
+        precious_metal=40.0
+        small_arms=80.0
+    }
+    domestic_demand_pool={
+        grain=300.0
+        iron=150.0
+        precious_metal=20.0
+        small_arms=40.0
+    }
+    actual_sold_domestic={
+        grain=300.0
+        iron=150.0
+        precious_metal=0.0
+        small_arms=40.0
+    }
+}
+
+USA={
+    state={
+        state_buildings={
+            employment={
+                employees={
+                    building={
+                        count=3000
+                    }
+                }
+            }
+            stockpile={
+                iron=10.0
+            }
+            pops_paychecks=6000.0
+        }
+    }
+    saved_country_supply={
+        grain=350.0
+        iron=150.0
+        precious_metal=20.0
+        small_arms=40.0
+    }
+    domestic_demand_pool={
+        grain=400.0
+        iron=200.0
+        precious_metal=30.0
+        small_arms=80.0
+    }
+    actual_sold_domestic={
+        grain=250.0
+        iron=120.0
+        precious_metal=0.0
+        small_arms=40.0
+    }
+}
+
+FRA={
+    state={
+        state_buildings={
+            employment={
+                employees={
+                    building={
+                        count=2000
+                    }
+                }
+            }
+            stockpile={
+                iron=5.0
+            }
+            pops_paychecks=4000.0
+        }
+    }
+    saved_country_supply={
+        grain=200.0
+        iron=100.0
+        precious_metal=0.0
+        small_arms=30.0
+    }
+    domestic_demand_pool={
+        grain=200.0
+        iron=100.0
+        precious_metal=10.0
+        small_arms=20.0
+    }
+    actual_sold_domestic={
+        grain=150.0
+        iron=80.0
+        precious_metal=0.0
+        small_arms=20.0
+    }
+}
+
+1={
+    owner="ENG"
+    farmers={
+        size=100000
+    }
+    craftsmen={
+        size=50000
+    }
+    clerks={
+        size=10000
+    }
+    rgo={
+        goods_type="grain"
+        last_income=50000.0
+        employment={
+            employees={
+                pop={
+                    count=40000
+                }
+            }
+        }
+    }
+}
+
+2={
+    owner="ENG"
+    labourers={
+        size=60000
+    }
+    rgo={
+        goods_type="precious_metal"
+        last_income=30000.0
+        employment={
+            employees={
+                pop={
+                    count=25000
+                }
+            }
+        }
+    }
+}
+
+3={
+    owner="USA"
+    farmers={
+        size=120000
+    }
+    craftsmen={
+        size=30000
+    }
+    rgo={
+        goods_type="grain"
+        last_income=60000.0
+        employment={
+            employees={
+                pop={
+                    count=50000
+                }
+            }
+        }
+    }
+}
+
+4={
+    owner="FRA"
+    farmers={
+        size=80000
+    }
+    labourers={
+        size=40000
+    }
+    rgo={
+        goods_type="grain"
+        last_income=35000.0
+        employment={
+            employees={
+                pop={
+                    count=35000
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,155 @@
+<template>
+    <div class="analysis-compare-container">
+        <!-- Analysis Selection Toolbar -->
+        <lightning-card title="📊 Analysis Snapshot Comparison" icon-name="standard:compare" class="slds-card_boundary slds-m-bottom_medium">
+            <div class="slds-p-horizontal_medium slds-p-vertical_small">
+                <div class="slds-grid slds-wrap slds-gutters slds-grid_vertical-align-center">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                        <lightning-combobox
+                            name="baseAnalysisCombobox"
+                            label="Base Analysis (Snapshot A)"
+                            value={baseAnalysisId}
+                            placeholder="Select base save file..."
+                            options={recentAnalysisOptions}
+                            onchange={handleBaseAnalysisChange}
+                            data-testid="base-combobox">
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_small">
+                        <lightning-combobox
+                            name="compareAnalysisCombobox"
+                            label="Comparison Analysis (Snapshot B)"
+                            value={compareAnalysisId}
+                            placeholder="Select comparison save file..."
+                            options={recentAnalysisOptions}
+                            onchange={handleCompareAnalysisChange}
+                            data-testid="compare-combobox">
+                        </lightning-combobox>
+                    </div>
+                </div>
+
+                <!-- Identical Selection Inline Guard -->
+                <template if:true={isIdenticalSelection}>
+                    <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-top_small" role="alert">
+                        <span class="slds-assistive-text">warning</span>
+                        <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        <h2>Base Analysis and Comparison Analysis must be different save files to compute delta metrics.</h2>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+
+        <!-- Stale / Pending Analysis Warning Banner -->
+        <template if:true={isStaleOrPending}>
+            <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert" data-testid="stale-warning">
+                <span class="slds-assistive-text">warning</span>
+                <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                <h2>Selected save file(s) are currently processing or updating. Comparison cannot be computed until import is complete.</h2>
+            </div>
+        </template>
+
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-spinner alternative-text="Computing Comparison Deltas..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error State -->
+        <template if:true={errorMessage}>
+            <lightning-card title="Comparison Error" icon-name="utility:error" class="slds-card_boundary">
+                <div class="slds-p-around_medium slds-text-color_error">
+                    <p>{errorMessage}</p>
+                </div>
+            </lightning-card>
+        </template>
+
+        <!-- Comparison Summary & Deltas -->
+        <template if:true={hasComparisonData}>
+            <!-- World Summary Block -->
+            <div class="slds-grid slds-wrap slds-gutters slds-m-bottom_medium" data-testid="world-summary-block">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_small">
+                    <div class="slds-box slds-box_x-small slds-text-align_center kpi-card">
+                        <p class="slds-text-title_caps slds-text-color_weak">Base World GDP</p>
+                        <p class="slds-text-heading_medium slds-truncate" title={formattedBaseGdp}>{formattedBaseGdp}</p>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_small">
+                    <div class="slds-box slds-box_x-small slds-text-align_center kpi-card">
+                        <p class="slds-text-title_caps slds-text-color_weak">Compare World GDP</p>
+                        <p class="slds-text-heading_medium slds-truncate" title={formattedCompareGdp}>{formattedCompareGdp}</p>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_small">
+                    <div class="slds-box slds-box_x-small slds-text-align_center kpi-card">
+                        <p class="slds-text-title_caps slds-text-color_weak">World GDP Growth %</p>
+                        <div class="slds-m-top_xx-small">
+                            <span class={growthBadgeClass} title={formattedGdpGrowth}>
+                                {formattedGdpGrowth}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Country Deltas Table -->
+            <div class="slds-m-bottom_medium">
+                <lightning-card title="🏛️ Country Economic Deltas" icon-name="standard:address" class="slds-card_boundary">
+                    <div style="height: 380px;" data-testid="country-deltas-table">
+                        <lightning-datatable
+                            key-field="countryTag"
+                            data={countryDeltaRows}
+                            columns={countryDeltaColumns}
+                            hide-checkbox-column
+                            default-sort-direction="desc"
+                            sorted-by={countrySortedBy}
+                            sorted-direction={countrySortDirection}
+                            onsort={handleCountrySort}>
+                        </lightning-datatable>
+                    </div>
+                </lightning-card>
+            </div>
+
+            <!-- Product Deltas Table -->
+            <div class="slds-m-bottom_medium">
+                <lightning-card title="📦 Commodity Market Deltas" icon-name="standard:product" class="slds-card_boundary">
+                    <div style="height: 380px;" data-testid="product-deltas-table">
+                        <lightning-datatable
+                            key-field="productCode"
+                            data={productDeltaRows}
+                            columns={productDeltaColumns}
+                            hide-checkbox-column
+                            default-sort-direction="desc"
+                            sorted-by={productSortedBy}
+                            sorted-direction={productSortDirection}
+                            onsort={handleProductSort}>
+                        </lightning-datatable>
+                    </div>
+                </lightning-card>
+            </div>
+        </template>
+
+        <!-- Empty Prompt State -->
+        <template if:true={isEmptyPrompt}>
+            <lightning-card title="Select Analyses to Compare" icon-name="custom:custom90" class="slds-card_boundary">
+                <div class="slds-p-around_large slds-text-align_center">
+                    <p class="slds-text-heading_small slds-text-color_weak">
+                        Please select both a Base Analysis and a Comparison Analysis in the dropdowns above to compare save snapshots.
+                    </p>
+                </div>
+            </lightning-card>
+        </template>
+
+        <!-- Multi-Save Historical Trend Section (Out of Original Audit Scope - Enhancement Track A) -->
+        <div class="slds-m-top_large">
+            <lightning-accordion allow-multiple-sections-open active-section-name="trends">
+                <lightning-accordion-section name="trends" label="📉 Multi-Save Time Series & Historical Trends (3+ Snapshots)">
+                    <c-multi-save-trend data-testid="multi-save-trend-component"></c-multi-save-trend>
+                </lightning-accordion-section>
+            </lightning-accordion>
+        </div>
+    </div>
+</template>

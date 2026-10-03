@@ -1,0 +1,56 @@
+military_goods = {
+    ammunition = { cost = 18.0 color = { 180 50 50 } }
+    small_arms = { cost = 30.0 color = { 200 50 50 } }
+    artillery = { cost = 80.0 color = { 220 50 50 } }
+    canned_food = { cost = 14.0 color = { 160 50 50 } }
+    barrels = { cost = 100.0 color = { 240 50 50 } }
+    aeroplanes = { cost = 110.0 color = { 250 50 50 } }
+}
+raw_material_goods = {
+    cotton = { cost = 2.0 color = { 240 240 200 } }
+    dye = { cost = 12.0 color = { 50 50 200 } }
+    wool = { cost = 0.7 color = { 220 220 220 } }
+    silk = { cost = 12.0 color = { 250 200 250 } }
+    coal = { cost = 2.5 color = { 50 50 50 } }
+    sulphur = { cost = 7.0 color = { 220 220 50 } }
+    iron = { cost = 5.0 color = { 120 120 120 } }
+    timber = { cost = 1.0 color = { 150 100 50 } }
+    tropical_wood = { cost = 6.0 color = { 120 80 40 } }
+    rubber = { cost = 25.0 color = { 80 80 80 } }
+    oil = { cost = 40.0 color = { 30 30 30 } }
+    precious_metal = { cost = 10.0 color = { 255 215 0 } }
+    cattle = { cost = 2.0 color = { 180 120 60 } }
+    fish = { cost = 1.2 color = { 100 150 200 } }
+    fruit = { cost = 1.5 color = { 255 150 50 } }
+    grain = { cost = 1.0 color = { 255 200 0 } }
+    tobacco = { cost = 3.0 color = { 140 90 40 } }
+    tea = { cost = 3.5 color = { 80 140 40 } }
+    coffee = { cost = 3.5 color = { 100 60 30 } }
+    opium = { cost = 8.0 color = { 180 100 180 } }
+}
+industrial_goods = {
+    steel = { cost = 6.0 color = { 100 100 120 } }
+    cement = { cost = 16.0 color = { 180 180 180 } }
+    machine_parts = { cost = 70.0 color = { 140 140 160 } }
+    glass = { cost = 3.0 color = { 200 240 255 } }
+    fuel = { cost = 28.0 color = { 60 60 80 } }
+    fertilizer = { cost = 10.0 color = { 160 200 100 } }
+    explosives = { cost = 20.0 color = { 220 100 50 } }
+    clipper_convoy = { cost = 40.0 color = { 160 120 80 } }
+    steamer_convoy = { cost = 70.0 color = { 100 120 160 } }
+    electric_gear = { cost = 16.0 color = { 255 200 50 } }
+    fabric = { cost = 3.0 color = { 220 200 180 } }
+    lumber = { cost = 2.0 color = { 180 130 70 } }
+    paper = { cost = 4.0 color = { 240 240 230 } }
+}
+consumer_goods = {
+    automobiles = { cost = 120.0 color = { 200 100 100 } }
+    telephones = { cost = 35.0 color = { 100 180 200 } }
+    wine = { cost = 8.0 color = { 150 30 60 } }
+    liquor = { cost = 6.0 color = { 200 140 60 } }
+    regular_clothes = { cost = 4.0 color = { 100 150 100 } }
+    luxury_clothes = { cost = 25.0 color = { 180 100 180 } }
+    furniture = { cost = 4.0 color = { 160 100 50 } }
+    luxury_furniture = { cost = 20.0 color = { 200 150 80 } }
+    radio = { cost = 30.0 color = { 120 120 180 } }
+}

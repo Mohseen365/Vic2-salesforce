@@ -1,0 +1,9 @@
+{
+  "source_class": "Report",
+  "source_method": "Report.countTotals()",
+  "calculation_type": "DERIVED",
+  "totalWorldGdp": 142429.828125,
+  "totalWorldSupplyPounds": 195681.015625,
+  "totalWorldDemandPounds": 250870.046875,
+  "totalWorldConsumptionPounds": 214857.1875
+}
