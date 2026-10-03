@@ -1,108 +1,58 @@
-# Phase 2 (Core Apex Service & Calculation Engine) Completion & Handoff Report
+# Phase 2 (Golden Dataset Extension) Completion & Handoff Report
 
 ## Summary of Accomplishments
-
-### Created Apex Classes
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyCalculationEngine.cls`
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyCalculationEngine.cls-meta.xml`
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyCalculationResult.cls`
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyCalculationResult.cls-meta.xml`
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyCalculationEngineTest.cls`
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyCalculationEngineTest.cls-meta.xml`
-
-### Public Method Signatures of `EconomyCalculationEngine`
-- `public static void calculateProductStorageContributions(List<Country_Product_Economy__c> junctions, Map<Id, Product_Economy__c> productEconomyById)`
-- `public static void calculateCountryTotals(List<Country_Economy__c> countries, Map<Id, List<Country_Product_Economy__c>> junctionsByCountryId)`
-- `public static void assignGdpRanks(List<Country_Economy__c> countries)`
-- `public static void calculateAnalysisTotals(Economy_Analysis__c analysis, List<Country_Economy__c> countries)`
-- `public static Decimal safeDivide(Decimal numerator, Decimal denominator, Decimal fallback)`
-
-### Mandatory Test Scenarios Implemented (`EconomyCalculationEngineTest.cls`)
-- **Golden Dataset Parity Tests:** Validates `Country_Economy__c.GDP__c`, `GDP_Rank__c`, junction contributions, and analysis import/export totals against expected outputs in `apex-golden-results.json` and `country-calculations.json`.
-- **Normal & Trade Cases:** Positive GDP, trade where imports > exports, and trade where exports > imports.
-- **Edge Cases:** `Population__c = 0`, `Workforce__c = 0`, `Real_Demand__c = 0`, `Total_World_Supply__c = 0`, `Price__c = 0`, `Base_Price__c = 0`, `Worldmarket_Pool__c = 0`, empty list handling for junctions, countries, and products.
-- **Special Cases:** Precious metals (`precious_metal`) bypassing world market exports, zero GDP country ranking, deterministic GDP tie-breaking (`Country_Tag__c` ascending), and negative intermediate consumption clamping (`Math.max(..., 0.0)`).
-- **DTO Coverage:** Full instantiation and property test coverage for `EconomyCalculationResult` wrapper classes (`JunctionResult`, `CountryResult`, `AnalysisResult`).
-
-### Coverage Percentage
-- **100% target code coverage** on `EconomyCalculationEngine` and `EconomyCalculationResult`.
+- Extended and verified Phase 2 golden dataset artifacts under `vc2-salesforce-version/golden-dataset/save-game-analyzer/`:
+  - `country.json` / `csv/Country.csv`: 118 records (extended with `fgdp`, `pgdp`, `agdp`, `corePopulation`, `colonyPopulation`).
+  - `provinces.json` / `csv/Provinces.csv`: 2,703 records (extended with `rgoIncome`, `rgoGdp`, `colony`, `artisanSpending`, `artisanIncome`, `artisanGdp`).
+  - `factory.json` / `csv/Factory.csv`: 714 records (individual factory building metrics).
+  - `artisans.json` / `csv/Artisans.csv`: 4,406 records (aggregated `Province × Product` artisan production).
+  - `states.json` / `csv/States.csv`: 124 records (regional state aggregations).
+  - `goods.json` / `csv/Goods.csv`: 48 records.
+- Updated `manifest.json` with exact record counts and SHA-256 checksums for all extended artifacts.
+- Created `verification/phase-2-determinism-diff.txt` confirming byte-identical determinism on re-runs.
+- Verified 100% referential integrity across country tags, prov_ids, state codes, and product codes.
+- Spot-checked unit and guard compliance against Phase 1 frozen contracts.
+- Confirmed zero scope creep: no files under `force-app/` modified, parity harness passes with 0 discrepancies.
 
 ---
 
-## Technical Details & Engine State
+## Technical Details & Golden Dataset State
 
-### Gate Implementation Notes
-- **Gate 1 (Overproduction):** Preserved in Phase 1 Formula Field `Product_Economy__c.Overproduction_Percent__c` (`IF(Real_Demand__c > 0, (Total_World_Supply__c / Real_Demand__c) * 100, 0.0)`).
-- **Gate 2 (GDP Contribution & Country GDP):**
-  - Junction sold units: `soldUnits = Sold_Domestic__c + (Thrown_To_Market__c * Actual_Sold_World__c / Worldmarket_Pool__c)` (with `Worldmarket_Pool__c == 0` guard).
-  - GDP Contribution: `GDP_Contribution__c = Math.max(soldUnits - Intermediate_Consumption__c, 0.0) * price`.
-  - Country GDP: `GDP__c = sum(GDP_Contribution__c) + Gold_Income__c`.
-- **Precious Metals Special Rule:** `precious_metal` skips world market exports (`Export_Value__c = 0.0`). RGO gold income converts directly to `Gold_Income__c` on `Country_Economy__c` and adds to GDP.
-- **Deterministic Rank Sorting:** Primary sort `GDP__c` descending; secondary tie-breaker `Country_Tag__c` ascending (alphabetical).
+### Golden Dataset Directory Inventory
+- `vc2-salesforce-version/golden-dataset/save-game-analyzer/country.json` (SHA-256: `21620bd0f09b6c612178e57e84d34a7c28949a105481a3373975e0bbbfc2de70`)
+- `vc2-salesforce-version/golden-dataset/save-game-analyzer/provinces.json` (SHA-256: `3afda6ca970e6ff10cbf068a3527e0a5d8c47cb1b80d8df422980f8a816026e2`)
+- `vc2-salesforce-version/golden-dataset/save-game-analyzer/factory.json` (SHA-256: `9e7dd6fd1521edaf37edc55aa5114e58812ca2a50ffce268f9e168d790756196`)
+- `vc2-salesforce-version/golden-dataset/save-game-analyzer/artisans.json` (SHA-256: `66885f202fe3d34eeddab96440a90b6bf3fdfc11c49cf5c01b5db71715779383`)
+- `vc2-salesforce-version/golden-dataset/save-game-analyzer/states.json` (SHA-256: `2ab43872ad30f74230b1bfda85f24c4e218206c59da2b0266d18332ca086fbf3`)
+- `vc2-salesforce-version/golden-dataset/save-game-analyzer/goods.json` (SHA-256: `95f7b4f4b9cb96d65141e595878263f6e41b6887eb6f1867b4e334872e5ad0e0`)
 
-### Precision & Rounding Behavior
-- `Decimal` is used exclusively for all monetary, volume, and percentage calculations. No `Double` primitive types are used in the engine.
-- Arithmetic retains full `Decimal` precision; field assignment delegates database scaling to custom object field definitions (Precision 18, Scale 4 / Scale 2).
-
-### Division-by-Zero Guard Inventory
-- `calculateProductStorageContributions`: Guarded via `if (worldmarketPool > 0)`.
-- `safeDivide`: Explicit null and zero guard check returning configurable fallback value.
-
-### Parity Test Results
-- **Pass (100%):** All 118 countries in the golden dataset match expected GDP and rank values within tolerance (±0.001).
-- **Pass (100%):** All 3,772 country-product storage junctions match expected trade and GDP contribution values.
-- **Pass (100%):** `Total_World_Imports__c` and `Total_World_Exports__c` sum correctly across countries.
-
-### Code Constraints Compliance
-- **Zero SOQL:** Confirmed via static analysis (`re.findall(r'\[\s*SELECT\b', code)` -> 0).
-- **Zero DML:** Confirmed via static analysis (`re.findall(r'\b(insert|update|delete|upsert)\b', code)` -> 0).
-- **Zero Double:** Confirmed via static analysis (`re.findall(r'\bDouble\b', code)` -> 0).
-
-### Governor Limit Profile
-- Heap usage: O(n) linear memory footprint.
-- CPU time: O(n log n) for country rank sorting (max 200 countries per save game, CPU time < 5ms).
-- DML statements: 0.
+### Identity Keys Emitted
+- Artisan aggregate key: `<AnalysisId>_<ExternalProvId>_<ProductCode>`
+- Factory key: `<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>`
+- State Master key: `<CountryTag>_<StateName>`
+- Province Master key: `<ExternalProvId>`
 
 ---
 
-## Critical Context for Phase 3 (Data Selectors & DTO Layer)
+## Parity Preservation Attestation
+- Parity harness (`python3 vc2-salesforce-version/e2e/parity/compare.py`) reports **0 discrepancies** on pre-existing scopes.
+- Metadata validator (`python3 vc2-salesforce-version/scripts/validate_metadata.py`) reports **100% valid XML** across 9 objects.
+- Zero files under `force-app/` were modified or created.
 
-### Engine Public API Surface
-- `EconomyCalculationEngine.calculateProductStorageContributions(junctions, productEconomyById)`
-- `EconomyCalculationEngine.calculateCountryTotals(countries, junctionsByCountryId)`
-- `EconomyCalculationEngine.assignGdpRanks(countries)`
-- `EconomyCalculationEngine.calculateAnalysisTotals(analysis, countries)`
+---
 
-### Fields the Selector Must Query for Engine Input
-- **`Country_Product_Economy__c`:**
-  - `Product_Economy__c`
-  - `Product_Code__c`
-  - `Sold_Domestic__c`
-  - `Bought_Quantity__c`
-  - `Thrown_To_Market__c`
-  - `Actual_Sold_World__c`
-  - `Worldmarket_Pool__c`
-  - `Intermediate_Consumption__c`
-- **`Product_Economy__c`:**
-  - `Price__c`
-  - `Product_Code__c`
-- **`Country_Economy__c`:**
-  - `Gold_Income__c`
-  - `Country_Tag__c`
-  - `Total_Imports_Value__c`
-  - `Total_Exports_Value__c`
-- **`Economy_Analysis__c`:**
-  - `Total_World_Imports__c`
-  - `Total_World_Exports__c`
-
-### Fields Left as Formula Fields (Phase 3 Must NOT Recompute)
-- `Product_Economy__c.Overproduction_Percent__c`
-- `Product_Economy__c.Inflation_Percent__c`
-- `Country_Economy__c.GDP_Per_Capita__c`
-- `Country_Economy__c.GDP_Share_Percent__c`
-- `Country_Economy__c.Unemployment_Rate__c` (+ RGO and Factory variants)
-
-### Prerequisites Checklist Before Starting Phase 3
-- [x] Phase 2 engine classes and unit tests created and verified.
-- [x] Static checks confirmed no SOQL, DML, or Double in `EconomyCalculationEngine`.
-- [x] AGENTS.md updated with Phase 2 API surface and Phase 3 rules.
+## Critical Context for Phase 3 (Salesforce Metadata Schema)
+- Custom objects Phase 3 must deploy:
+  1. `State__c` (Master metadata object)
+  2. `State_Economy__c` (Snapshot object)
+  3. `Factory_Economy__c` (Snapshot object)
+  4. `Artisan_Economy__c` (Snapshot object)
+- Extended fields Phase 3 must add:
+  - `Province_Economy__c`: `Colony__c`, `RGO_Income__c`, `RGO_GDP__c`, `Artisan_Spending__c`, `Artisan_Income__c`, `Artisan_GDP__c`.
+  - `Country_Economy__c`: `Core_Population__c`, `Colony_Population__c`, `Factory_GDP__c`, `Province_GDP__c`, `Artisan_GDP__c`.
+- Field Precision Requirements:
+  - Currency Daily & Annual £: `Currency(18, 2)`
+  - Productivity & Wages: `Currency(18, 4)`
+  - Quantities: `Number(18, 2)`
+  - Headcount / Counts: `Number(18, 0)`
+- External ID requirement: Every snapshot object must have `Unique_Snapshot_Key__c` marked with `External ID` and `Unique`.

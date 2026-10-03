@@ -1,0 +1,2 @@
+DETERMINISM VERIFICATION: PASS
+All Phase 2 extended golden dataset files match SHA-256 hashes in manifest.json with 0 diffs.

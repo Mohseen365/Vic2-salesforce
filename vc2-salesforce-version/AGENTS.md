@@ -2,37 +2,42 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** Phase 1 (Semantic Contract Freeze) **VERIFIED AND COMPLETE** — Semantic contract frozen.
+- **Current Status:** Phase 2 (Golden Dataset Extension) **VERIFIED AND COMPLETE** — Golden dataset extended.
 - **Semantic Contract Reference:** [`SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Audit Reference:** [`SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
-- **Golden Dataset Location:** `golden-dataset/`
+- **Golden Dataset Location:** `golden-dataset/` & `golden-dataset/save-game-analyzer/`
+- **Golden Manifest Pointer:** [`golden-dataset/manifest.json`](./golden-dataset/manifest.json)
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
-- **Parity Verification Status:** `PASS` (0 discrepancies across all entity scopes)
+- **Parity Verification Status:** `PASS` (0 discrepancies across pre-existing scopes)
 
 ---
 
-## Phase 1 Frozen Semantic Contracts Summary
+## Phase 2 Extended Golden Dataset Inventory & Record Counts
 
-1. **Canonical Units:** Factory/RGO/Artisan financial metrics frozen in daily £ vs annual £ (`GDP = Daily * 365`), zero-guards (`Employees == 0 → 0.0`), and negative AGDP clamps (`AGDP < -1000 → 0.0`).
-2. **Artisan Granularity:** Aggregated at `Province × Product per snapshot` with key `<AnalysisId>_<ExternalProvId>_<ProductCode>`. Individual POP-level preservation is an explicit non-goal.
-3. **Factory Occurrence Key:** `<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>` (1-based index matching legacy `Factory.py` traversal order).
-4. **Master vs. Snapshot Model:** Master records (`State__c`, `Province__c`) and Snapshot records (`State_Economy__c`, `Province_Economy__c`) remain strictly separated. Master records are never mutated by snapshot imports except via non-destructive auto-provisioning upserts.
-
----
-
-## Open Architecture-Review Gates Carried Forward
-
-- **GATE-1:** Modded Commodity & Artisan Type Mappings (Phase 4).
-- **GATE-2:** State Name Variance across Mods via `<CountryTag>_<StateName>` keys (Phase 3).
-- **GATE-3:** Asynchronous Import Queue Scope (200 records/scope) for Large Saves (Phase 6).
+1. **`country.json` / `csv/Country.csv`:** 118 records (Extended with `fgdp`, `pgdp`, `agdp`, `corePopulation`, `colonyPopulation`).
+2. **`provinces.json` / `csv/Provinces.csv`:** 2,703 records (Extended with `rgoIncome`, `rgoGdp`, `colony`, `artisanSpending`, `artisanIncome`, `artisanGdp`).
+3. **`factory.json` / `csv/Factory.csv`:** 714 records (New Phase 2 addition covering individual building metrics).
+4. **`artisans.json` / `csv/Artisans.csv`:** 4,406 records (New Phase 2 addition covering aggregated artisan metrics).
+5. **`states.json` / `csv/States.csv`:** 124 records (New Phase 2 addition covering regional state aggregations).
+6. **`goods.json` / `csv/Goods.csv`:** 48 records.
 
 ---
 
-## Critical Rules & Guidelines for Phase 2 (Golden Dataset Extension)
+## Phase 1 Semantic Contract Compliance Verification
 
-- Phase 2 must produce derived golden JSON fixtures (`states.json`, `factories.json`, `artisans.json`) directly from Python/legacy execution without altering Apex or Salesforce metadata.
-- Phase 2 must strictly enforce the identity key formats and canonical units frozen in Phase 1.
-- Zero changes to Apex, Salesforce metadata (`force-app/`), LWCs, or existing tests were made in Phase 1.
+- All identity keys in Phase 2 match the Phase 1 frozen formulas (`State_Code__c`, `OccurrenceIndex`, `Province × Product`).
+- All monetary and physical units match the Phase 1 canonical unit table.
+- All division-by-zero guards (`Employees == 0 → 0.0`, `Population == 0 → 0.0`) and clamps (`AGDP < -1000 → 0.0`) are verified.
+
+---
+
+## Rules & Guidelines for Phase 3 (Salesforce Metadata Schema)
+
+- Phase 3 must deploy custom objects `State__c`, `State_Economy__c`, `Factory_Economy__c`, and `Artisan_Economy__c`.
+- Phase 3 must add extended custom fields to `Province_Economy__c` (`Colony__c`, `RGO_Income__c`, `RGO_GDP__c`, `Artisan_Spending__c`, `Artisan_Income__c`, `Artisan_GDP__c`) and `Country_Economy__c` (`Core_Population__c`, `Colony_Population__c`, `Factory_GDP__c`, `Province_GDP__c`, `Artisan_GDP__c`).
+- Phase 3 must deploy unique external ID fields matching the frozen snapshot key contracts.
+- Phase 3 must resolve `GATE-2` (State Name Variance Across Mods).
+- Zero Apex, metadata (`force-app/`), LWCs, or tests were created in Phase 2.
 
 ---
 
