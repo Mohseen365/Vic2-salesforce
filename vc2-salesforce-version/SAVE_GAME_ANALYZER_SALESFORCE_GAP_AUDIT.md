@@ -4,7 +4,7 @@
 **Target Platform:** Salesforce Enterprise / Unlimited Edition (Lightning Web Components, Apex, Custom Objects & Relationships)
 **Source System:** Older Python-based `Save_Game_Analyzer` (`Artisans.py`, `Country.py`, `Factory.py`, `GoodsFinder.py`, `Provinces.py`, `SandPfinder.py`, `States.py`)
 **Target System:** `vc2-salesforce-version/` (Salesforce-native Victoria 2 Economy Analyzer)
-**Document Purpose:** Comprehensive audit, classification, data-lineage mapping, formula comparison, data model gap analysis, and implementation-ready migration backlog.
+**Document Purpose:** Comprehensive audit, classification, data-lineage mapping, formula comparison, data model gap analysis, and implementation-ready migration plan.
 
 ---
 
@@ -159,7 +159,7 @@ This audit evaluates every file, formula, data field, relationship, and capabili
 ### 5.5 `States.py` -> `State_Economy__c` (Proposed New Object)
 | Python Field | Source Node | Formula / Logic | Salesforce Field | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `Rank` | Sorted index | Sort by `GDP` descending | Proposed `GDP_Rank__c` | **MISSING** | Rank within save snapshot. |
+| `Rank` | Sorted index | Sort by `GDP` descending | Proposed `GDP_Rank__c` | **MISSING** | Rank within save game. |
 | `Name` | State Name | Text name | `State__c.Name` | **MISSING** | Master state name. |
 | `Country` | Country Name | Country Name | `Country_Economy__c` | **MISSING** | Country economy parent lookup. |
 | `Population` | Province sum | Sum of province pops in state | Proposed `Population__c` | **MISSING** | State population headcount. |
@@ -243,7 +243,7 @@ To preserve all microeconomic capabilities present in `Save_Game_Analyzer` while
 * **Purpose:** Static catalog of regional states within countries.
 * **Fields:**
   * `Name` (Text, 80): State Name (e.g. "Illinois", "Mazowieckie").
-  * `State_Code__c` (Text, 50, Unique, External ID): Unique key (e.g. `USA_Illinois`).
+  * `State_Code__c` (Text, 50, Unique, External ID): Deterministic key (`<CountryTag>_<StateIdentifier>`).
   * `Country__c` (Lookup to `Country__c`): Associated parent nation.
 
 #### 2. `State_Economy__c` (Snapshot Object)
@@ -270,7 +270,7 @@ To preserve all microeconomic capabilities present in `Save_Game_Analyzer` while
 * **Purpose:** Detailed individual factory performance snapshot per save game.
 * **Relationships:** Lookup to `State_Economy__c`, Lookup to `Country_Economy__c`, Lookup to `Product__c` (Output Good).
 * **Fields:**
-  * `Unique_Snapshot_Key__c` (Text, 255, Unique, External ID): Key (`<AnalysisId>_<StateCode>_<BuildingType>`).
+  * `Unique_Snapshot_Key__c` (Text, 255, Unique, External ID): Key (`<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>`).
   * `Building_Type__c` (Text, 100): Factory building identifier (e.g. `steel_mill`).
   * `Level__c` (Number, 4, 0): Industrial level (1-99).
   * `Employees__c` (Number, 18, 0): Total active factory workers.
@@ -287,10 +287,10 @@ To preserve all microeconomic capabilities present in `Save_Game_Analyzer` while
   * `Profit_Rank__c` (Number, 6, 0): Global factory profit rank.
 
 #### 4. `Artisan_Economy__c` (Snapshot Object)
-* **Purpose:** Detailed province-level artisan pop production snapshot per save game.
+* **Purpose:** Province x Product aggregated artisan production snapshot per save game.
 * **Relationships:** Lookup to `Province_Economy__c`, Lookup to `Country_Economy__c`, Lookup to `Product__c`.
 * **Fields:**
-  * `Unique_Snapshot_Key__c` (Text, 255, Unique, External ID): Key (`<AnalysisId>_<ProvId>_<ArtisanType>`).
+  * `Unique_Snapshot_Key__c` (Text, 255, Unique, External ID): Key (`<AnalysisId>_<ProvId>_<ProductCode>`).
   * `Artisan_Type__c` (Text, 100): Good produced (e.g. `furniture`, `regular_clothes`).
   * `Spending__c` (Currency, 18, 2): Daily raw input cost (£).
   * `Income__c` (Currency, 18, 2): Daily gross revenue (£).
@@ -352,6 +352,7 @@ The REST API interface (`EconomyImportRestResource.cls`) and service (`EconomyIm
       "stateCode": "EGY_Cairo",
       "countryTag": "EGY",
       "buildingType": "glass_factory",
+      "occurrenceIndex": 1,
       "level": 1,
       "employees": 4200,
       "produces": 15.4,
@@ -395,13 +396,13 @@ Add pure calculation methods for the new entities:
    - Aggregates country-level `Factory_GDP__c`, `Province_GDP__c`, `Artisan_GDP__c`, `Core_Population__c`, and `Colony_Population__c`.
 
 ### 9.2 `EconomyImportService.cls` Updates
-Update transaction processing order to ingest new objects sequentially:
-1. Ingest/Upsert Master Data (`Country__c`, `Product__c`, `Province__c`, `State__c`).
+Update transaction processing order to ingest new objects sequentially with batch chunking:
+1. Auto-provision Master Data via `Database.upsert` (`Country__c`, `Product__c`, `Province__c`, `State__c`).
 2. Persist Snapshot Header (`Economy_Analysis__c`).
 3. Persist `Country_Economy__c` & `Product_Economy__c`.
 4. Persist `State_Economy__c`.
 5. Persist `Province_Economy__c` & `Country_Product_Economy__c`.
-6. Persist `Factory_Economy__c` & `Artisan_Economy__c` in batch chunks if count exceeds 2,000.
+6. Asynchronously queue `Factory_Economy__c` & `Artisan_Economy__c` in 200-record scope batches to enforce LDV / heap safety.
 
 ---
 
@@ -424,7 +425,7 @@ Update transaction processing order to ingest new objects sequentially:
 | Python CSV | Salesforce Export Equivalent | Gap Status |
 | :--- | :--- | :--- |
 | `Goods.csv` | Export from `Product_Economy__c` | **EXACT** |
-| `Country.csv` | Export from `Country_Economy__c` + `Country_Product_Economy__c` | **EQUIVALENT** (Add sector GDP columns) |
+| `Country.csv` | Export from `Country_Economy__c` + `Country_Product_Economy__c` | **EQUIVALENT** (Client/Server unpivoting required for 49-good columns) |
 | `Provinces.csv` | Export from `Province_Economy__c` | **PARTIAL** (Add RGO/Artisan financial columns) |
 | `States.csv` | Proposed export from `State_Economy__c` | **MISSING** (Requires `State_Economy__c`) |
 | `Factory.csv` | Proposed export from `Factory_Economy__c` | **MISSING** (Requires `Factory_Economy__c`) |
@@ -447,93 +448,116 @@ Update transaction processing order to ingest new objects sequentially:
 
 ---
 
-## 13. Migration Backlog
+## 13. Controlled 16-Phase Migration Plan
 
-The following backlog tasks outline the sequential implementation required to migrate `Save_Game_Analyzer` capabilities into Salesforce:
+To ensure a safe, robust, and fully verified migration without breaking existing Salesforce capabilities, execution is divided into **16 gated phases**.
 
-* **SGA-001 — Add Missing Microeconomic Fields to `Province_Economy__c` and `Country_Economy__c`**
-  * *Evidence:* `Provinces.py` lines 85-130 (`Last_income`, `AGDP`, `Colony`), `Country.py` lines 140-185 (`FGDP`, `PGDP`, `AGDP`, `Colony_Population`).
-* **SGA-002 — Introduce Master `State__c` and Snapshot `State_Economy__c` Objects**
-  * *Evidence:* `States.py` lines 50-150 (`Name`, `Population`, `GDP`, `GDP_PerCapita`, `RGO_Income`, `PGDP`, `AGDP`, `FGDP`, `Employees`, `Revenue`, `Profit`).
-* **SGA-003 — Introduce Snapshot `Factory_Economy__c` Object**
-  * *Evidence:* `Factory.py` lines 30-100 (`Building`, `Level`, `Employees`, `Produces`, `Leftover`, `Money`, `Revenue`, `Input Costs`, `Pops_paychecks`, `Profit`, `GDP`, `Productivity`, `AvgWage`).
-* **SGA-004 — Introduce Snapshot `Artisan_Economy__c` Object**
-  * *Evidence:* `Artisans.py` lines 40-110 (`artisan_type`, `last_spending`, `production_income`, `AGDP`, `Production`).
-* **SGA-005 — Extend Ingestion DTO Contract (`EconomyImportRequestDTO`) & REST Service**
-  * *Evidence:* Need parser to transmit states, factories, artisans, and extended province fields.
-* **SGA-006 — Extend Pure Calculation Engine (`EconomyCalculationEngine.cls`)**
-  * *Evidence:* Implement factory profit/productivity, artisan AGDP/output, state aggregation, and country sector GDP formulas.
-* **SGA-007 — Extend Data Persistence in `EconomyImportService.cls` & `EconomyImportBatch.cls`**
-  * *Evidence:* Handle transactional creation of state, factory, and artisan records with governor limit protection.
-* **SGA-008 — Update Selectors & DTO Service Facades (`EconomyAnalysisSelector.cls`, `EconomyAnalysisController.cls`)**
-  * *Evidence:* Expose state, factory, and artisan summary metrics to LWC layer.
-* **SGA-009 — Update Existing LWCs (`c-country-dashboard`, `c-analysis-compare`)**
-  * *Evidence:* Display sector GDP breakdowns and core vs colony population.
-* **SGA-010 — Create Microeconomic LWC Dashboards (`c-state-dashboard`, `c-factory-dashboard`)**
-  * *Evidence:* Provide UI views for state ranks and factory profit/productivity tables.
-* **SGA-011 — Extend CSV Export Utilities (`c/economicExportUtils`, `EconomyAnalysisController`)**
-  * *Evidence:* Support exporting `States.csv`, `Factory.csv`, and `Artisans.csv`.
-* **SGA-012 — Extend Golden Dataset & Parity Verification Harness (`compare.py`)**
-  * *Evidence:* Add verification checks for factory, artisan, state, and province micro fields.
+### Phase 0 — Baseline Freeze and Design Validation
+* **Goal:** Protect the existing Salesforce version before adding missing capabilities.
+* **Tasks:** Run test suite, record baseline test counts and object inventory, verify golden parity harness passes (`compare.py`), and record baseline metrics in `SAVE_GAME_ANALYZER_MIGRATION_BASELINE.md`.
+
+### Phase 1 — Semantic Contract Freeze
+* **Goal:** Resolve ambiguity before creating schema objects.
+* **Tasks:**
+  1. Freeze canonical unit definitions (Daily £ vs Annual £).
+  2. Resolve `AGDP` definition (`Production_Income - Last_Spending`).
+  3. Resolve Factory Identity (`<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>`).
+  4. Freeze Master vs Snapshot relationships for State and Province objects.
+
+### Phase 2 — Golden Dataset Extension (Test-Driven Oracle)
+* **Goal:** Generate expected parity outputs directly from Python/legacy behavior **before** writing Apex engine code.
+* **Tasks:** Create `golden/states.json`, `golden/factories.json`, and `golden/artisans.json` from `egypt.v2`.
+
+### Phase 3 — Salesforce Metadata Schema
+* **Goal:** Deploy custom objects and custom fields.
+* **Tasks:** Deploy `State__c`, `State_Economy__c`, `Factory_Economy__c`, `Artisan_Economy__c`, and extended fields on `Province_Economy__c` and `Country_Economy__c`.
+
+### Phase 4 — Parser & Ingestion DTO Contract
+* **Goal:** Extend external ingestion interface.
+* **Tasks:** Extend `EconomyImportRequestDTO` with JSON definitions for `states`, `factories`, and `artisans`.
+
+### Phase 5 — Apex Calculation Engine Extension
+* **Goal:** Implement pure calculation methods.
+* **Tasks:** Add `calculateFactoryMetrics`, `calculateArtisanMetrics`, `calculateStateTotals`, and `calculateCountrySectorGdp` to `EconomyCalculationEngine.cls`.
+
+### Phase 6 — Import & Persistence Layer
+* **Goal:** Implement transactional persistence.
+* **Tasks:** Implement `Database.upsert` master auto-provisioning and asynchronous batch chunking (200 records/scope) in `EconomyImportService.cls` and `EconomyImportBatch.cls`.
+
+### Phase 7 — Idempotency & Snapshot Integrity
+* **Goal:** Protect against duplicate records.
+* **Tasks:** Verify re-importing the same save game updates records in place via unique external snapshot keys without creating duplicates.
+
+### Phase 8 — Selectors & Controller Facades
+* **Goal:** Expose query methods safely.
+* **Tasks:** Add bounded selector queries in `EconomyAnalysisSelector.cls` and cached read endpoints in `EconomyAnalysisController.cls` with pagination and filtering.
+
+### Phase 9 — Parity Verification Harness
+* **Goal:** Prove mathematical parity against golden oracle.
+* **Tasks:** Extend `e2e/parity/compare.py` with numerical tolerance limits (£ ±0.01, output ±0.0001, counts exact integer).
+
+### Phase 10 — Lightning Web Components (UI)
+* **Goal:** Expose microeconomic views in LWC.
+* **Tasks:** Update `c-country-dashboard` (sector donut chart), create `c-state-dashboard`, `c-factory-dashboard`, and `c-artisan-dashboard`.
+
+### Phase 11 — CSV Export Parity & Commodity Unpivoting
+* **Goal:** Support downloading legacy flat CSVs.
+* **Tasks:** Implement 49-good unpivoting logic in `c/economicExportUtils` and `EconomyAnalysisController.exportCsv` for `Country.csv`, `States.csv`, `Factory.csv`, and `Artisans.csv`.
+
+### Phase 12 — Performance & Governor Limit Verification
+* **Goal:** Guarantee LDV scalability.
+* **Tasks:** Test ingestion of 2,000+ factories and 10,000+ artisans; verify heap stays < 12 MB and CPU < 10s.
+
+### Phase 13 — Security & Access Controls Review
+* **Goal:** Enforce FLS, CRUD, and sharing rules.
+* **Tasks:** Update permission sets (`Economy_Analyzer_Admin`, `Economy_Analyzer_User`) with object/field permissions for new entities.
+
+### Phase 14 — Full Regression Test Suite
+* **Goal:** Ensure zero regressions across existing application.
+* **Tasks:** Execute complete Apex test suite, LWC Jest suite (`npm run test:lwc`), and parity verification script.
+
+### Phase 15 — Migration Completion & Documentation Attestation
+* **Goal:** Formal closeout and sign-off.
+* **Tasks:** Create `SAVE_GAME_ANALYZER_MIGRATION_COMPLETION_REPORT.md` and finalize audit compliance.
 
 ---
 
-## 14. Recommended Implementation Order
+## 14. Architecture Decisions (ADR)
 
-```text
-Phase 1: Metadata & Data Model Extensions (SGA-001, SGA-002, SGA-003, SGA-004)
-   │
-   ▼
-Phase 2: Ingestion Contract & DTO Extensions (SGA-005)
-   │
-   ▼
-Phase 3: Core Calculation Engine & Service Updates (SGA-006, SGA-007)
-   │
-   ▼
-Phase 4: Selectors & Facade Controller Updates (SGA-008)
-   │
-   ▼
-Phase 5: Golden Dataset Extension & Parity Harness Updates (SGA-012)
-   │
-   ▼
-Phase 6: LWC Enhancements & New Dashboards (SGA-009, SGA-010)
-   │
-   ▼
-Phase 7: Export Utilities & Full End-to-End Validation (SGA-011)
-```
+### ADR 1: Artisan Granularity Strategy (Province x Product Aggregation)
+* **Decision:** Aggregate artisan spending, income, AGDP, and production quantity by `(Province, Product)` per snapshot rather than storing 10,000+ individual pop rows.
+* **Reason:** Retains **100% of the economic production and AGDP metrics** required by `Artisans.py` and `Country.py` while reducing record volume by ~90%, preserving Salesforce storage and heap limits.
+* **Impact:** High performance and LDV compliance with zero loss of economic domain fidelity.
+
+### ADR 2: Deterministic Factory Occurrence Key
+* **Decision:** Construct unique external key as `<AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex>`.
+* **Reason:** Victoria 2 state buildings can contain multiple factories of the same building type in modded save files or queued expansion states.
+* **Impact:** Prevents silent record overwrites during REST ingestion.
+
+### ADR 3: Master Data Auto-Provisioning Guard
+* **Decision:** Perform `Database.upsert` on `State__c` and `Province__c` master records prior to snapshot insertion.
+* **Reason:** Modded save games or custom user scenarios may introduce state names or province IDs not present in static seed files.
+* **Impact:** Auto-provisions missing master metadata on the fly without failing the import batch.
+
+### ADR 4: Unpivoting Logic for `Country.csv` Export
+* **Decision:** Client-side (`c/economicExportUtils`) and server-side (`EconomyAnalysisController`) will unpivot `Country_Product_Economy__c` junctions into flat 49-column CSV rows matching Python `Country.csv`.
+* **Reason:** Preserves relational database normalization inside Salesforce while guaranteeing 100% byte-level format compatibility for external tools.
 
 ---
 
-## 15. Architecture Decisions (ADR)
-
-### ADR 1: Microeconomic Persistence vs. High-Volume Record Limits
-* **Decision:** Introduce `State_Economy__c`, `Factory_Economy__c`, and `Artisan_Economy__c` snapshot objects.
-* **Reason:** Preserves full microeconomic detail from `Save_Game_Analyzer` (`Factory.py`, `Artisans.py`, `States.py`).
-* **Evidence:** Victoria 2 save games contain ~300 states, ~1,500-2,500 factories, and ~5,000-10,000 artisan pop entries.
-* **Alternatives Considered:** Aggregating factories into state-level JSON blobs on `State_Economy__c`. Rejected because JSON blobs prevent standard Salesforce SOQL filtering, report generation, and datatable sorting.
-* **Impact:** Adds ~8,000 records per imported save game snapshot. `EconomyImportBatch.cls` will process factory/artisan records in chunked batches (200 records per scope) to prevent CPU and heap governor limit exceptions.
-
-### ADR 2: Country Commodity Columns vs. Junction Storage
-* **Decision:** Preserve `Country_Product_Economy__c` junction records as the primary storage mechanism for country-product production rather than creating 49 custom fields on `Country_Economy__c`.
-* **Reason:** Salesforce custom object field limit (800 fields) and normalization best practices favor relational junction records over rigid, wide-column tables.
-* **Evidence:** `Country.py` writes 49 commodity columns (`ammunition`, `small_arms`, etc.). In `vc2-salesforce-version`, `Country_Product_Economy__c` already pairs `Country_Economy__c` with `Product__c`.
-* **Impact:** Zero schema changes required for commodity production storage. Export utility handles unpivoting junction records into flat 49-column CSVs matching Python `Country.csv`.
-
----
-
-## 16. Statement: DO NOT IMPLEMENT YET
+## 15. Statement: DO NOT IMPLEMENT YET
 
 > **Audit Attestation:** No modifications to Salesforce metadata (`force-app/`), Apex classes, LWC components, DTOs, import logic, or tests were performed during this audit phase. The codebase remains in its exact pre-audit state.
 
 ---
 
-## 17. Statement: CRITICAL RULE
+## 16. Statement: CRITICAL RULE
 
 > **Evaluation Hierarchy Attestation:** The evaluation strictly adhered to the required hierarchy: Python functionality was evaluated against existing Salesforce capabilities first to identify exact/equivalent coverage before proposing new schema additions. Existing Salesforce architecture was preserved.
 
 ---
 
-## 18. Final Audit Acceptance Criteria
+## 17. Final Audit Acceptance Criteria
 
 - [x] Every `Save_Game_Analyzer` file inspected (`Artisans.py`, `Country.py`, `Factory.py`, `GoodsFinder.py`, `Provinces.py`, `SandPfinder.py`, `States.py`).
 - [x] Every Python CSV/output field mapped to Salesforce or marked missing.
@@ -554,7 +578,7 @@ Phase 7: Export Utilities & Full End-to-End Validation (SGA-011)
 - [x] Golden/parity requirements checked.
 - [x] Performance & governor limit implications evaluated.
 - [x] Security & FLS implications evaluated.
-- [x] Concrete migration backlog produced.
+- [x] Concrete 16-phase migration backlog produced.
 - [x] No existing Salesforce functionality modified during audit.
 - [x] No `git push` performed.
 
@@ -571,4 +595,4 @@ Phase 7: Export Utilities & Full End-to-End Validation (SGA-011)
 2. **What Needs to be Added to Salesforce:**
    - **Schema Additions:** Master `State__c` object; snapshot objects `State_Economy__c`, `Factory_Economy__c`, and `Artisan_Economy__c`; extended fields on `Province_Economy__c` (`Colony__c`, `RGO_Income__c`, `RGO_GDP__c`, `Artisan_Spending__c`, `Artisan_Income__c`, `Artisan_GDP__c`) and `Country_Economy__c` (`Core_Population__c`, `Colony_Population__c`, `Factory_GDP__c`, `Province_GDP__c`, `Artisan_GDP__c`).
    - **Ingestion & Apex:** Ingestion DTO contract extensions (`EconomyImportRequestDTO`), pure calculation methods in `EconomyCalculationEngine.cls`, chunked transactional batch processing in `EconomyImportService.cls`/`EconomyImportBatch.cls`, and facade methods in `EconomyAnalysisController.cls`.
-   - **UI & Export:** UI updates to `c-country-dashboard` and `c-analysis-compare`, state/factory dashboard LWCs, and export extensions for `States.csv`, `Factory.csv`, and `Artisans.csv`.
+   - **UI & Export:** UI updates to `c-country-dashboard` and `c-analysis-compare`, state/factory dashboard LWCs, unpivoting export extensions for 49-good `Country.csv`, `States.csv`, `Factory.csv`, and `Artisans.csv`.
