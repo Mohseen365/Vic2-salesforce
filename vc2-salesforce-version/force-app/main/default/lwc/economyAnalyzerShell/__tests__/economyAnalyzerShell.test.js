@@ -139,6 +139,34 @@ describe('c-economy-analyzer-shell', () => {
         expect(tabset.activeTabValue).toBe('product-market');
     });
 
+    it('handles stateselect event from State Explorer tab and routes to Factory Explorer tab', async () => {
+        const element = createElement('c-economy-analyzer-shell', {
+            is: EconomyAnalyzerShell
+        });
+        document.body.appendChild(element);
+
+        mockGetRecentAnalysesAdapter.emit(MOCK_ANALYSES);
+
+        await flushPromises();
+
+        const stateDash = element.shadowRoot.querySelector('[data-testid="state-dashboard-component"]');
+        const tabset = element.shadowRoot.querySelector('[data-testid="tabset"]');
+
+        expect(stateDash).not.toBeNull();
+
+        stateDash.dispatchEvent(new CustomEvent('stateselect', {
+            detail: { stateEconomyId: 's1', stateCode: '294', countryTag: 'ENG' },
+            bubbles: true,
+            composed: true
+        }));
+
+        await flushPromises();
+
+        expect(tabset.activeTabValue).toBe('factory-explorer');
+        const factoryDash = element.shadowRoot.querySelector('[data-testid="factory-dashboard-component"]');
+        expect(factoryDash.stateEconomyId).toBe('s1');
+    });
+
     it('handles watcher statuschange event and triggers refresh on COMPLETED status', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
@@ -184,7 +212,7 @@ describe('c-economy-analyzer-shell', () => {
         expect(header.analysisId).toBe('a00000000000002AAA');
     });
 
-    it('renders all workspace tabs including dedicated Analytics tab and supports full tab switching', async () => {
+    it('renders all workspace tabs including state, factory, artisan, analytics, and compare tabs', async () => {
         const element = createElement('c-economy-analyzer-shell', {
             is: EconomyAnalyzerShell
         });
@@ -198,6 +226,9 @@ describe('c-economy-analyzer-shell', () => {
         const tabGlobal = element.shadowRoot.querySelector('[data-testid="tab-global"]');
         const tabCountry = element.shadowRoot.querySelector('[data-testid="tab-country"]');
         const tabProduct = element.shadowRoot.querySelector('[data-testid="tab-product"]');
+        const tabState = element.shadowRoot.querySelector('[data-testid="tab-state"]');
+        const tabFactory = element.shadowRoot.querySelector('[data-testid="tab-factory"]');
+        const tabArtisan = element.shadowRoot.querySelector('[data-testid="tab-artisan"]');
         const tabAnalytics = element.shadowRoot.querySelector('[data-testid="tab-analytics"]');
         const tabCompare = element.shadowRoot.querySelector('[data-testid="tab-compare"]');
 
@@ -205,27 +236,25 @@ describe('c-economy-analyzer-shell', () => {
         expect(tabGlobal).not.toBeNull();
         expect(tabCountry).not.toBeNull();
         expect(tabProduct).not.toBeNull();
+        expect(tabState).not.toBeNull();
+        expect(tabFactory).not.toBeNull();
+        expect(tabArtisan).not.toBeNull();
         expect(tabAnalytics).not.toBeNull();
         expect(tabCompare).not.toBeNull();
 
-        // Verify active tab default and switch tabs
         expect(tabset.activeTabValue).toBe('country-explorer');
 
-        tabset.activeTabValue = 'global-overview';
+        tabset.activeTabValue = 'state-explorer';
         await flushPromises();
-        expect(tabset.activeTabValue).toBe('global-overview');
+        expect(tabset.activeTabValue).toBe('state-explorer');
 
-        tabset.activeTabValue = 'product-market';
+        tabset.activeTabValue = 'factory-explorer';
         await flushPromises();
-        expect(tabset.activeTabValue).toBe('product-market');
+        expect(tabset.activeTabValue).toBe('factory-explorer');
 
-        tabset.activeTabValue = 'analytics';
+        tabset.activeTabValue = 'artisan-explorer';
         await flushPromises();
-        expect(tabset.activeTabValue).toBe('analytics');
-
-        tabset.activeTabValue = 'compare-saves';
-        await flushPromises();
-        expect(tabset.activeTabValue).toBe('compare-saves');
+        expect(tabset.activeTabValue).toBe('artisan-explorer');
 
         const dedicatedCharts = element.shadowRoot.querySelector('[data-testid="dedicated-charts-component"]');
         expect(dedicatedCharts).not.toBeNull();
@@ -260,7 +289,6 @@ describe('c-economy-analyzer-shell', () => {
         const productListComp = element.shadowRoot.querySelector('[data-testid="product-list-component"]');
         expect(productListComp).not.toBeNull();
 
-        // Simulate product select event
         productListComp.dispatchEvent(new CustomEvent('productselect', {
             detail: { productEconomyId: 'p00000000000001AAA', productCode: 'small_arms' },
             bubbles: true,
@@ -273,7 +301,6 @@ describe('c-economy-analyzer-shell', () => {
         expect(productDashComp).not.toBeNull();
         expect(productDashComp.productEconomyId).toBe('p00000000000001AAA');
 
-        // Simulate back event
         productDashComp.dispatchEvent(new CustomEvent('back', {
             bubbles: true,
             composed: true

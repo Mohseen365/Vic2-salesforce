@@ -1,0 +1,76 @@
+<template>
+    <lightning-card title="Artisan Explorer" icon-name="standard:groups">
+        <div class="slds-p-around_medium">
+            <!-- Search & Filters -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                        type="search"
+                        label="Search Artisans"
+                        placeholder="Filter by artisan type, province, or country..."
+                        value={searchTerm}
+                        onchange={handleSearchChange}>
+                    </lightning-input>
+                </div>
+            </div>
+
+            <!-- KPI Summary Cards -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                        <div class="slds-text-color_weak slds-text-title_caps">Total Artisans</div>
+                        <div class="slds-text-heading_medium">{totalArtisans}</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                        <div class="slds-text-color_weak slds-text-title_caps">Total Income</div>
+                        <div class="slds-text-heading_medium">{formattedTotalIncome}</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                        <div class="slds-text-color_weak slds-text-title_caps">Total Spending</div>
+                        <div class="slds-text-heading_medium">{formattedTotalSpending}</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                    <div class="slds-box slds-box_x-small slds-text-align_center slds-theme_shade">
+                        <div class="slds-text-color_weak slds-text-title_caps">Total Artisan GDP (AGDP)</div>
+                        <div class="slds-text-heading_medium">{formattedTotalAgdp}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alt-text="Loading artisan data..."></lightning-spinner>
+            </template>
+
+            <!-- Datatable -->
+            <template if:true={hasArtisans}>
+                <div style="height: 400px;">
+                    <lightning-datatable
+                        key-field="id"
+                        data={filteredArtisans}
+                        columns={columns}
+                        hide-checkbox-column
+                        default-sort-direction="asc"
+                        sorted-by={sortedBy}
+                        sorted-direction={sortDirection}
+                        onsort={handleSort}>
+                    </lightning-datatable>
+                </div>
+            </template>
+
+            <!-- Empty State -->
+            <template if:false={hasArtisans}>
+                <template if:false={isLoading}>
+                    <div class="slds-text-align_center slds-p-around_large slds-text-color_weak">
+                        No artisan economic data found for this selection.
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

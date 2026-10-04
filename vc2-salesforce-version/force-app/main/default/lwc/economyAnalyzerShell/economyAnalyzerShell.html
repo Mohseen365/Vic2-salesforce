@@ -118,6 +118,31 @@
                 </div>
             </lightning-tab>
 
+            <!-- State Explorer Tab (Phase 10) -->
+            <lightning-tab label="🏛️ State Explorer" value="state-explorer" data-testid="tab-state">
+                <c-state-dashboard
+                    analysis-id={selectedAnalysisId}
+                    onstateselect={handleStateSelect}
+                    data-testid="state-dashboard-component">
+                </c-state-dashboard>
+            </lightning-tab>
+
+            <!-- Factory Explorer Tab (Phase 10) -->
+            <lightning-tab label="🏭 Factory Explorer" value="factory-explorer" data-testid="tab-factory">
+                <c-factory-dashboard
+                    state-economy-id={selectedStateEconomyId}
+                    data-testid="factory-dashboard-component">
+                </c-factory-dashboard>
+            </lightning-tab>
+
+            <!-- Artisan Explorer Tab (Phase 10) -->
+            <lightning-tab label="🛠️ Artisan Explorer" value="artisan-explorer" data-testid="tab-artisan">
+                <c-artisan-dashboard
+                    province-economy-id={selectedProvinceEconomyId}
+                    data-testid="artisan-dashboard-component">
+                </c-artisan-dashboard>
+            </lightning-tab>
+
             <!-- Analytics & Visualizations Tab (Phase 7 Dedicated View) -->
             <lightning-tab label="📈 Analytics & Visualizations" value="analytics" data-testid="tab-analytics">
                 <c-economic-charts-container
