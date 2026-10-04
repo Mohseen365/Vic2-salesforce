@@ -6,6 +6,7 @@ public with sharing class EconomyImportResponseDTO {
     @AuraEnabled public String importStatus { get; set; }
     @AuraEnabled public Map<String, Integer> recordCounts { get; set; }
     @AuraEnabled public String errorMessage { get; set; }
+    @AuraEnabled public List<String> warnings { get; set; }
     @AuraEnabled public Boolean success { get; set; }
 
     public EconomyImportResponseDTO() {
@@ -13,8 +14,12 @@ public with sharing class EconomyImportResponseDTO {
             'countries' => 0,
             'products' => 0,
             'countryProducts' => 0,
-            'provinces' => 0
+            'provinces' => 0,
+            'states' => 0,
+            'factories' => 0,
+            'artisans' => 0
         };
+        this.warnings = new List<String>();
         this.success = true;
     }
 }

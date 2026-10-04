@@ -1,11 +1,11 @@
 /**
  * @description Service-layer entry point for inbound economy save-game imports.
- * Orchestrates analysis header creation, master-data resolution (Country, Product, Province),
- * snapshot child record upserts, and handoff to EconomyAnalysisService.recalculateAnalysis.
+ * Orchestrates analysis header creation, master-data resolution (Country, Product, Province, State),
+ * snapshot child record upserts, and invocation of EconomyCalculationEngine.
  */
 public with sharing class EconomyImportService {
 
-    public static final Integer BATCH_THRESHOLD = 2000;
+    public static final Integer BATCH_THRESHOLD = 200;
 
     /**
      * @description Processes an inbound EconomyImportRequestDTO payload synchronously or delegates to EconomyImportBatch.
@@ -29,27 +29,38 @@ public with sharing class EconomyImportService {
     private static EconomyImportResponseDTO processImportInternal(EconomyImportRequestDTO request, Boolean forceBatch) {
         EconomyImportResponseDTO response = new EconomyImportResponseDTO();
 
-        if (request == null || request.analysis == null || String.isBlank(request.analysis.saveGameName)) {
+        if (request == null || request.analysis == null || String.isBlank(request.analysis.saveFileName)) {
             response.success = false;
             response.importStatus = 'FAILED';
-            response.errorMessage = 'Invalid payload: Analysis header and saveGameName are required.';
+            response.errorMessage = 'Invalid payload: Analysis header and saveFileName are required.';
+            return response;
+        }
+
+        // Contract Version Validation (Enforce 1.x.x)
+        String contractVer = request.analysis.contractVersion;
+        if (String.isBlank(contractVer) || !contractVer.startsWith('1.')) {
+            response.success = false;
+            response.importStatus = 'FAILED';
+            response.errorMessage = 'Contract version mismatch: Expected major version 1.x.x, received: ' + contractVer;
             return response;
         }
 
         Economy_Analysis__c analysisHeader = null;
 
         try {
-            // 1. Resolve / Create Master Data (Audit Section Q Rules)
+            // 1. Resolve / Create Master Data in strict order: Country -> Product -> Province -> State
             Map<String, Country__c> masterCountryMap = resolveMasterCountries(request.countries);
             Map<String, Product__c> masterProductMap = resolveMasterProducts(request.products);
             Map<String, Province__c> masterProvinceMap = resolveMasterProvinces(request.provinces, masterCountryMap);
+            Map<String, State__c> masterStateMap = resolveMasterStates(request.states, masterCountryMap);
 
             response.recordCounts.put('countries', request.countries != null ? request.countries.size() : 0);
             response.recordCounts.put('products', request.products != null ? request.products.size() : 0);
             response.recordCounts.put('provinces', request.provinces != null ? request.provinces.size() : 0);
+            response.recordCounts.put('states', request.states != null ? request.states.size() : 0);
 
             // 2. Create / Upsert Economy_Analysis__c Header
-            String analysisKey = request.analysis.saveGameName;
+            String analysisKey = request.analysis.saveFileName;
             analysisHeader = getOrCreateAnalysisHeader(request.analysis, analysisKey);
             response.analysisId = analysisHeader.Id;
 
@@ -72,7 +83,26 @@ public with sharing class EconomyImportService {
                 masterProductMap
             );
 
-            // 5. Construct Country_Product_Economy__c & Province_Economy__c Child Records
+            // 5. Create / Upsert State_Economy__c Records
+            Map<String, State_Economy__c> stateEconomyMap = upsertStateEconomies(
+                analysisHeader.Id,
+                analysisKey,
+                request.states,
+                countryEconomyMap,
+                masterStateMap
+            );
+
+            // 6. Create / Upsert Province_Economy__c Records
+            Map<String, Province_Economy__c> provinceEconomyMap = upsertProvinceEconomies(
+                analysisHeader.Id,
+                analysisKey,
+                request.provinces,
+                countryEconomyMap,
+                stateEconomyMap,
+                masterProvinceMap
+            );
+
+            // 7. Construct Country_Product_Economy__c Child Records
             List<Country_Product_Economy__c> junctionRecords = buildCountryProductRecords(
                 analysisKey,
                 request.countryProducts,
@@ -81,45 +111,96 @@ public with sharing class EconomyImportService {
                 masterProductMap
             );
 
-            List<Province_Economy__c> provinceRecords = buildProvinceRecords(
-                analysisKey,
-                request.provinces,
-                countryEconomyMap,
-                masterProvinceMap
-            );
-
             response.recordCounts.put('countryProducts', junctionRecords.size());
 
-            Integer totalChildRecords = junctionRecords.size() + provinceRecords.size();
+            if (!junctionRecords.isEmpty() && Schema.sObjectType.Country_Product_Economy__c.isCreateable()) {
+                upsert junctionRecords Unique_Snapshot_Key__c;
+            }
 
-            if (forceBatch || totalChildRecords > BATCH_THRESHOLD) {
-                // Asynchronous / Chunked execution via EconomyImportBatch
+            // 8. Transition status to CALCULATING and invoke EconomyCalculationEngine
+            updateAnalysisStatus(analysisHeader.Id, 'CALCULATING', null);
+
+            if (!junctionRecords.isEmpty()) {
+                EconomyCalculationEngine.calculateProductStorageContributions(
+                    junctionRecords,
+                    productEconomyMap
+                );
+                if (Schema.sObjectType.Country_Product_Economy__c.isUpdateable()) {
+                    update junctionRecords;
+                }
+            }
+
+            List<Country_Economy__c> countryList = countryEconomyMap.values();
+            Map<Id, List<Country_Product_Economy__c>> junctionsByCountryId = new Map<Id, List<Country_Product_Economy__c>>();
+            for (Country_Product_Economy__c j : junctionRecords) {
+                if (!junctionsByCountryId.containsKey(j.Country_Economy__c)) {
+                    junctionsByCountryId.put(j.Country_Economy__c, new List<Country_Product_Economy__c>());
+                }
+                junctionsByCountryId.get(j.Country_Economy__c).add(j);
+            }
+
+            EconomyCalculationEngine.calculateCountryTotals(countryList, junctionsByCountryId);
+            EconomyCalculationEngine.assignGdpRanks(countryList);
+
+            if (!countryList.isEmpty() && Schema.sObjectType.Country_Economy__c.isUpdateable()) {
+                update countryList;
+            }
+
+            EconomyCalculationEngine.calculateAnalysisTotals(analysisHeader, countryList);
+            if (Schema.sObjectType.Economy_Analysis__c.isUpdateable()) {
+                update analysisHeader;
+            }
+
+            // 9. Process Factory & Artisan Snapshots
+            List<Factory_Economy__c> factoryRecords = buildFactoryRecords(
+                analysisHeader.Id,
+                analysisKey,
+                request.factories,
+                countryEconomyMap,
+                stateEconomyMap,
+                masterProductMap
+            );
+
+            List<Artisan_Economy__c> artisanRecords = buildArtisanRecords(
+                analysisHeader.Id,
+                analysisKey,
+                request.artisans,
+                countryEconomyMap,
+                stateEconomyMap,
+                provinceEconomyMap,
+                masterProductMap,
+                response
+            );
+
+            response.recordCounts.put('factories', factoryRecords.size());
+            response.recordCounts.put('artisans', artisanRecords.size());
+
+            // GATE-3 Chunk Size Resolution Check
+            if (forceBatch || factoryRecords.size() > BATCH_THRESHOLD || artisanRecords.size() > BATCH_THRESHOLD) {
+                // Delegate factory and artisan snapshot insertion to async batch
                 EconomyImportBatch batchJob = new EconomyImportBatch(
                     analysisHeader.Id,
-                    junctionRecords,
-                    provinceRecords
+                    factoryRecords,
+                    artisanRecords
                 );
-                Database.executeBatch(batchJob, 2000);
+                Database.executeBatch(batchJob, 200);
 
                 response.importStatus = 'PROCESSING';
                 response.success = true;
                 return response;
             } else {
-                // Synchronous insertion
-                if (!junctionRecords.isEmpty() && Schema.sObjectType.Country_Product_Economy__c.isCreateable()) {
-                    upsert junctionRecords Unique_Snapshot_Key__c;
+                if (!factoryRecords.isEmpty() && Schema.sObjectType.Factory_Economy__c.isCreateable()) {
+                    upsert factoryRecords Unique_Snapshot_Key__c;
                 }
 
-                if (!provinceRecords.isEmpty() && Schema.sObjectType.Province_Economy__c.isCreateable()) {
-                    upsert provinceRecords Unique_Snapshot_Key__c;
+                if (!artisanRecords.isEmpty() && Schema.sObjectType.Artisan_Economy__c.isCreateable()) {
+                    upsert artisanRecords Unique_Snapshot_Key__c;
                 }
 
-                // 6. Handoff to EconomyAnalysisService recalculateAnalysis
-                EconomyAnalysisService.recalculateAnalysis(analysisHeader.Id);
+                String diagMsg = (response.warnings != null && !response.warnings.isEmpty()) ? String.join(response.warnings, '; ') : null;
+                updateAnalysisStatus(analysisHeader.Id, 'COMPLETED', diagMsg);
 
-                // Fetch final status
-                Economy_Analysis__c finalAnalysis = EconomyAnalysisSelector.selectById(analysisHeader.Id);
-                response.importStatus = (finalAnalysis != null) ? finalAnalysis.Import_Status__c : 'COMPLETED';
+                response.importStatus = 'COMPLETED';
                 response.success = true;
                 return response;
             }
@@ -139,7 +220,7 @@ public with sharing class EconomyImportService {
     }
 
     /**
-     * @description Resolves master Country__c records, creating missing tags dynamically per Audit Section Q.
+     * @description Resolves master Country__c records, creating missing tags dynamically per GATE-1.
      */
     private static Map<String, Country__c> resolveMasterCountries(List<EconomyImportRequestDTO.CountryDTO> countryDTOs) {
         Map<String, Country__c> countryMap = new Map<String, Country__c>();
@@ -183,7 +264,7 @@ public with sharing class EconomyImportService {
     }
 
     /**
-     * @description Resolves master Product__c records, creating missing codes dynamically per Audit Section Q.
+     * @description Resolves master Product__c records, auto-provisioning missing codes dynamically per GATE-1 (Base_Price__c = 0.0).
      */
     private static Map<String, Product__c> resolveMasterProducts(List<EconomyImportRequestDTO.ProductDTO> productDTOs) {
         Map<String, Product__c> productMap = new Map<String, Product__c>();
@@ -198,7 +279,7 @@ public with sharing class EconomyImportService {
                 codes.add(p.code);
                 ProductDTOHelper helper = new ProductDTOHelper();
                 helper.name = String.isNotBlank(p.name) ? p.name : p.code;
-                helper.basePrice = p.basePrice != null ? p.basePrice : (p.price != null ? p.price : 1.0);
+                helper.basePrice = p.basePrice != null ? p.basePrice : 0.0;
                 codeToHelper.put(p.code, helper);
             }
         }
@@ -237,7 +318,7 @@ public with sharing class EconomyImportService {
     }
 
     /**
-     * @description Resolves master Province__c records, creating missing external IDs dynamically per Audit Section Q.
+     * @description Resolves master Province__c records, creating missing external IDs dynamically.
      */
     private static Map<String, Province__c> resolveMasterProvinces(
         List<EconomyImportRequestDTO.ProvinceDTO> provinceDTOs,
@@ -299,6 +380,74 @@ public with sharing class EconomyImportService {
     }
 
     /**
+     * @description Resolves master State__c records, creating missing State_Code__c (<CountryTag>_<StateName>) dynamically per GATE-2.
+     */
+    private static Map<String, State__c> resolveMasterStates(
+        List<EconomyImportRequestDTO.StateDTO> stateDTOs,
+        Map<String, Country__c> masterCountryMap
+    ) {
+        Map<String, State__c> stateMap = new Map<String, State__c>();
+        if (stateDTOs == null || stateDTOs.isEmpty()) {
+            return stateMap;
+        }
+
+        Set<String> stateCodes = new Set<String>();
+        Map<String, StateDTOHelper> helperMap = new Map<String, StateDTOHelper>();
+        for (EconomyImportRequestDTO.StateDTO s : stateDTOs) {
+            if (String.isNotBlank(s.stateCode)) {
+                stateCodes.add(s.stateCode);
+                StateDTOHelper helper = new StateDTOHelper();
+                helper.name = String.isNotBlank(s.stateName) ? s.stateName : s.stateCode;
+                helper.countryTag = s.countryTag;
+                helperMap.put(s.stateCode, helper);
+            }
+        }
+
+        if (stateCodes.isEmpty() || !Schema.sObjectType.State__c.isAccessible()) {
+            return stateMap;
+        }
+
+        List<State__c> existingStates = [
+            SELECT Id, State_Code__c, Country__c
+            FROM State__c
+            WHERE State_Code__c IN :stateCodes
+            LIMIT 5000
+        ];
+
+        for (State__c st : existingStates) {
+            stateMap.put(st.State_Code__c, st);
+        }
+
+        List<State__c> statesToInsert = new List<State__c>();
+        for (String sCode : stateCodes) {
+            if (!stateMap.containsKey(sCode)) {
+                StateDTOHelper helper = helperMap.get(sCode);
+                Country__c masterCountry = (helper.countryTag != null) ? masterCountryMap.get(helper.countryTag) : null;
+                State__c newSt = new State__c(
+                    State_Code__c = sCode,
+                    Name = helper.name,
+                    Country__c = (masterCountry != null) ? masterCountry.Id : null
+                );
+                statesToInsert.add(newSt);
+            }
+        }
+
+        if (!statesToInsert.isEmpty() && Schema.sObjectType.State__c.isCreateable()) {
+            insert statesToInsert;
+            for (State__c st : statesToInsert) {
+                stateMap.put(st.State_Code__c, st);
+            }
+        }
+
+        return stateMap;
+    }
+
+    private class StateDTOHelper {
+        public String name;
+        public String countryTag;
+    }
+
+    /**
      * @description Fetches existing analysis header or creates a new one with RECEIVED status.
      */
     private static Economy_Analysis__c getOrCreateAnalysisHeader(
@@ -324,8 +473,8 @@ public with sharing class EconomyImportService {
 
         if (header == null) {
             header = new Economy_Analysis__c(
-                Name = analysisDTO.saveGameName,
-                Save_File_Name__c = analysisDTO.saveGameName,
+                Name = analysisDTO.saveFileName,
+                Save_File_Name__c = analysisDTO.saveFileName,
                 Unique_Snapshot_Key__c = analysisKey,
                 Source_Save_File_Name__c = analysisDTO.sourceFileName,
                 Player_Country_Tag__c = analysisDTO.playerCountryTag,
@@ -418,9 +567,14 @@ public with sharing class EconomyImportService {
                 Country__c = (masterCountry != null) ? masterCountry.Id : null,
                 Country_Tag__c = c.tag,
                 Population__c = c.population,
+                Core_Population__c = c.corePopulation,
+                Colony_Population__c = c.colonyPopulation,
                 Workforce__c = c.workforce,
                 Employment__c = c.employment,
                 Gold_Income__c = c.goldIncome,
+                Factory_GDP__c = c.factoryGdp,
+                Province_GDP__c = c.provinceGdp,
+                Artisan_GDP__c = c.artisanGdp,
                 Unique_Snapshot_Key__c = snapshotKey
             );
             records.add(ce);
@@ -483,6 +637,118 @@ public with sharing class EconomyImportService {
     }
 
     /**
+     * @description Creates/upserts State_Economy__c snapshot records for the analysis.
+     */
+    private static Map<String, State_Economy__c> upsertStateEconomies(
+        Id analysisId,
+        String analysisKey,
+        List<EconomyImportRequestDTO.StateDTO> stateDTOs,
+        Map<String, Country_Economy__c> countryEconomyMap,
+        Map<String, State__c> masterStateMap
+    ) {
+        Map<String, State_Economy__c> resultMap = new Map<String, State_Economy__c>();
+        if (stateDTOs == null || stateDTOs.isEmpty()) {
+            return resultMap;
+        }
+
+        List<State_Economy__c> records = new List<State_Economy__c>();
+        for (EconomyImportRequestDTO.StateDTO s : stateDTOs) {
+            if (String.isBlank(s.stateCode)) {
+                continue;
+            }
+            Country_Economy__c countryEcon = (s.countryTag != null) ? countryEconomyMap.get(s.countryTag) : null;
+            State__c masterState = masterStateMap.get(s.stateCode);
+            String snapshotKey = analysisKey + '_' + s.stateCode;
+
+            State_Economy__c se = new State_Economy__c(
+                Economy_Analysis__c = analysisId,
+                Country_Economy__c = (countryEcon != null) ? countryEcon.Id : null,
+                State__c = (masterState != null) ? masterState.Id : null,
+                Population__c = s.population,
+                GDP__c = s.gdp,
+                GDP_Rank__c = s.gdpRank,
+                RGO_Income__c = s.rgoIncome,
+                PGDP__c = s.pgdp,
+                AGDP__c = s.agdp,
+                FGDP__c = s.fgdp,
+                Factory_Employees__c = s.factoryEmployees,
+                Factory_Revenue__c = s.factoryRevenue,
+                Factory_Profit__c = s.factoryProfit,
+                Unique_Snapshot_Key__c = snapshotKey
+            );
+            records.add(se);
+        }
+
+        if (!records.isEmpty() && Schema.sObjectType.State_Economy__c.isCreateable()) {
+            upsert records Unique_Snapshot_Key__c;
+            for (State_Economy__c se : records) {
+                resultMap.put(se.Unique_Snapshot_Key__c, se);
+            }
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * @description Creates/upserts Province_Economy__c snapshot records for the analysis.
+     */
+    private static Map<String, Province_Economy__c> upsertProvinceEconomies(
+        Id analysisId,
+        String analysisKey,
+        List<EconomyImportRequestDTO.ProvinceDTO> provinceDTOs,
+        Map<String, Country_Economy__c> countryEconomyMap,
+        Map<String, State_Economy__c> stateEconomyMap,
+        Map<String, Province__c> masterProvinceMap
+    ) {
+        Map<String, Province_Economy__c> resultMap = new Map<String, Province_Economy__c>();
+        if (provinceDTOs == null || provinceDTOs.isEmpty()) {
+            return resultMap;
+        }
+
+        List<Province_Economy__c> records = new List<Province_Economy__c>();
+        for (EconomyImportRequestDTO.ProvinceDTO prov : provinceDTOs) {
+            String pId = prov.getProvinceIdAsString();
+            if (String.isBlank(pId) || String.isBlank(prov.countryTag)) {
+                continue;
+            }
+
+            Country_Economy__c countryEcon = countryEconomyMap.get(prov.countryTag);
+            State_Economy__c stateEcon = (prov.stateCode != null) ? stateEconomyMap.get(analysisKey + '_' + prov.stateCode) : null;
+            Province__c masterProv = masterProvinceMap.get(pId);
+
+            if (countryEcon == null) {
+                continue;
+            }
+
+            String snapshotKey = analysisKey + '_' + pId;
+
+            Province_Economy__c pe = new Province_Economy__c(
+                Country_Economy__c = countryEcon.Id,
+                Province__c = (masterProv != null) ? masterProv.Id : null,
+                Population__c = prov.population,
+                RGO_Production__c = prov.rgoProduction,
+                Colony__c = (prov.colony != null) ? prov.colony : false,
+                RGO_Income__c = prov.rgoIncome,
+                RGO_GDP__c = prov.rgoGdp,
+                Artisan_Spending__c = prov.artisanSpending,
+                Artisan_Income__c = prov.artisanIncome,
+                Artisan_GDP__c = prov.artisanGdp,
+                Unique_Snapshot_Key__c = snapshotKey
+            );
+            records.add(pe);
+        }
+
+        if (!records.isEmpty() && Schema.sObjectType.Province_Economy__c.isCreateable()) {
+            upsert records Unique_Snapshot_Key__c;
+            for (Province_Economy__c pe : records) {
+                resultMap.put(pe.Unique_Snapshot_Key__c, pe);
+            }
+        }
+
+        return resultMap;
+    }
+
+    /**
      * @description Constructs Country_Product_Economy__c records ready for insertion.
      */
     private static List<Country_Product_Economy__c> buildCountryProductRecords(
@@ -535,42 +801,115 @@ public with sharing class EconomyImportService {
     }
 
     /**
-     * @description Constructs Province_Economy__c records ready for insertion.
+     * @description Constructs Factory_Economy__c records ready for insertion.
      */
-    private static List<Province_Economy__c> buildProvinceRecords(
+    private static List<Factory_Economy__c> buildFactoryRecords(
+        Id analysisId,
         String analysisKey,
-        List<EconomyImportRequestDTO.ProvinceDTO> provinceDTOs,
+        List<EconomyImportRequestDTO.FactoryDTO> factoryDTOs,
         Map<String, Country_Economy__c> countryEconomyMap,
-        Map<String, Province__c> masterProvinceMap
+        Map<String, State_Economy__c> stateEconomyMap,
+        Map<String, Product__c> masterProductMap
     ) {
-        List<Province_Economy__c> records = new List<Province_Economy__c>();
-        if (provinceDTOs == null || provinceDTOs.isEmpty()) {
+        List<Factory_Economy__c> records = new List<Factory_Economy__c>();
+        if (factoryDTOs == null || factoryDTOs.isEmpty()) {
             return records;
         }
 
-        for (EconomyImportRequestDTO.ProvinceDTO prov : provinceDTOs) {
-            String pId = prov.getProvinceIdAsString();
-            if (String.isBlank(pId) || String.isBlank(prov.countryTag)) {
+        for (EconomyImportRequestDTO.FactoryDTO f : factoryDTOs) {
+            if (String.isBlank(f.stateCode) || String.isBlank(f.buildingType)) {
                 continue;
             }
 
-            Country_Economy__c countryEcon = countryEconomyMap.get(prov.countryTag);
-            Province__c masterProv = masterProvinceMap.get(pId);
+            Country_Economy__c countryEcon = (f.countryTag != null) ? countryEconomyMap.get(f.countryTag) : null;
+            State_Economy__c stateEcon = stateEconomyMap.get(analysisKey + '_' + f.stateCode);
+            Product__c masterProd = (f.productCode != null) ? masterProductMap.get(f.productCode) : null;
 
-            if (countryEcon == null) {
-                continue;
-            }
+            Integer occIdx = (f.occurrenceIndex != null && f.occurrenceIndex > 0) ? f.occurrenceIndex : 1;
+            String snapshotKey = analysisKey + '_' + f.stateCode + '_' + f.buildingType + '_' + occIdx;
 
-            String snapshotKey = analysisKey + '_' + pId;
-
-            Province_Economy__c pe = new Province_Economy__c(
-                Country_Economy__c = countryEcon.Id,
-                Province__c = (masterProv != null) ? masterProv.Id : null,
-                Population__c = prov.population,
-                RGO_Production__c = prov.rgoProduction,
+            Factory_Economy__c fe = new Factory_Economy__c(
+                Economy_Analysis__c = analysisId,
+                Country_Economy__c = (countryEcon != null) ? countryEcon.Id : null,
+                State_Economy__c = (stateEcon != null) ? stateEcon.Id : null,
+                Product__c = (masterProd != null) ? masterProd.Id : null,
+                Building_Type__c = f.buildingType,
+                Occurrence_Index__c = occIdx,
+                Level__c = f.level,
+                Employees__c = f.employees,
+                Output_Quantity__c = f.outputQuantity,
+                Unsold_Quantity__c = f.unsoldQuantity,
+                Capital_Reserves__c = f.capitalReserves,
+                Revenue__c = f.revenue,
+                Input_Cost__c = f.inputCost,
+                Wages_Paid__c = f.wagesPaid,
+                Injected_Money__c = f.injectedMoney,
+                Factory_GDP__c = f.factoryGdp,
+                Profit_Rank__c = f.profitRank,
                 Unique_Snapshot_Key__c = snapshotKey
             );
-            records.add(pe);
+            records.add(fe);
+        }
+
+        return records;
+    }
+
+    /**
+     * @description Constructs Artisan_Economy__c records ready for insertion, logging GATE-1 warnings for unmapped artisan types.
+     */
+    private static List<Artisan_Economy__c> buildArtisanRecords(
+        Id analysisId,
+        String analysisKey,
+        List<EconomyImportRequestDTO.ArtisanDTO> artisanDTOs,
+        Map<String, Country_Economy__c> countryEconomyMap,
+        Map<String, State_Economy__c> stateEconomyMap,
+        Map<String, Province_Economy__c> provinceEconomyMap,
+        Map<String, Product__c> masterProductMap,
+        EconomyImportResponseDTO response
+    ) {
+        List<Artisan_Economy__c> records = new List<Artisan_Economy__c>();
+        if (artisanDTOs == null || artisanDTOs.isEmpty()) {
+            return records;
+        }
+
+        for (EconomyImportRequestDTO.ArtisanDTO a : artisanDTOs) {
+            String pId = a.externalProvinceId;
+            String prodCode = (a.productCode != null) ? a.productCode : a.artisanType;
+
+            if (String.isBlank(pId) || String.isBlank(prodCode)) {
+                String warn = 'Skipping artisan record with missing province ID or product code/type.';
+                response.warnings.add(warn);
+                continue;
+            }
+
+            Country_Economy__c countryEcon = (a.countryTag != null) ? countryEconomyMap.get(a.countryTag) : null;
+            Province_Economy__c provEcon = provinceEconomyMap.get(analysisKey + '_' + pId);
+            State_Economy__c stateEcon = (a.stateCode != null) ? stateEconomyMap.get(analysisKey + '_' + a.stateCode) : null;
+            Product__c masterProd = masterProductMap.get(prodCode);
+
+            if (masterProd == null) {
+                // GATE-1: Unmapped artisan type logged and skipped
+                String warn = 'GATE-1 Warning: Unmapped artisan type [' + prodCode + '] in province [' + pId + ']. Record skipped.';
+                response.warnings.add(warn);
+                continue;
+            }
+
+            String snapshotKey = analysisKey + '_' + pId + '_' + prodCode;
+
+            Artisan_Economy__c ae = new Artisan_Economy__c(
+                Economy_Analysis__c = analysisId,
+                Country_Economy__c = (countryEcon != null) ? countryEcon.Id : null,
+                Province_Economy__c = (provEcon != null) ? provEcon.Id : null,
+                State_Economy__c = (stateEcon != null) ? stateEcon.Id : null,
+                Product__c = masterProd.Id,
+                Artisan_Type__c = a.artisanType,
+                Spending__c = a.spending,
+                Income__c = a.income,
+                AGDP__c = a.agdp,
+                Production_Quantity__c = a.productionQuantity,
+                Unique_Snapshot_Key__c = snapshotKey
+            );
+            records.add(ae);
         }
 
         return records;
