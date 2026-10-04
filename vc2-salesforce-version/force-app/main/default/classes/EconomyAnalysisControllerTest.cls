@@ -18,6 +18,19 @@ private class EconomyAnalysisControllerTest {
         );
         insert product;
 
+        State__c st = new State__c(
+            State_Code__c = 'PRU_Silesia',
+            Name = 'Silesia',
+            Country__c = country.Id
+        );
+        insert st;
+
+        Province__c prov = new Province__c(
+            External_Province_Id__c = '42',
+            Country__c = country.Id
+        );
+        insert prov;
+
         // Analysis Header 1
         Economy_Analysis__c analysis1 = new Economy_Analysis__c(
             Save_File_Name__c = 'prussia_1848.v2',
@@ -101,6 +114,57 @@ private class EconomyAnalysisControllerTest {
             Unique_Snapshot_Key__c = 'prussia_1850.v2_small_arms'
         );
         insert prodEco2;
+
+        // State Snapshot
+        State_Economy__c stateEco = new State_Economy__c(
+            Economy_Analysis__c = analysis1.Id,
+            Country_Economy__c = countryEco1.Id,
+            State__c = st.Id,
+            Population__c = 500000,
+            GDP__c = 200000.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_Silesia'
+        );
+        insert stateEco;
+
+        // Province Snapshot
+        Province_Economy__c provEco = new Province_Economy__c(
+            Country_Economy__c = countryEco1.Id,
+            Province__c = prov.Id,
+            Population__c = 85000,
+            RGO_Production__c = 120.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_42'
+        );
+        insert provEco;
+
+        // Factory Snapshot
+        Factory_Economy__c factoryEco = new Factory_Economy__c(
+            Economy_Analysis__c = analysis1.Id,
+            Country_Economy__c = countryEco1.Id,
+            State_Economy__c = stateEco.Id,
+            Product__c = product.Id,
+            Building_Type__c = 'glass_factory',
+            Employees__c = 1000,
+            Revenue__c = 500.0,
+            Input_Cost__c = 200.0,
+            Wages_Paid__c = 100.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_Silesia_glass_factory_1'
+        );
+        insert factoryEco;
+
+        // Artisan Snapshot
+        Artisan_Economy__c artisanEco = new Artisan_Economy__c(
+            Economy_Analysis__c = analysis1.Id,
+            Country_Economy__c = countryEco1.Id,
+            Province_Economy__c = provEco.Id,
+            State_Economy__c = stateEco.Id,
+            Product__c = product.Id,
+            Artisan_Type__c = 'small_arms',
+            Spending__c = 10.0,
+            Income__c = 25.0,
+            AGDP__c = 15.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_42_small_arms'
+        );
+        insert artisanEco;
 
         // Junction Snapshot 1
         Country_Product_Economy__c cpe1 = new Country_Product_Economy__c(
@@ -239,6 +303,45 @@ private class EconomyAnalysisControllerTest {
         System.assertEquals('PRU', productDtos[0].countryTag, 'Country tag should be PRU');
         System.assertEquals(600.0, productDtos[0].gdpContribution, 'GDP contribution should match');
         System.assertEquals(0, nullList.size(), 'Null product ID should return empty list');
+    }
+
+    @isTest
+    static void testGetStateSummaries() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+
+        Test.startTest();
+        List<StateSummaryDTO> stateDtos = EconomyAnalysisController.getStateSummaries(analysis.Id);
+        List<StateSummaryDTO> nullList = EconomyAnalysisController.getStateSummaries(null);
+        Test.stopTest();
+
+        System.assertEquals(1, stateDtos.size());
+        System.assertEquals(0, nullList.size());
+    }
+
+    @isTest
+    static void testGetFactorySummaries() {
+        State_Economy__c stateEco = [SELECT Id FROM State_Economy__c LIMIT 1];
+
+        Test.startTest();
+        List<FactorySummaryDTO> factoryDtos = EconomyAnalysisController.getFactorySummaries(stateEco.Id);
+        List<FactorySummaryDTO> nullList = EconomyAnalysisController.getFactorySummaries(null);
+        Test.stopTest();
+
+        System.assertEquals(1, factoryDtos.size());
+        System.assertEquals(0, nullList.size());
+    }
+
+    @isTest
+    static void testGetArtisanSummaries() {
+        Province_Economy__c provEco = [SELECT Id FROM Province_Economy__c LIMIT 1];
+
+        Test.startTest();
+        List<ArtisanSummaryDTO> artisanDtos = EconomyAnalysisController.getArtisanSummaries(provEco.Id);
+        List<ArtisanSummaryDTO> nullList = EconomyAnalysisController.getArtisanSummaries(null);
+        Test.stopTest();
+
+        System.assertEquals(1, artisanDtos.size());
+        System.assertEquals(0, nullList.size());
     }
 
     @isTest

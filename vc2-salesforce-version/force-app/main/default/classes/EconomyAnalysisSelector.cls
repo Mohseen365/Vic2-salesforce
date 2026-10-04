@@ -80,11 +80,13 @@ public with sharing class EconomyAnalysisSelector {
 
         List<Country_Economy__c> records = [
             SELECT Id, Name, Economy_Analysis__c, Country__c, Country_Tag__c, Population__c,
+                   Core_Population__c, Colony_Population__c,
                    Workforce__c, Employment__c, Workforce_RGO__c, Employment_RGO__c,
                    Workforce_Factory__c, Employment_Factory__c, GDP__c, GDP_Rank__c,
                    GDP_Per_Capita__c, GDP_Share_Percent__c, Unemployment_Rate__c,
                    Unemployment_Rate_RGO__c, Unemployment_Rate_Factory__c,
                    Total_Imports_Value__c, Total_Exports_Value__c, Gold_Income__c,
+                   Factory_GDP__c, Province_GDP__c, Artisan_GDP__c,
                    Unique_Snapshot_Key__c, Country__r.Tag__c, Country__r.Flag_URL__c, Country__r.Name
             FROM Country_Economy__c
             WHERE Economy_Analysis__c = :analysisId
@@ -137,7 +139,8 @@ public with sharing class EconomyAnalysisSelector {
                    Worldmarket_Pool__c, Intermediate_Consumption__c, Total_Supply_Pounds__c,
                    Actual_Supply_Pounds__c, Actual_Demand_Pounds__c, Import_Value__c,
                    Export_Value__c, Domestic_Sales_Value__c, GDP_Contribution__c,
-                   Unique_Snapshot_Key__c, Product_Economy__r.Product_Code__c, Product_Economy__r.Price__c
+                   Unique_Snapshot_Key__c, Product_Economy__r.Product_Code__c, Product_Economy__r.Price__c,
+                   Country_Economy__r.Country_Tag__c, Country_Economy__r.Country__r.Name
             FROM Country_Product_Economy__c
             WHERE Country_Economy__c = :countryEconomyId
             ORDER BY Product_Code__c ASC
@@ -192,7 +195,8 @@ public with sharing class EconomyAnalysisSelector {
                    Worldmarket_Pool__c, Intermediate_Consumption__c, Total_Supply_Pounds__c,
                    Actual_Supply_Pounds__c, Actual_Demand_Pounds__c, Import_Value__c,
                    Export_Value__c, Domestic_Sales_Value__c, GDP_Contribution__c,
-                   Unique_Snapshot_Key__c, Product_Economy__r.Product_Code__c, Product_Economy__r.Price__c
+                   Unique_Snapshot_Key__c, Product_Economy__r.Product_Code__c, Product_Economy__r.Price__c,
+                   Country_Economy__r.Country_Tag__c, Country_Economy__r.Country__r.Name
             FROM Country_Product_Economy__c
             WHERE Country_Economy__r.Economy_Analysis__c = :analysisId
             LIMIT 50000
@@ -214,7 +218,8 @@ public with sharing class EconomyAnalysisSelector {
 
         List<Province_Economy__c> records = [
             SELECT Id, Name, Country_Economy__c, Province__c, Population__c, RGO_Production__c,
-                   Unique_Snapshot_Key__c, Province__r.External_Province_Id__c
+                   Colony__c, RGO_Income__c, RGO_GDP__c, Artisan_Spending__c, Artisan_Income__c, Artisan_GDP__c,
+                   Unique_Snapshot_Key__c, Province__r.External_Province_Id__c, Province__r.Name
             FROM Province_Economy__c
             WHERE Country_Economy__c = :countryEconomyId
             LIMIT 5000
@@ -222,6 +227,83 @@ public with sharing class EconomyAnalysisSelector {
 
         SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
         return (List<Province_Economy__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects State_Economy__c records for a given Economy_Analysis__c Id.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of State_Economy__c records.
+     */
+    public static List<State_Economy__c> selectStateEconomies(Id analysisId) {
+        if (analysisId == null || !Schema.sObjectType.State_Economy__c.isAccessible()) {
+            return new List<State_Economy__c>();
+        }
+
+        List<State_Economy__c> records = [
+            SELECT Id, Name, Economy_Analysis__c, Country_Economy__c, State__c, Population__c,
+                   GDP__c, GDP_Per_Capita__c, GDP_Rank__c, RGO_Income__c, PGDP__c, AGDP__c, FGDP__c,
+                   Factory_Employees__c, Factory_Revenue__c, Factory_Profit__c, Unique_Snapshot_Key__c,
+                   State__r.State_Code__c, State__r.Name, Country_Economy__r.Country_Tag__c
+            FROM State_Economy__c
+            WHERE Economy_Analysis__c = :analysisId
+            ORDER BY GDP__c DESC, State__r.State_Code__c ASC
+            LIMIT 5000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<State_Economy__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects Factory_Economy__c records for a given State_Economy__c Id.
+     * @param stateEconomyId Parent State_Economy__c Id.
+     * @return List of Factory_Economy__c records.
+     */
+    public static List<Factory_Economy__c> selectFactoryEconomies(Id stateEconomyId) {
+        if (stateEconomyId == null || !Schema.sObjectType.Factory_Economy__c.isAccessible()) {
+            return new List<Factory_Economy__c>();
+        }
+
+        List<Factory_Economy__c> records = [
+            SELECT Id, Name, Economy_Analysis__c, Country_Economy__c, State_Economy__c, Product__c,
+                   Building_Type__c, Occurrence_Index__c, Level__c, Employees__c, Output_Quantity__c,
+                   Unsold_Quantity__c, Capital_Reserves__c, Revenue__c, Input_Cost__c, Wages_Paid__c,
+                   Profit__c, Factory_GDP__c, Productivity__c, Average_Wage__c, Profit_Rank__c,
+                   Unique_Snapshot_Key__c
+            FROM Factory_Economy__c
+            WHERE State_Economy__c = :stateEconomyId
+            ORDER BY Profit__c DESC
+            LIMIT 5000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Factory_Economy__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects Artisan_Economy__c records for a given Province_Economy__c Id.
+     * @param provinceEconomyId Parent Province_Economy__c Id.
+     * @return List of Artisan_Economy__c records.
+     */
+    public static List<Artisan_Economy__c> selectArtisanEconomies(Id provinceEconomyId) {
+        if (provinceEconomyId == null || !Schema.sObjectType.Artisan_Economy__c.isAccessible()) {
+            return new List<Artisan_Economy__c>();
+        }
+
+        List<Artisan_Economy__c> records = [
+            SELECT Id, Name, Economy_Analysis__c, Country_Economy__c, Province_Economy__c, State_Economy__c,
+                   Product__c, Artisan_Type__c, Spending__c, Income__c, AGDP__c, Production_Quantity__c,
+                   Unique_Snapshot_Key__c, Province_Economy__r.Province__r.External_Province_Id__c,
+                   Province_Economy__r.Province__r.Name, Country_Economy__r.Country_Tag__c,
+                   State_Economy__r.State__r.State_Code__c
+            FROM Artisan_Economy__c
+            WHERE Province_Economy__c = :provinceEconomyId
+            ORDER BY AGDP__c DESC
+            LIMIT 5000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Artisan_Economy__c>) decision.getRecords();
     }
 
     /**

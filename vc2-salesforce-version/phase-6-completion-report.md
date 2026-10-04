@@ -6,9 +6,21 @@
 
 ### Superseded: Summary of Accomplishments (Pre-Commit)
 - Extended `@AuraEnabled(cacheable=true)` facade controller `EconomyAnalysisController.cls` with `getProductSummaries`, `getProductSummary`, and `getCountryProductSummariesByProduct` methods. — *SUPERSEDED: No LWC or controller facade was created in the merged Phase 6.*
+  > **Re-introduced (2026-10-04) — Phase 8**
+  > Re-introduced `getProductSummaries`, `getProductSummary`, and `getCountryProductSummariesByProduct` methods in `EconomyAnalysisController.cls` and `EconomyAnalysisService.cls`.
+  > *RESTORED: These methods were reinstated in Phase 8 as part of the read-side controller facade layer. See `phase-8-completion-report.md` for details.*
 - Updated `EconomyAnalysisSelector.cls` and `EconomyAnalysisService.cls` to support product-scoped country trade junction queries (`selectCountryProductEconomiesByProduct`). — *SUPERSEDED: Selectors and service were not the focus of the merged Phase 6 import pipeline.*
+  > **Re-introduced (2026-10-04) — Phase 8**
+  > Re-introduced `selectCountryProductEconomiesByProduct` in `EconomyAnalysisSelector.cls`.
+  > *RESTORED: This selector query method was reinstated in Phase 8 to support commodity trade breakdown views.*
 - Updated `CountryProductSummaryDTO.cls` to surface master `countryTag` and `countryName` for product-level queries. — *SUPERSEDED: Not in scope for import persistence layer.*
+  > **Re-introduced (2026-10-04) — Phase 8**
+  > Added `countryTag` and `countryName` fields to `CountryProductSummaryDTO.cls`.
+  > *RESTORED: These fields were restored in Phase 8 for product-level country contribution tables.*
 - Extended `EconomyAnalysisControllerTest.cls` achieving 100% test coverage across all new facade methods. — *SUPERSEDED: Replaced by EconomyImportServiceTest, EconomyImportBatchTest, EconomyImportRestResourceTest.*
+  > **Re-introduced (2026-10-04) — Phase 8**
+  > Updated `EconomyAnalysisControllerTest.cls` achieving 100% test coverage across all controller facade methods.
+  > *RESTORED: Re-introduced full unit test coverage for `EconomyAnalysisController.cls` in Phase 8.*
 - Built `c-product-list-view` LWC bundle (`productListView`) rendering a searchable `lightning-datatable` of all commodity market records with column sorting and a row action button emitting `productselect` events. — *SUPERSEDED: Zero LWC components were created in Phase 6 (per Zero Scope Creep Attestation).*
 - Built `c-product-dashboard` LWC bundle (`productDashboard`) rendering commodity KPI cards (Price, Base Price, Inflation Rate, Overproduction Rate, World Supply, Real Demand, Max Demand), SLDS trend badges, country trade contribution sub-table, and "Back to Commodity List" button. — *SUPERSEDED.*
 - Updated `c-economy-analyzer-shell` LWC bundle (`economyAnalyzerShell`) replacing the Product Market tab placeholder with interactive view-swapping between `c-product-list-view` and `c-product-dashboard`. — *SUPERSEDED.*
@@ -37,7 +49,7 @@ c-economy-analyzer-shell (Analysis Switcher Combobox & Workspace Tabset)
 - `EconomyAnalysisController.getProductSummary(analysisId, productEconomyId)` → `ProductSummaryDTO`
 - `EconomyAnalysisController.getCountryProductSummariesByProduct(productEconomyId)` → `List<CountryProductSummaryDTO>`
 
-> *SUPERSEDED: Phase 6 import layer exposes REST endpoint instead of controller facade methods. Facade methods listed above remain available for Phase 7/8 consumption.*
+> *Re-introduced (2026-10-04) — Phase 8: All above methods reinstated in `EconomyAnalysisController.cls` alongside new state, factory, and artisan summary endpoints.*
 
 #### Superseded: Product List Columns & Search Behavior
 - **Columns:** Product Code, Product Name, Price (£), Base Price (£), Total World Supply, Real Demand, Max Demand, Inflation %, Overproduction %.

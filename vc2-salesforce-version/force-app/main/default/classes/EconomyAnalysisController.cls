@@ -109,6 +109,45 @@ public with sharing class EconomyAnalysisController {
     }
 
     /**
+     * @description Retrieves state summary DTOs for all regional states in an analysis.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of StateSummaryDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<StateSummaryDTO> getStateSummaries(Id analysisId) {
+        if (analysisId == null) {
+            return new List<StateSummaryDTO>();
+        }
+        return EconomyAnalysisService.getStateSummaries(analysisId);
+    }
+
+    /**
+     * @description Retrieves factory summary DTOs for all factories in a state snapshot.
+     * @param stateEconomyId Parent State_Economy__c Id.
+     * @return List of FactorySummaryDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<FactorySummaryDTO> getFactorySummaries(Id stateEconomyId) {
+        if (stateEconomyId == null) {
+            return new List<FactorySummaryDTO>();
+        }
+        return EconomyAnalysisService.getFactorySummaries(stateEconomyId);
+    }
+
+    /**
+     * @description Retrieves artisan summary DTOs for all artisans in a province snapshot.
+     * @param provinceEconomyId Parent Province_Economy__c Id.
+     * @return List of ArtisanSummaryDTO.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<ArtisanSummaryDTO> getArtisanSummaries(Id provinceEconomyId) {
+        if (provinceEconomyId == null) {
+            return new List<ArtisanSummaryDTO>();
+        }
+        return EconomyAnalysisService.getArtisanSummaries(provinceEconomyId);
+    }
+
+    /**
      * @description Compares two analysis snapshots and returns structured delta DTO.
      * @param baseAnalysisId Baseline Economy_Analysis__c Id.
      * @param compareAnalysisId Comparison Economy_Analysis__c Id.

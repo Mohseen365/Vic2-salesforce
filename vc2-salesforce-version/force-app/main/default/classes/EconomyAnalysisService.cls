@@ -210,6 +210,48 @@ public with sharing class EconomyAnalysisService {
     }
 
     /**
+     * @description Retrieves state summary DTOs for all regional states in an analysis.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of StateSummaryDTO.
+     */
+    public static List<StateSummaryDTO> getStateSummaries(Id analysisId) {
+        List<State_Economy__c> states = EconomyAnalysisSelector.selectStateEconomies(analysisId);
+        List<StateSummaryDTO> dtos = new List<StateSummaryDTO>();
+        for (State_Economy__c se : states) {
+            dtos.add(new StateSummaryDTO(se));
+        }
+        return dtos;
+    }
+
+    /**
+     * @description Retrieves factory summary DTOs for all factories in a state snapshot.
+     * @param stateEconomyId Parent State_Economy__c Id.
+     * @return List of FactorySummaryDTO.
+     */
+    public static List<FactorySummaryDTO> getFactorySummaries(Id stateEconomyId) {
+        List<Factory_Economy__c> factories = EconomyAnalysisSelector.selectFactoryEconomies(stateEconomyId);
+        List<FactorySummaryDTO> dtos = new List<FactorySummaryDTO>();
+        for (Factory_Economy__c fe : factories) {
+            dtos.add(new FactorySummaryDTO(fe));
+        }
+        return dtos;
+    }
+
+    /**
+     * @description Retrieves artisan summary DTOs for all artisans in a province snapshot.
+     * @param provinceEconomyId Parent Province_Economy__c Id.
+     * @return List of ArtisanSummaryDTO.
+     */
+    public static List<ArtisanSummaryDTO> getArtisanSummaries(Id provinceEconomyId) {
+        List<Artisan_Economy__c> artisans = EconomyAnalysisSelector.selectArtisanEconomies(provinceEconomyId);
+        List<ArtisanSummaryDTO> dtos = new List<ArtisanSummaryDTO>();
+        for (Artisan_Economy__c ae : artisans) {
+            dtos.add(new ArtisanSummaryDTO(ae));
+        }
+        return dtos;
+    }
+
+    /**
      * @description Compares two analysis snapshots (base vs compare) and computes GDP and price deltas.
      * @param baseAnalysisId Base Economy_Analysis__c Id.
      * @param compareAnalysisId Compare Economy_Analysis__c Id.
