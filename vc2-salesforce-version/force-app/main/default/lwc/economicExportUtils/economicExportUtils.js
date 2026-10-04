@@ -1,5 +1,5 @@
 /**
- * RFC 4180 compliant CSV utility module for Victoria 2 Economy Analyzer.
+ * Helper utility for client-side RFC 4180 CSV export generation in LWC.
  * Supports legacy flat CSV export parity and 49-good commodity unpivoting.
  */
 
@@ -17,11 +17,11 @@ export function escapeCsvValue(value) {
     if (value === null || value === undefined) {
         return '';
     }
-    const str = String(value);
-    if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
-        return `"${str.replace(/"/g, '""')}"`;
+    const stringVal = String(value);
+    if (stringVal.includes('"') || stringVal.includes(',') || stringVal.includes('\n') || stringVal.includes('\r')) {
+        return `"${stringVal.replace(/"/g, '""')}"`;
     }
-    return str;
+    return stringVal;
 }
 
 export function formatCurrencyValue(val) {
@@ -33,43 +33,40 @@ export function formatCurrencyValue(val) {
     return num < 0 ? `-$${formatted}` : `$${formatted}`;
 }
 
-export function toCsv(rows, headers) {
-    if (!headers || !headers.length) {
+export function toCsv(records, headers) {
+    if (!records || !Array.isArray(records) || records.length === 0) {
+        if (headers && Array.isArray(headers)) {
+            return headers.map(h => escapeCsvValue(typeof h === 'string' ? h : h.label)).join(',');
+        }
         return '';
     }
 
-    const headerLine = headers.map(h => escapeCsvValue(h.label || h.key)).join(',');
-    if (!rows || !rows.length) {
-        return headerLine;
+    const headerKeys = headers ? headers.map(h => typeof h === 'string' ? h : h.key) : Object.keys(records[0]);
+    const headerLabels = headers ? headers.map(h => typeof h === 'string' ? h : h.label) : headerKeys;
+
+    const csvLines = [];
+    csvLines.push(headerLabels.map(l => escapeCsvValue(l)).join(','));
+
+    for (const record of records) {
+        const row = headerKeys.map((key, idx) => {
+            let val = record[key];
+            const headerConfig = headers && headers[idx];
+            if (headerConfig && typeof headerConfig === 'object' && headerConfig.decimals !== undefined && val !== null && val !== undefined) {
+                const num = Number(val);
+                if (!isNaN(num)) {
+                    val = num.toFixed(headerConfig.decimals);
+                }
+            }
+            return escapeCsvValue(val);
+        });
+        csvLines.push(row.join(','));
     }
 
-    const lines = [headerLine];
-
-    for (const row of rows) {
-        const line = headers.map(h => {
-            const rawVal = row[h.key];
-            if (rawVal === null || rawVal === undefined) {
-                return '';
-            }
-            if (typeof rawVal === 'number' && h.decimals !== undefined) {
-                return escapeCsvValue(rawVal.toFixed(h.decimals));
-            }
-            return escapeCsvValue(rawVal);
-        }).join(',');
-        lines.push(line);
-    }
-
-    return lines.join('\n');
+    return csvLines.join('\n');
 }
 
-export function generateFilename(saveFileName, scope, ingameDate) {
-    const cleanName = (saveFileName || 'Economy_Analysis').replace(/[^a-zA-Z0-9_-]/g, '_');
-    const cleanScope = (scope || 'Export').toLowerCase();
-    const dateStr = ingameDate ? `_${ingameDate}` : '';
-    return `${cleanName}_${cleanScope}${dateStr}.csv`;
-}
-
-export function buildAnalysisCsv(summary) {
+export function buildSummaryCsv(summary) {
+    if (!summary) return '';
     const headers = [
         { key: 'analysisId', label: 'Analysis ID' },
         { key: 'saveFileName', label: 'Save File Name' },
@@ -82,79 +79,57 @@ export function buildAnalysisCsv(summary) {
         { key: 'totalWorldExports', label: 'Total World Exports (£)', decimals: 2 },
         { key: 'importStatus', label: 'Import Status' }
     ];
-    return toCsv(summary ? [summary] : [], headers);
+    return toCsv([summary], headers);
 }
 
-export function buildGoodsCsv(goods) {
+// LEGACY (Phase 6-10) 13-column Country Summary Builder
+export function buildCountriesCsv(countries) {
     const headers = [
-        { key: 'good', label: 'Good' },
-        { key: 'price', label: 'Price', decimals: 5 }
+        { key: 'countryTag', label: 'Tag' },
+        { key: 'countryName', label: 'Official Name' },
+        { key: 'gdpRank', label: 'GDP Rank' },
+        { key: 'gdp', label: 'GDP (£)', decimals: 2 },
+        { key: 'gdpPerCapita', label: 'GDP Per Capita (£)', decimals: 2 },
+        { key: 'gdpShare', label: 'GDP Share %', decimals: 4 },
+        { key: 'population', label: 'Population' },
+        { key: 'workforce', label: 'Workforce' },
+        { key: 'employment', label: 'Employment' },
+        { key: 'unemploymentRate', label: 'Unemployment Rate %', decimals: 2 },
+        { key: 'totalImports', label: 'Total Imports (£)', decimals: 2 },
+        { key: 'totalExports', label: 'Total Exports (£)', decimals: 2 },
+        { key: 'goldIncome', label: 'Gold Income (£)', decimals: 2 }
     ];
-    const rows = (goods || []).map(g => ({
-        good: g.productCode || g.Good || g.good || g.code || '',
-        price: g.price != null ? g.price : (g.Price != null ? g.Price : (g.basePrice != null ? g.basePrice : 0.0))
-    }));
-    return toCsv(rows, headers);
+    return toCsv(countries || [], headers);
 }
 
-export function buildCountriesCsv(countries, products, junctions) {
-    if (!junctions && Array.isArray(countries) && countries.length > 0 && !countries[0].productStorages) {
-        // Fallback for flat DTO list if unpivot data is not supplied
-        const simpleHeaders = [
-            { key: 'countryTag', label: 'Tag' },
-            { key: 'countryName', label: 'Official Name' },
-            { key: 'gdpRank', label: 'GDP Rank' },
-            { key: 'gdp', label: 'GDP (£)', decimals: 2 },
-            { key: 'gdpPerCapita', label: 'GDP Per Capita (£)', decimals: 2 },
-            { key: 'gdpShare', label: 'GDP Share %', decimals: 4 },
-            { key: 'population', label: 'Population' },
-            { key: 'workforce', label: 'Workforce' },
-            { key: 'employment', label: 'Employment' },
-            { key: 'unemploymentRate', label: 'Unemployment Rate %', decimals: 2 },
-            { key: 'totalImports', label: 'Total Imports (£)', decimals: 2 },
-            { key: 'totalExports', label: 'Total Exports (£)', decimals: 2 },
-            { key: 'goldIncome', label: 'Gold Income (£)', decimals: 2 }
-        ];
-        return toCsv(countries || [], simpleHeaders);
-    }
-
-    // Unpivot map: `${countryTag}_${productCode}` -> qty
+// NEW (Phase 11) Golden Unpivoted Country CSV Builder (60 Columns)
+export function buildCountriesCsv49Good(countries, junctionRecords = [], commodityOrder = GOLDEN_COMMODITIES) {
     const unpivotMap = new Map();
-    if (Array.isArray(junctions)) {
-        for (const j of junctions) {
-            const tag = j.countryTag || (j.Country_Economy__r ? j.Country_Economy__r.Country_Tag__c : '');
-            const code = j.productCode || j.Product_Code__c || '';
-            const qty = j.soldDomestic != null ? j.soldDomestic : (j.Sold_Domestic__c != null ? j.Sold_Domestic__c : 0.0);
-            if (tag && code) {
-                unpivotMap.set(`${tag}_${code}`, qty);
-            }
+    for (const j of junctionRecords) {
+        const tag = j.countryTag || j.Country_Economy__r?.Country_Tag__c || '';
+        const code = j.productCode || j.Product_Code__c || '';
+        const qty = j.soldDomestic != null ? j.soldDomestic : (j.Sold_Domestic__c != null ? j.Sold_Domestic__c : 0.0);
+        if (tag && code) {
+            unpivotMap.set(`${tag}_${code}`, qty);
         }
     }
 
-    const commodityOrder = GOLDEN_COMMODITIES;
-
     const headers = [
-        { key: 'Rank', label: 'Rank' },
-        { key: 'ID', label: 'ID' },
-        { key: 'Name', label: 'Name' },
-        { key: 'Population', label: 'Population', decimals: 1 },
-        { key: 'Colony_Population', label: 'Colony_Population', decimals: 1 },
-        { key: 'Total_Population', label: 'Total_Population', decimals: 1 },
-        { key: 'FGDP', label: 'FGDP' },
-        { key: 'PGDP', label: 'PGDP' },
-        { key: 'AGDP', label: 'AGDP' },
-        { key: 'GDP', label: 'GDP' },
-        { key: 'GDPperCapita', label: 'GDPperCapita' },
-        ...commodityOrder.map(comm => ({ key: comm, label: comm, decimals: 1 }))
-    ];
+        'Rank', 'ID', 'Name', 'Population', 'Colony_Population', 'Total_Population',
+        'FGDP', 'PGDP', 'AGDP', 'GDP', 'GDPperCapita', ...commodityOrder
+    ].map(h => {
+        if (['Population', 'Colony_Population', 'Total_Population', ...commodityOrder].includes(h)) {
+            return { key: h, label: h, decimals: 1 };
+        }
+        return { key: h, label: h };
+    });
 
-    const rows = (countries || []).map(c => {
-        const tag = c.countryTag || c.tag || c.ID || '';
-        const name = c.countryTag || c.tag || c.Name || tag;
-        const pop = c.corePopulation != null ? c.corePopulation : (c.Population != null ? c.Population : 0);
-        const colPop = c.colonyPopulation != null ? c.colonyPopulation : (c.Colony_Population != null ? c.Colony_Population : 0);
+    const rows = (countries || []).map((c, idx) => {
+        const tag = c.countryTag || c.Tag || c.ID || '';
+        const name = c.countryName || c.Name || tag;
+        const pop = c.corePopulation != null ? c.corePopulation : (c.Population != null ? c.Population : 0.0);
+        const colPop = c.colonyPopulation != null ? c.colonyPopulation : (c.Colony_Population != null ? c.Colony_Population : 0.0);
         const totPop = c.population != null ? c.population : (c.Total_Population != null ? c.Total_Population : pop + colPop);
-
         const fgdp = formatCurrencyValue(c.factoryGdp != null ? c.factoryGdp : c.FGDP);
         const pgdp = formatCurrencyValue(c.provinceGdp != null ? c.provinceGdp : c.PGDP);
         const agdp = formatCurrencyValue(c.artisanGdp != null ? c.artisanGdp : c.AGDP);
@@ -162,7 +137,7 @@ export function buildCountriesCsv(countries, products, junctions) {
         const gdpPerCapita = c.gdpPerCapita != null ? `$${c.gdpPerCapita.toFixed(2)}` : (c.GDPperCapita != null ? `$${Number(c.GDPperCapita).toFixed(2)}` : '$0.00');
 
         const row = {
-            Rank: c.gdpRank != null ? c.gdpRank : c.Rank,
+            Rank: c.gdpRank != null ? c.gdpRank : (c.Rank != null ? c.Rank : idx + 1),
             ID: tag,
             Name: name,
             Population: pop,
@@ -175,7 +150,6 @@ export function buildCountriesCsv(countries, products, junctions) {
             GDPperCapita: gdpPerCapita
         };
 
-        // Populate product storages if attached directly to country DTO
         const countryStorages = c.productStorages || [];
         const storageMap = new Map();
         for (const ps of countryStorages) {
@@ -202,6 +176,18 @@ export function buildCountriesCsv(countries, products, junctions) {
     return toCsv(rows, headers);
 }
 
+export function buildGoodsCsv(goods) {
+    const headers = [
+        { key: 'productCode', label: 'Good' },
+        { key: 'price', label: 'Price', decimals: 5 }
+    ];
+    const rows = (goods || []).map(g => ({
+        productCode: g.productCode || g.Good || '',
+        price: g.price != null ? g.price : (g.Price != null ? g.Price : 0.0)
+    }));
+    return toCsv(rows, headers);
+}
+
 export function buildProductsCsv(products) {
     const headers = [
         { key: 'productCode', label: 'Product Code' },
@@ -217,22 +203,34 @@ export function buildProductsCsv(products) {
     return toCsv(products || [], headers);
 }
 
-export function buildCountryProductsCsv(junctions) {
+export function buildCountryProductsCsv(countryProducts) {
     const headers = [
         { key: 'countryTag', label: 'Country Tag' },
         { key: 'productCode', label: 'Product Code' },
-        { key: 'soldDomestic', label: 'Sold Domestic Qty', decimals: 4 },
+        { key: 'soldDomesticQuantity', label: 'Sold Domestic Qty', decimals: 4 },
         { key: 'boughtQuantity', label: 'Bought Qty', decimals: 4 },
-        { key: 'thrownToMarket', label: 'Thrown To Market Qty', decimals: 4 },
-        { key: 'actualSoldWorld', label: 'Actual Sold World Qty', decimals: 4 },
+        { key: 'thrownToMarketQuantity', label: 'Thrown To Market Qty', decimals: 4 },
+        { key: 'actualSoldWorldQuantity', label: 'Actual Sold World Qty', decimals: 4 },
         { key: 'domesticSalesValue', label: 'Domestic Sales Value (£)', decimals: 2 },
         { key: 'importValue', label: 'Import Value (£)', decimals: 2 },
         { key: 'exportValue', label: 'Export Value (£)', decimals: 2 },
         { key: 'gdpContribution', label: 'GDP Contribution (£)', decimals: 2 }
     ];
-    return toCsv(junctions || [], headers);
+    return toCsv(countryProducts || [], headers);
 }
 
+// LEGACY (Phase 6-10) 4-column Province Summary Builder
+export function buildProvincesCsvLegacy(provinces) {
+    const headers = [
+        { key: 'externalProvinceId', label: 'Province ID' },
+        { key: 'countryTag', label: 'Country Tag' },
+        { key: 'population', label: 'Population' },
+        { key: 'rgoProduction', label: 'RGO Production', decimals: 4 }
+    ];
+    return toCsv(provinces || [], headers);
+}
+
+// NEW (Phase 11) Golden 15-column Province CSV Builder
 export function buildProvincesCsv(provinces) {
     const headers = [
         { key: 'ID', label: 'ID' },
