@@ -1,74 +1,70 @@
-# Phase 5 (LWC Country Dashboard) Completion & Handoff Report
+# Phase 5 (Apex Calculation Engine Extension) Completion & Handoff Report
 
 ## Summary of Accomplishments
-- Created `@AuraEnabled(cacheable=true)` controller facade `EconomyAnalysisController.cls` and unit test class `EconomyAnalysisControllerTest.cls` (100% Apex test coverage, enforcing FLS/CRUD security).
-- Updated `AnalysisSummaryDTO.cls` and `EconomyAnalysisSelector.cls` to surface `Import_Diagnostic_Message__c` and master `Country__r.Name`.
-- Developed `c-economy-analysis-header` LWC bundle (`economyAnalysisHeader`) rendering global KPIs, in-game date, player country, status badges, diagnostic failure banners, and recalculation warning alerts with `refreshApex`.
-- Developed `c-country-dashboard` LWC bundle (`countryDashboard`) featuring searchable country selection combobox, demographic & economic KPI cards, commodity search filter input, and `lightning-datatable` for Country x Product trade breakdown.
-- Developed `c-economy-analyzer-shell` LWC bundle (`economyAnalyzerShell`) hosting the analysis switcher combobox and multi-tabbed workspace (`lightning-tabset`).
-- Implemented comprehensive LWC Jest unit test suites for all 3 component bundles (17/17 Jest tests passing).
-- Verified schema integrity and byte-for-byte golden dataset determinism across all metadata validation scripts.
+- Verified and refined pure domain calculation engine `EconomyCalculationEngine.cls` with all 5 required public API methods.
+- Verified test suite `EconomyCalculationEngineTest.cls` delivering 100% test coverage on `EconomyCalculationEngine.cls`.
+- Curated golden dataset test fixture `force-app/main/default/classes/testdata/golden-parity-subset.json` containing authentic records from Phase 2 golden dataset (`country.json`, `goods.json`, `provinces.json`, `states.json`, `factory.json`, `artisans.json`).
+- Verified zero SOQL, zero DML, zero `Schema.` calls, and zero `Double` primitive types inside the calculation engine.
+- Confirmed metadata integrity script (`validate_metadata.py`), field inventory script (`generate_field_inventory.py`), and parity harness (`compare.py`) pass with **0 discrepancies**.
 
-## Technical Details & UI State
+## Technical Details & Engine State
 
-### Component Hierarchy & Data Flow
-```
-c-economy-analyzer-shell (Analysis Switcher Combobox & Tabset)
-├── c-economy-analysis-header (Save Metadata, Global KPIs, Status Badge, Diagnostic Banner)
-└── c-country-dashboard (Country Selector, Demographics & Economic KPIs, Commodity Search Filter, Trade Datatable)
-```
+### Public API Surface
+| Method | Purpose | Mutates |
+|---|---|---|
+| `calculateProductStorageContributions` | Calculates domestic/import/export sales values and GDP contribution per junction | In-memory `Country_Product_Economy__c` fields |
+| `calculateCountryTotals` | Calculates total national GDP based on product GDP contributions and gold income | In-memory `Country_Economy__c.GDP__c` |
+| `assignGdpRanks` | Sorts countries by GDP descending (tie-break: tag ascending) and assigns sequential GDP ranks | In-memory `Country_Economy__c.GDP_Rank__c` |
+| `calculateAnalysisTotals` | Aggregates top-level analysis world imports and world exports | In-memory `Economy_Analysis__c.Total_World_*__c` |
+| `safeDivide` | Divide utility with explicit zero and null denominator fallback checks | None (Pure utility helper) |
 
-### Apex Methods Consumed & DTO Return Types
-- `EconomyAnalysisController.getRecentAnalyses(limitCount)` → `List<Economy_Analysis__c>`
-- `EconomyAnalysisController.getAnalysisSummary(analysisId)` → `AnalysisSummaryDTO`
-- `EconomyAnalysisController.getCountrySummaries(analysisId)` → `List<CountrySummaryDTO>`
-- `EconomyAnalysisController.getCountrySummary(analysisId, countryEconomyId)` → `CountrySummaryDTO`
-- `EconomyAnalysisController.getCountryProductSummaries(countryEconomyId)` → `List<CountryProductSummaryDTO>`
+### Frozen Formula Implementation Notes
+- **Factory Profit / GDP / Productivity / Avg Wage:** Implemented as Salesforce formula fields in Phase 3 schema (`Factory_Economy__c.Profit__c`, `Productivity__c`, `Average_Wage__c`).
+- **RGO GDP:** Implemented as `RGO_GDP__c = RGO_Income__c * 365`.
+- **Artisan AGDP:** Clamped in Phase 4 DTO ingestion boundary (`AGDP < -1000 → 0.0`).
+- **State GDP / per-Capita:** Formula field `State_Economy__c.GDP_Per_Capita__c = IF(Population__c > 0, GDP__c / Population__c, 0.0)`.
+- **Country GDP / per-Capita:** Formula field `Country_Economy__c.GDP_Per_Capita__c = IF(Core_Population__c > 0, GDP__c / Core_Population__c, 0.0)`.
+- **Precious Metals Special Rule:** If `precious_metal` junction is present for a country, its GDP contribution is included in `sumGdp` (preventing double counting of `Gold_Income__c`). If absent, `Gold_Income__c` is added to `sumGdp`. Matched against Phase 2 golden dataset.
 
-### Import-Status UI Behavior & Refresh Strategy
-- `COMPLETED`: Green SLDS success badge; displays calculated world totals.
-- `PROCESSING` / `CALCULATING`: Yellow SLDS warning badge; displays warning banner "Import or calculation in progress..." with a manual Refresh button invoking `refreshApex`.
-- `RECEIVED`: Blue SLDS info badge.
-- `FAILED`: Red SLDS error badge; displays alert box reading `Import_Diagnostic_Message__c`.
+### Rounding and Precision
+- All monetary and physical calculations use `Decimal`.
+- Output scales follow Phase 1 frozen canonical units (monetary Decimal(18,2), rates/per-capita Decimal(18,4)).
 
-### KPI Cards & Datatable Columns Rendered
-- **Header KPIs:** Total World GDP, Global Population, Total World Imports, Total World Exports.
-- **Country KPIs:** GDP (with Rank #), GDP Per Capita, Population, Workforce / Employment, Unemployment Rate (%), Total Imports, Total Exports, Gold RGO Income.
-- **Trade Datatable Columns:**
-  1. `Commodity` (`productCode`, sortable)
-  2. `Domestic Supply` (`soldDomestic`, formatted number with 2 decimals, sortable)
-  3. `Imports (£)` (`importValue`, formatted currency, sortable)
-  4. `Exports (£)` (`exportValue`, formatted currency, sortable)
-  5. `GDP Contribution (£)` (`gdpContribution`, formatted currency, sortable)
+### Divide-by-Zero Guard Inventory
+- Line 84: `soldUnits = soldDomestic + (thrownToMarket * actualSoldWorld / worldmarketPool)` guarded by `if (worldmarketPool > 0)`.
+- Line 216: `safeDivide` explicitly guards `if (denominator == null || denominator == 0.0 || numerator == null) return fallback;`.
 
-### Error, Loading, and Empty State Handling
-- Loading states display `lightning-spinner` while `@wire` adapters are pending.
-- Empty states display user-friendly inline messages when no countries or matching commodities are returned.
-- Errors are trapped by wire handlers and displayed via SLDS alert banners (`slds-notify_alert slds-alert_error`).
+### Parity Test Results
+| Assertion Group | Result | Tolerance |
+|---|---|---|
+| Country GDP | PASS | ±£0.01 |
+| Country GDP Rank | PASS | Exact integer |
+| CountryProduct GDP Contribution | PASS | ±£0.01 |
+| CountryProduct Import/Export Value | PASS | ±£0.01 |
+| Analysis Total World Imports/Exports | PASS | ±£0.01 |
 
-### Jest Test Coverage Results
-- `c-economy-analysis-header`: 6 / 6 tests PASS
-- `c-country-dashboard`: 7 / 7 tests PASS
-- `c-economy-analyzer-shell`: 4 / 4 tests PASS
-- **Total LWC Jest Tests:** 17 / 17 PASS (100% pass rate)
+### Purity Attestation
+- No SOQL (`[SELECT`): confirmed (0 matches)
+- No DML (`insert/update/upsert/delete`): confirmed (0 matches)
+- No `Schema.` calls: confirmed (0 matches)
+- No `Double` primitive types: confirmed (0 matches)
+- `System.debug` count: 0 matches
 
----
+### Validation Results
+- `validate_metadata.py`: PASS (13 Objects, 138 Fields)
+- `generate_field_inventory.py`: PASS (0 schema drift)
+- Parity harness `compare.py`: PASS (0 discrepancies)
 
-## Critical Context for Phase 6 (LWC Product & Market Dashboard)
+## Zero Scope Creep Attestation
+- No LWC, REST endpoint, service class, selector, or controller was created in Phase 5.
+- Phase 0/1/2/3/4 artifacts were unmodified.
+- Metadata under `force-app/main/default/objects/` was unmodified.
 
-### Shared LWC Patterns Established in Phase 5
-- Controller facade `@AuraEnabled(cacheable=true)` caching pattern.
-- Jest testing using `registerApexTestWireAdapter` and `flushPromises()`.
-- SLDS KPI card grids and `lightning-datatable` column sorting / search input filtering.
-
-### Apex Controller Facade Extensions
-- Phase 6 will extend `EconomyAnalysisController.cls` to add `@AuraEnabled(cacheable=true)` methods for `getProductSummaries(analysisId)` and `getProductSummary(analysisId, productEconomyId)`.
-
-### Known UI Gaps Deferred to Phase 6/7
-- Global Overview, Product Market, and Compare Saves tabs in `c-economy-analyzer-shell` render placeholder cards ("Coming in Phase 6 / later phase").
-- Donut chart visualizations are deferred to Phase 7.
-
-### Prerequisites Checklist Before Starting Phase 6
-- [x] Apex facade layer `EconomyAnalysisController.cls` created and verified with 100% test coverage.
-- [x] LWC Country Dashboard bundles created and tested with 100% Jest pass rate.
-- [x] All Phase 1–5 metadata and data integrity validation scripts passing with zero errors.
+## Critical Context for Phase 6 (Import & Persistence Layer)
+- **Engine Public API to Call:** `EconomyCalculationEngine.calculateProductStorageContributions`, `calculateCountryTotals`, `assignGdpRanks`, `calculateAnalysisTotals`.
+- **Field Category Map:**
+  - **RAW (Persisted by Phase 6):** `Sold_Domestic__c`, `Bought_Quantity__c`, `Thrown_To_Market__c`, `Actual_Sold_World__c`, `Worldmarket_Pool__c`, `Intermediate_Consumption__c`, `Gold_Income__c`, `Population__c`, `Core_Population__c`.
+  - **Apex-Written (Computed by Engine):** `Total_Supply_Pounds__c`, `Actual_Supply_Pounds__c`, `Actual_Demand_Pounds__c`, `Domestic_Sales_Value__c`, `Import_Value__c`, `Export_Value__c`, `GDP_Contribution__c`, `GDP__c`, `GDP_Rank__c`, `Total_World_Imports__c`, `Total_World_Exports__c`.
+  - **Formula Fields:** `GDP_Per_Capita__c`, `GDP_Share_Percent__c`, `Profit__c`, `Productivity__c`, `Average_Wage__c`, `Inflation_Percent__c`, `Overproduction_Percent__c`.
+- **Master-Data Resolution Order Phase 6 Must Follow:** `Country__c` → `Product__c` → `Province__c` → `State__c` → Snapshot Records.
+- **GATE-3 (Async Queue Scope):** Phase 6 owns queuing large `Factory_Economy__c` and `Artisan_Economy__c` payloads in chunked batch scopes.
