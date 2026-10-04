@@ -2,10 +2,15 @@
  * @description Service-layer entry point for inbound economy save-game imports.
  * Orchestrates analysis header creation, master-data resolution (Country, Product, Province, State),
  * snapshot child record upserts, and invocation of EconomyCalculationEngine.
+ * LEGACY (Phase 5/6 Pre-commit) behavior retained: accepts saveGameName alias, BATCH_THRESHOLD_LEGACY=2000,
+ * buildProvinceRecords() method, and EconomyAnalysisService.recalculateAnalysis() handoff in synchronous path.
  */
 public with sharing class EconomyImportService {
 
     public static final Integer BATCH_THRESHOLD = 200;
+
+    // LEGACY (Phase 5/6 Pre-commit): Original batch threshold for junction + province record volume
+    public static final Integer BATCH_THRESHOLD_LEGACY = 2000;
 
     /**
      * @description Processes an inbound EconomyImportRequestDTO payload synchronously or delegates to EconomyImportBatch.
@@ -29,16 +34,17 @@ public with sharing class EconomyImportService {
     private static EconomyImportResponseDTO processImportInternal(EconomyImportRequestDTO request, Boolean forceBatch) {
         EconomyImportResponseDTO response = new EconomyImportResponseDTO();
 
-        if (request == null || request.analysis == null || String.isBlank(request.analysis.saveFileName)) {
+        if (request == null || request.analysis == null ||
+            (String.isBlank(request.analysis.saveFileName) && String.isBlank(request.analysis.saveGameName))) {
             response.success = false;
             response.importStatus = 'FAILED';
-            response.errorMessage = 'Invalid payload: Analysis header and saveFileName are required.';
+            response.errorMessage = 'Invalid payload: Analysis header and saveFileName (or saveGameName) are required.';
             return response;
         }
 
-        // Contract Version Validation (Enforce 1.x.x)
+        // Contract Version Validation (Enforce 1.x.x) — LEGACY: absent contractVersion is tolerated for backward compatibility
         String contractVer = request.analysis.contractVersion;
-        if (String.isBlank(contractVer) || !contractVer.startsWith('1.')) {
+        if (contractVer != null && !contractVer.startsWith('1.')) {
             response.success = false;
             response.importStatus = 'FAILED';
             response.errorMessage = 'Contract version mismatch: Expected major version 1.x.x, received: ' + contractVer;
@@ -60,7 +66,7 @@ public with sharing class EconomyImportService {
             response.recordCounts.put('states', request.states != null ? request.states.size() : 0);
 
             // 2. Create / Upsert Economy_Analysis__c Header
-            String analysisKey = request.analysis.saveFileName;
+            String analysisKey = (request.analysis.saveFileName != null) ? request.analysis.saveFileName : request.analysis.saveGameName;
             analysisHeader = getOrCreateAnalysisHeader(request.analysis, analysisKey);
             response.analysisId = analysisHeader.Id;
 
@@ -150,6 +156,11 @@ public with sharing class EconomyImportService {
             if (Schema.sObjectType.Economy_Analysis__c.isUpdateable()) {
                 update analysisHeader;
             }
+
+            // LEGACY (Phase 5/6 Pre-commit): Handoff to recalculation engine
+            // New code above performs inline calculations on in-memory objects; this recalculation
+            // re-fetches from DB and re-calculates, preserving the legacy recalculation path.
+            EconomyAnalysisService.recalculateAnalysis(analysisHeader.Id);
 
             // 9. Process Factory & Artisan Snapshots
             List<Factory_Economy__c> factoryRecords = buildFactoryRecords(
@@ -471,10 +482,12 @@ public with sharing class EconomyImportService {
 
         Date ingameDateVal = parseIngameDate(analysisDTO.ingameDate);
 
+        String effectiveSaveFileName = (analysisDTO.saveFileName != null) ? analysisDTO.saveFileName : analysisDTO.saveGameName;
+
         if (header == null) {
             header = new Economy_Analysis__c(
-                Name = analysisDTO.saveFileName,
-                Save_File_Name__c = analysisDTO.saveFileName,
+                Name = effectiveSaveFileName,
+                Save_File_Name__c = effectiveSaveFileName,
                 Unique_Snapshot_Key__c = analysisKey,
                 Source_Save_File_Name__c = analysisDTO.sourceFileName,
                 Player_Country_Tag__c = analysisDTO.playerCountryTag,
@@ -910,6 +923,53 @@ public with sharing class EconomyImportService {
                 Unique_Snapshot_Key__c = snapshotKey
             );
             records.add(ae);
+        }
+
+        return records;
+    }
+
+    /**
+     * @description Constructs Province_Economy__c records ready for insertion.
+     * LEGACY (Phase 5/6 Pre-commit): Original province record builder, retained for backward compatibility.
+     * The new upsertProvinceEconomies() method persists these immediately; this builder returns records
+     * for deferred persistence via EconomyImportBatch (legacy junction/province batch path).
+     */
+    private static List<Province_Economy__c> buildProvinceRecords(
+        Id analysisId,
+        String analysisKey,
+        List<EconomyImportRequestDTO.ProvinceDTO> provinceDTOs,
+        Map<String, Country_Economy__c> countryEconomyMap,
+        Map<String, Province__c> masterProvinceMap
+    ) {
+        List<Province_Economy__c> records = new List<Province_Economy__c>();
+        if (provinceDTOs == null || provinceDTOs.isEmpty()) {
+            return records;
+        }
+
+        for (EconomyImportRequestDTO.ProvinceDTO prov : provinceDTOs) {
+            String pId = prov.getProvinceIdAsString();
+            if (String.isBlank(pId) || String.isBlank(prov.countryTag)) {
+                continue;
+            }
+
+            Country_Economy__c countryEcon = countryEconomyMap.get(prov.countryTag);
+            Province__c masterProv = masterProvinceMap.get(pId);
+
+            if (countryEcon == null) {
+                continue;
+            }
+
+            String snapshotKey = analysisKey + '_' + pId;
+
+            Province_Economy__c pe = new Province_Economy__c(
+                Economy_Analysis__c = analysisId,
+                Country_Economy__c = countryEcon.Id,
+                Province__c = (masterProv != null) ? masterProv.Id : null,
+                Population__c = prov.population,
+                RGO_Production__c = prov.rgoProduction,
+                Unique_Snapshot_Key__c = snapshotKey
+            );
+            records.add(pe);
         }
 
         return records;

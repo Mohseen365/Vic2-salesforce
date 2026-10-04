@@ -28,6 +28,7 @@ public class EconomyImportRequestDTO {
         public String sourceFileName;
         public String playerCountryTag;
         public String contractVersion;
+        public String saveGameName;
 
         public AnalysisDTO() {
             this.contractVersion = '1.0.0';
