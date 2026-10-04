@@ -1,4 +1,4 @@
-# AGENTS.md — Victoria 2 Economy Analyzer (Salesforce Version)
+# Agent Working Rules & Project Memory — Victoria 2 Economy Analyzer (Salesforce Version)
 
 ## Project Overview & Current Status
 
@@ -7,11 +7,10 @@
 - **Phase 10 Report Pointer:** [`phase-10-completion-report.md`](./phase-10-completion-report.md)
 - **Phase 9 Report Pointer:** [`PARITY_HARNESS_EXTENSION_REPORT.md`](./PARITY_HARNESS_EXTENSION_REPORT.md)
 - **Phase 8 Report Pointer:** [`phase-8-completion-report.md`](./phase-8-completion-report.md)
-- **Phase 7 Report Pointer:** [`IDEMPOTENCY_REPORT.md`](./IDEMPOTENCY_REPORT.md)
-- **Import Contract Specification:** [`IMPORT_CONTRACT.md`](./IMPORT_CONTRACT.md)
-- **Field Inventory Reference:** [`field-inventory.md`](./field-inventory.md)
-- **Semantic Contract Reference:** [`SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
-- **Audit Reference:** [`SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
+- **Phase 7 Report Pointer:** [`phase-7-completion-report.md`](./phase-7-completion-report.md)
+- **Phase 6 Report Pointer:** [`phase-6-completion-report.md`](./phase-6-completion-report.md)
+- **Phase 5 Report Pointer:** [`phase-5-completion-report.md`](./phase-5-completion-report.md)
+- **Semantic Contract Pointer:** [`SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Golden Dataset Location:** `golden-dataset/` & `golden-dataset/save-game-analyzer/`
 - **Golden Manifest Pointer:** [`golden-dataset/manifest.json`](./golden-dataset/manifest.json)
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
@@ -19,7 +18,7 @@
 
 ---
 
-## Phase 11 LWC Component & Export Scope Inventory
+## Phase 10 & 11 LWC Component & Export Scope Inventory
 
 ### LWC Component Inventory (`force-app/main/default/lwc/`)
 1. `c-economy-analyzer-shell` (`economyAnalyzerShell`): Analysis switcher toolbar, watcher status, header, export modal, and 8-tab workspace tabset.
@@ -31,16 +30,19 @@
 7. `c-state-dashboard` (`stateDashboard`): State KPI cards and datatable bound to `getStateSummaries`.
 8. `c-factory-dashboard` (`factoryDashboard`): Factory KPI cards and datatable bound to `getFactorySummaries`.
 9. `c-artisan-dashboard` (`artisanDashboard`): Artisan KPI cards and datatable bound to `getArtisanSummaries`.
-10. `c-economic-charts-container` (`economicChartsContainer`): SVG-native visualizations.
+10. `c-economic-charts-container` (`economicChartsContainer`): SVG-native visualizations (GDP distribution, trade balance, supply/demand).
 11. `c-analysis-compare` (`analysisCompare`): Base/Compare pickers, world summary block, country and product delta datatables (Phase 11 filled).
 12. `c-save-game-watcher-status` (`saveGameWatcherStatus`): Real-time Platform Event watcher status pill.
 13. `c-economic-export-modal` (`economicExportModal`): Export dialog supporting 9 CSV scopes, row count preview, and client/Apex routing (Phase 11 re-introduced).
 14. `c-economic-export-utils` (`economicExportUtils`): RFC 4180 client-side CSV builder module with 49-good commodity unpivot (Phase 11 re-introduced).
 
+### Shell Tab Order
+`Global Overview` → `Country Explorer` → `Product Market` → `State Explorer` → `Factory Explorer` → `Artisan Explorer` → `Analytics & Visualizations` → `Compare Saves`
+
 ### Export Scope Inventory & Client vs Apex Threshold
 - **Threshold:** 5,000 rows.
 - **Client-Side Engine:** `Summary` (1 row), `Products` (48 rows), `Goods` (48 rows), `CountryProducts` (<=5000 rows).
-- **Apex Fallback Stream:** `Countries` (49-good unpivot), `Provinces` (2,703 rows), `States` (124 rows), `Factories` (714 rows), `Artisans` (4,406 rows).
+- **Apex Fallback Stream:** `Countries` (49-good unpivot or legacy summary format), `Provinces` (2,703 rows), `States` (124 rows), `Factories` (714 rows), `Artisans` (4,406 rows).
 - **Filename Convention:** `<SaveFileName>_<scope>_<IngameDate>.csv`
 
 ### Re-Introduction Log
@@ -59,11 +61,11 @@
 
 ---
 
-## Maintenance & Test Execution Guidelines
+## Verification Protocols & Commands
 
 - **Run Apex Test Suite:** Execute all Apex unit tests (`EconomyAnalysisSelectorTest`, `EconomyAnalysisControllerTest`, `EconomyAnalysisServiceTest`, `DTOsTest`, `EconomyImportIdempotencyTest`, etc.).
 - **Run LWC Jest Test Suite:** `npm run test:lwc`
 - **Run Parity Verification Harness:** `python3 vc2-salesforce-version/e2e/parity/compare.py`
-- **Run Parity & CSV Test Suite:** `python3 vc2-salesforce-version/e2e/parity/test_compare.py`
+- **Run Parity & CSV Test Suite:** `python3 vc2-salesforce-version/e2e/parity/test_compare.py` & `python3 vc2-salesforce-version/e2e/parity/test_csv_export_parity.py`
 - **Run Metadata Validator:** `python3 vc2-salesforce-version/scripts/validate_metadata.py`
 - **Run Field Inventory Generator:** `python3 vc2-salesforce-version/scripts/generate_field_inventory.py`
