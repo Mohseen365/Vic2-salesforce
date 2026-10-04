@@ -118,6 +118,66 @@ private class DTOsTest {
     }
 
     @isTest
+    static void testStateSummaryDto() {
+        StateSummaryDTO dto1 = new StateSummaryDTO();
+        System.assertEquals(0, dto1.population, 'Default population should be 0');
+
+        State_Economy__c se = new State_Economy__c(
+            Population__c = 1500000,
+            GDP__c = 200000.0,
+            GDP_Rank__c = 1
+        );
+
+        StateSummaryDTO dto2 = new StateSummaryDTO(se);
+        System.assertEquals(1500000, dto2.population, 'Population should match');
+
+        String jsonStr = JSON.serialize(dto2);
+        StateSummaryDTO deserialized = (StateSummaryDTO) JSON.deserialize(jsonStr, StateSummaryDTO.class);
+        System.assertEquals(1500000, deserialized.population, 'Deserialized population should match');
+    }
+
+    @isTest
+    static void testFactorySummaryDto() {
+        FactorySummaryDTO dto1 = new FactorySummaryDTO();
+        System.assertEquals(0, dto1.employees, 'Default employees should be 0');
+
+        Factory_Economy__c fe = new Factory_Economy__c(
+            Building_Type__c = 'steel_factory',
+            Employees__c = 1200,
+            Revenue__c = 500.0,
+            Input_Cost__c = 200.0,
+            Wages_Paid__c = 100.0
+        );
+
+        FactorySummaryDTO dto2 = new FactorySummaryDTO(fe);
+        System.assertEquals('steel_factory', dto2.buildingType, 'Building type should match');
+
+        String jsonStr = JSON.serialize(dto2);
+        FactorySummaryDTO deserialized = (FactorySummaryDTO) JSON.deserialize(jsonStr, FactorySummaryDTO.class);
+        System.assertEquals('steel_factory', deserialized.buildingType, 'Deserialized building type should match');
+    }
+
+    @isTest
+    static void testArtisanSummaryDto() {
+        ArtisanSummaryDTO dto1 = new ArtisanSummaryDTO();
+        System.assertEquals(0.0, dto1.spending, 'Default spending should be 0.0');
+
+        Artisan_Economy__c ae = new Artisan_Economy__c(
+            Artisan_Type__c = 'fabric',
+            Spending__c = 10.0,
+            Income__c = 25.0,
+            AGDP__c = 15.0
+        );
+
+        ArtisanSummaryDTO dto2 = new ArtisanSummaryDTO(ae);
+        System.assertEquals('fabric', dto2.artisanType, 'Artisan type should match');
+
+        String jsonStr = JSON.serialize(dto2);
+        ArtisanSummaryDTO deserialized = (ArtisanSummaryDTO) JSON.deserialize(jsonStr, ArtisanSummaryDTO.class);
+        System.assertEquals('fabric', deserialized.artisanType, 'Deserialized artisan type should match');
+    }
+
+    @isTest
     static void testAnalysisComparisonDto() {
         AnalysisComparisonDTO dto = new AnalysisComparisonDTO();
         dto.baseGdp = 100000.0;

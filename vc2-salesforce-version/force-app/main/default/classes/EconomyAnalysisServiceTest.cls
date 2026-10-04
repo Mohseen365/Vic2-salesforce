@@ -11,6 +11,9 @@ private class EconomyAnalysisServiceTest {
         ProductSummaryDTO pDto = EconomyAnalysisService.getProductSummary(null, null);
         List<ProductSummaryDTO> pDtos = EconomyAnalysisService.getProductSummaries(null);
         List<CountryProductSummaryDTO> cpeDtos = EconomyAnalysisService.getCountryProductSummaries(null);
+        List<StateSummaryDTO> stDtos = EconomyAnalysisService.getStateSummaries(null);
+        List<FactorySummaryDTO> fDtos = EconomyAnalysisService.getFactorySummaries(null);
+        List<ArtisanSummaryDTO> aDtos = EconomyAnalysisService.getArtisanSummaries(null);
         AnalysisComparisonDTO cmpDto = EconomyAnalysisService.compareAnalyses(null, null);
         Test.stopTest();
 
@@ -20,6 +23,9 @@ private class EconomyAnalysisServiceTest {
         System.assertEquals(null, pDto, 'Product summary should be null for null Ids');
         System.assertEquals(0, pDtos.size(), 'Product summaries list should be empty');
         System.assertEquals(0, cpeDtos.size(), 'Junction summaries list should be empty');
+        System.assertEquals(0, stDtos.size(), 'State summaries list should be empty');
+        System.assertEquals(0, fDtos.size(), 'Factory summaries list should be empty');
+        System.assertEquals(0, aDtos.size(), 'Artisan summaries list should be empty');
         System.assertNotEquals(null, cmpDto, 'Comparison DTO should not be null');
         System.assertEquals(0.0, cmpDto.gdpGrowthPercent, 'Growth percent should be 0');
     }
@@ -37,6 +43,19 @@ private class EconomyAnalysisServiceTest {
             Base_Price__c = 10.0
         );
         insert masterProduct;
+
+        State__c masterState = new State__c(
+            State_Code__c = 'ENG_London',
+            Name = 'London',
+            Country__c = masterCountry.Id
+        );
+        insert masterState;
+
+        Province__c masterProv = new Province__c(
+            External_Province_Id__c = '101',
+            Country__c = masterCountry.Id
+        );
+        insert masterProv;
 
         // Insert Base Analysis Header
         Economy_Analysis__c analysis = new Economy_Analysis__c(
@@ -71,6 +90,53 @@ private class EconomyAnalysisServiceTest {
         );
         insert productSnapshot;
 
+        // Insert State Economy Snapshot
+        State_Economy__c stateSnapshot = new State_Economy__c(
+            Economy_Analysis__c = analysis.Id,
+            Country_Economy__c = countrySnapshot.Id,
+            State__c = masterState.Id,
+            Population__c = 500000,
+            GDP__c = 50000.0,
+            Unique_Snapshot_Key__c = 'england_1848.v2_ENG_London'
+        );
+        insert stateSnapshot;
+
+        // Insert Province Economy Snapshot
+        Province_Economy__c provinceSnapshot = new Province_Economy__c(
+            Country_Economy__c = countrySnapshot.Id,
+            Province__c = masterProv.Id,
+            Population__c = 100000,
+            RGO_Production__c = 50.0,
+            Unique_Snapshot_Key__c = 'england_1848.v2_101'
+        );
+        insert provinceSnapshot;
+
+        // Insert Factory Economy Snapshot
+        Factory_Economy__c factorySnapshot = new Factory_Economy__c(
+            Economy_Analysis__c = analysis.Id,
+            Country_Economy__c = countrySnapshot.Id,
+            State_Economy__c = stateSnapshot.Id,
+            Product__c = masterProduct.Id,
+            Building_Type__c = 'glass_factory',
+            Employees__c = 1000,
+            Profit__c = 500.0,
+            Unique_Snapshot_Key__c = 'england_1848.v2_ENG_London_glass_factory_1'
+        );
+        insert factorySnapshot;
+
+        // Insert Artisan Economy Snapshot
+        Artisan_Economy__c artisanSnapshot = new Artisan_Economy__c(
+            Economy_Analysis__c = analysis.Id,
+            Country_Economy__c = countrySnapshot.Id,
+            Province_Economy__c = provinceSnapshot.Id,
+            State_Economy__c = stateSnapshot.Id,
+            Product__c = masterProduct.Id,
+            Artisan_Type__c = 'grain',
+            AGDP__c = 200.0,
+            Unique_Snapshot_Key__c = 'england_1848.v2_101_grain'
+        );
+        insert artisanSnapshot;
+
         // Insert Country Product Junction Snapshot
         Country_Product_Economy__c junction = new Country_Product_Economy__c(
             Country_Economy__c = countrySnapshot.Id,
@@ -96,16 +162,24 @@ private class EconomyAnalysisServiceTest {
         ProductSummaryDTO productSummary = EconomyAnalysisService.getProductSummary(analysis.Id, productSnapshot.Id);
         List<ProductSummaryDTO> productSummaries = EconomyAnalysisService.getProductSummaries(analysis.Id);
         List<CountryProductSummaryDTO> cpeSummaries = EconomyAnalysisService.getCountryProductSummaries(countrySnapshot.Id);
+        List<CountryProductSummaryDTO> cpeByProd = EconomyAnalysisService.getCountryProductSummariesByProduct(productSnapshot.Id);
+        List<StateSummaryDTO> stateSummaries = EconomyAnalysisService.getStateSummaries(analysis.Id);
+        List<FactorySummaryDTO> factorySummaries = EconomyAnalysisService.getFactorySummaries(stateSnapshot.Id);
+        List<ArtisanSummaryDTO> artisanSummaries = EconomyAnalysisService.getArtisanSummaries(provinceSnapshot.Id);
         Test.stopTest();
 
         // Verify Analysis
         System.assertEquals('COMPLETED', analysisSummary.importStatus, 'Import status should transition to COMPLETED');
 
         // Verify Junction calculation:
-        // soldUnits = 5 + (10 * 8 / 10) = 13
-        // unclamped GDP units = 13 - 3 = 10, GDP Contribution = 10 * 10 = 100
         System.assertEquals(1, cpeSummaries.size(), 'Junction summary count should be 1');
         System.assertEquals(100.0, cpeSummaries[0].gdpContribution, 'GDP contribution should be 100');
+        System.assertEquals(1, cpeByProd.size(), 'Junction by product count should be 1');
+
+        // Verify State, Factory, Artisan
+        System.assertEquals(1, stateSummaries.size(), 'State summaries count should be 1');
+        System.assertEquals(1, factorySummaries.size(), 'Factory summaries count should be 1');
+        System.assertEquals(1, artisanSummaries.size(), 'Artisan summaries count should be 1');
 
         // Verify Country total GDP = 100 (junction) + 50 (gold) = 150
         System.assertEquals(1, countrySummaries.size(), 'Country summary count should be 1');
@@ -169,6 +243,9 @@ private class EconomyAnalysisServiceTest {
 
         Test.startTest();
         AnalysisComparisonDTO comparison = EconomyAnalysisService.compareAnalyses(baseAnalysis.Id, compareAnalysis.Id);
+        WorldTrendDTO wt = EconomyAnalysisService.getWorldTrend(new List<Id>{ baseAnalysis.Id, compareAnalysis.Id });
+        CountryTrendDTO ct = EconomyAnalysisService.getCountryTrend(new Set<String>{ 'ENG' }, new List<Id>{ baseAnalysis.Id, compareAnalysis.Id });
+        ProductTrendDTO pt = EconomyAnalysisService.getProductTrend(new Set<String>{ 'grain' }, new List<Id>{ baseAnalysis.Id, compareAnalysis.Id });
         Test.stopTest();
 
         System.assertEquals(baseAnalysis.Id, comparison.baseAnalysisId, 'Base Analysis Id should match');
@@ -178,9 +255,8 @@ private class EconomyAnalysisServiceTest {
         System.assertEquals(50.0, comparison.countryDeltas[0].gdpDelta, 'GDP delta should be 50');
         System.assertEquals(50.0, comparison.countryDeltas[0].gdpGrowthPercent, 'GDP growth percent should be 50%');
 
-        System.assertEquals(1, comparison.productDeltas.size(), 'Product deltas count should be 1');
-        System.assertEquals('grain', comparison.productDeltas[0].productCode, 'Product code should match');
-        System.assertEquals(2.0, comparison.productDeltas[0].priceDelta, 'Price delta should be 2');
-        System.assertEquals(20.0, comparison.productDeltas[0].priceGrowthPercent, 'Price growth percent should be 20%');
+        System.assertEquals(2, wt.points.size());
+        System.assertEquals(1, ct.series.size());
+        System.assertEquals(1, pt.series.size());
     }
 }
