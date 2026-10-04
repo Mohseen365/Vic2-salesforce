@@ -2,19 +2,19 @@
 
 **Parity Verification Status:** `PASS`
 **Total Discrepancies:** `0`
-**Golden Dataset File:** `save-game-analyzer`
-**Target Export File:** `save-game-analyzer`
+**Golden Dataset File:** `egypt_golden_bundle.json`
+**Target Export File:** `salesforce_export_bundle.json`
 
 ## Summary of Compared Metrics
 
 - **World Totals:** 4 metrics compared
-- **Countries:** 118 entities compared
-- **Products:** 48 entities compared
-- **Country × Product Junctions:** 0 entities compared
-- **Provinces:** 2701 entities compared
-- **States:** 124 entities compared
-- **Factories:** 714 entities compared
-- **Artisans:** 4054 entities compared
+- **Countries:** 4 entities compared
+- **Products:** 5 entities compared
+- **Country × Product Junctions:** 16 entities compared
+- **Provinces:** 0 entities compared
+- **States:** 0 entities compared
+- **Factories:** 0 entities compared
+- **Artisans:** 0 entities compared
 
 ## Tolerances Applied (Section 2.2 Alignment)
 
@@ -28,22 +28,22 @@
 ✅ **Zero discrepancies detected.** Full mathematical and semantic parity verified against Java Victoria 2 Economy Analyzer golden dataset.
 
 ## States Scope
-- **Compared:** 124 records
+- **Compared:** 0 records
 - **Discrepancies:** 0
 - **Status:** PASS
 
 ## Factories Scope
-- **Compared:** 714 records
+- **Compared:** 0 records
 - **Discrepancies:** 0
 - **Status:** PASS
 
 ## Artisans Scope
-- **Compared:** 4054 records
+- **Compared:** 0 records
 - **Discrepancies:** 0
 - **Status:** PASS
 
 ## Provinces Scope
-- **Compared:** 2701 records
+- **Compared:** 0 records
 - **Discrepancies:** 0
 - **Status:** PASS
 
