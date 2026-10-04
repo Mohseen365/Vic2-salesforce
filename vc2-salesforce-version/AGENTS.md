@@ -2,7 +2,8 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** Phase 3 (Salesforce Metadata Schema) **VERIFIED AND COMPLETE** — Schema frozen and deployed.
+- **Current Status:** Phase 4 (Parser & Ingestion DTO Contract) **VERIFIED AND COMPLETE** — DTO contract frozen.
+- **Import Contract Specification:** [`IMPORT_CONTRACT.md`](./IMPORT_CONTRACT.md)
 - **Field Inventory Reference:** [`field-inventory.md`](./field-inventory.md)
 - **Semantic Contract Reference:** [`SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Audit Reference:** [`SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
@@ -45,7 +46,9 @@
 
 ## Architecture Review Gates Status
 
-- **GATE-1 (Modded Commodity & Artisan Type Mappings):** OPEN — Target Phase 4 (Parser & Ingestion DTO Contract).
+- **GATE-1 (Modded Commodity & Artisan Type Mappings):** RESOLVED in Phase 4.
+  - *Unknown Products Strategy:* If a `productCode` in an incoming payload does not match an existing `Product__c` master, the Phase 6 import service auto-provisions a minimal static `Product__c` (`Code__c = productCode`, `Name = productCode`, `Base_Price__c = 0.0`).
+  - *Unknown Artisan Types Strategy:* If an `artisanType` string in an incoming payload cannot be normalized or matched to a valid product/artisan mapping, the Phase 6 import service logs a diagnostic warning (`Import_Diagnostic_Message__c`) and skips the individual artisan record without aborting the batch transaction.
 - **GATE-2 (State Name Variance Across Mods — HPM/GFM/Vanilla):** RESOLVED in Phase 3.
   - *Strategy:* Use composite key `State_Code__c = <CountryTag>_<StateName>` (e.g. `EGY_Cairo`, `TUR_blank`).
   - *Analysis:* Inspection of `golden-dataset/save-game-analyzer/states.json` confirms 124 state records with 124 unique composite key values (100% uniqueness).

@@ -1,0 +1,313 @@
+{
+  "analysis": {
+    "saveFileName": "sample_egypt_turkey_1836.v2",
+    "ingameDate": "1836-01-01",
+    "sourceFileName": "sample_egypt_turkey_1836.v2",
+    "playerCountryTag": "EGY",
+    "contractVersion": "1.0.0"
+  },
+  "countries": [
+    {
+      "tag": "TUR",
+      "name": "Ottoman Empire",
+      "flagUrl": "https://example.org/flags/TUR.png",
+      "corePopulation": 13252500,
+      "colonyPopulation": 34229316,
+      "population": 47481816,
+      "workforce": 11870454,
+      "employment": 11870454,
+      "gdp": 7010392.13,
+      "factoryGdp": 280400.13,
+      "provinceGdp": 6726168.00,
+      "artisanGdp": 3824.00,
+      "goldIncome": 0.00,
+      "totalImports": 1250340.50,
+      "totalExports": 1890210.75
+    },
+    {
+      "tag": "EGY",
+      "name": "Egypt",
+      "flagUrl": "https://example.org/flags/EGY.png",
+      "corePopulation": 2400000,
+      "colonyPopulation": 0,
+      "population": 2400000,
+      "workforce": 600000,
+      "employment": 600000,
+      "gdp": 124500.00,
+      "factoryGdp": 0.00,
+      "provinceGdp": 120000.00,
+      "artisanGdp": 4500.00,
+      "goldIncome": 0.00,
+      "totalImports": 15000.00,
+      "totalExports": 32000.00
+    }
+  ],
+  "products": [
+    {
+      "code": "ammunition",
+      "name": "Ammunition",
+      "basePrice": 18.8313,
+      "price": 18.8313,
+      "totalWorldSupply": 25.5,
+      "realDemand": 30.0,
+      "maxDemand": 50.0
+    },
+    {
+      "code": "small_arms",
+      "name": "Small Arms",
+      "basePrice": 35.4985,
+      "price": 35.4985,
+      "totalWorldSupply": 12.0,
+      "realDemand": 15.0,
+      "maxDemand": 25.0
+    },
+    {
+      "code": "artillery",
+      "name": "Artillery",
+      "basePrice": 82.3518,
+      "price": 82.3518,
+      "totalWorldSupply": 8.9,
+      "realDemand": 10.0,
+      "maxDemand": 18.0
+    }
+  ],
+  "countryProducts": [
+    {
+      "countryTag": "TUR",
+      "productCode": "ammunition",
+      "soldDomestic": 15.0,
+      "boughtQuantity": 15.0,
+      "thrownToMarket": 10.5,
+      "actualSoldWorld": 10.5,
+      "worldmarketPool": 0.0,
+      "intermediateConsumption": 5.0,
+      "totalSupplyPounds": 480.20,
+      "actualSupplyPounds": 480.20,
+      "actualDemandPounds": 564.94
+    },
+    {
+      "countryTag": "TUR",
+      "productCode": "small_arms",
+      "soldDomestic": 5.0,
+      "boughtQuantity": 5.0,
+      "thrownToMarket": 3.4,
+      "actualSoldWorld": 3.4,
+      "worldmarketPool": 0.0,
+      "intermediateConsumption": 2.0,
+      "totalSupplyPounds": 298.19,
+      "actualSupplyPounds": 298.19,
+      "actualDemandPounds": 354.99
+    },
+    {
+      "countryTag": "TUR",
+      "productCode": "artillery",
+      "soldDomestic": 4.0,
+      "boughtQuantity": 4.0,
+      "thrownToMarket": 4.9,
+      "actualSoldWorld": 4.9,
+      "worldmarketPool": 0.0,
+      "intermediateConsumption": 1.0,
+      "totalSupplyPounds": 732.93,
+      "actualSupplyPounds": 732.93,
+      "actualDemandPounds": 823.52
+    },
+    {
+      "countryTag": "EGY",
+      "productCode": "ammunition",
+      "soldDomestic": 0.0,
+      "boughtQuantity": 2.0,
+      "thrownToMarket": 0.0,
+      "actualSoldWorld": 0.0,
+      "worldmarketPool": 0.0,
+      "intermediateConsumption": 0.0,
+      "totalSupplyPounds": 0.0,
+      "actualSupplyPounds": 0.0,
+      "actualDemandPounds": 37.66
+    },
+    {
+      "countryTag": "EGY",
+      "productCode": "small_arms",
+      "soldDomestic": 0.0,
+      "boughtQuantity": 1.0,
+      "thrownToMarket": 0.0,
+      "actualSoldWorld": 0.0,
+      "worldmarketPool": 0.0,
+      "intermediateConsumption": 0.0,
+      "totalSupplyPounds": 0.0,
+      "actualSupplyPounds": 0.0,
+      "actualDemandPounds": 35.50
+    }
+  ],
+  "provinces": [
+    {
+      "externalProvinceId": "674",
+      "countryTag": "TUR",
+      "stateCode": "TUR_blank",
+      "population": 43319,
+      "rgoProduction": 7.43,
+      "colony": false,
+      "rgoIncome": 16.35,
+      "rgoGdp": 5966.50,
+      "artisanSpending": 4.47,
+      "artisanIncome": 6.60,
+      "artisanGdp": 2.14
+    },
+    {
+      "externalProvinceId": "675",
+      "countryTag": "TUR",
+      "stateCode": "TUR_blank",
+      "population": 13639,
+      "rgoProduction": 5.51,
+      "colony": false,
+      "rgoIncome": 14.60,
+      "rgoGdp": 5329.74,
+      "artisanSpending": 0.06,
+      "artisanIncome": 0.08,
+      "artisanGdp": 0.01
+    },
+    {
+      "externalProvinceId": "783",
+      "countryTag": "TUR",
+      "stateCode": "TUR_blank",
+      "population": 50816,
+      "rgoProduction": 13.41,
+      "colony": false,
+      "rgoIncome": 24.01,
+      "rgoGdp": 8764.07,
+      "artisanSpending": 33.09,
+      "artisanIncome": 42.20,
+      "artisanGdp": 9.11
+    },
+    {
+      "externalProvinceId": "1720",
+      "countryTag": "EGY",
+      "stateCode": "EGY_Cairo",
+      "population": 120000,
+      "rgoProduction": 15.20,
+      "colony": false,
+      "rgoIncome": 30.50,
+      "rgoGdp": 11132.50,
+      "artisanSpending": 12.00,
+      "artisanIncome": 18.50,
+      "artisanGdp": 6.50
+    },
+    {
+      "externalProvinceId": "1721",
+      "countryTag": "EGY",
+      "stateCode": "EGY_Cairo",
+      "population": 85000,
+      "rgoProduction": 10.10,
+      "colony": false,
+      "rgoIncome": 20.10,
+      "rgoGdp": 7336.50,
+      "artisanSpending": 8.50,
+      "artisanIncome": 12.20,
+      "artisanGdp": 3.70
+    }
+  ],
+  "states": [
+    {
+      "stateCode": "TUR_blank",
+      "stateName": "blank",
+      "countryTag": "TUR",
+      "population": 47481816,
+      "gdp": 6729992.30,
+      "gdpRank": 1,
+      "rgoIncome": 18427.86,
+      "pgdp": 6726167.83,
+      "agdp": 3824.48,
+      "fgdp": 0.00,
+      "factoryEmployees": 0,
+      "factoryRevenue": 0.00,
+      "factoryProfit": 0.00
+    },
+    {
+      "stateCode": "EGY_Cairo",
+      "stateName": "Cairo",
+      "countryTag": "EGY",
+      "population": 205000,
+      "gdp": 18469.00,
+      "gdpRank": 12,
+      "rgoIncome": 50.60,
+      "pgdp": 18469.00,
+      "agdp": 10.20,
+      "fgdp": 0.00,
+      "factoryEmployees": 0,
+      "factoryRevenue": 0.00,
+      "factoryProfit": 0.00
+    }
+  ],
+  "factories": [
+    {
+      "stateCode": "TUR_876",
+      "countryTag": "TUR",
+      "productCode": "luxury_clothes",
+      "buildingType": "luxury_clothes_factory",
+      "occurrenceIndex": 1,
+      "level": 1,
+      "employees": 7379,
+      "outputQuantity": 2.00,
+      "unsoldQuantity": 0.56,
+      "capitalReserves": 1.00,
+      "revenue": 207.99,
+      "inputCost": 98.87,
+      "wagesPaid": 81.84,
+      "injectedMoney": 0.00,
+      "factoryGdp": 39830.97,
+      "profitRank": 35
+    },
+    {
+      "stateCode": "TUR_1731",
+      "countryTag": "TUR",
+      "productCode": "machine_parts",
+      "buildingType": "machine_parts_factory",
+      "occurrenceIndex": 1,
+      "level": 2,
+      "employees": 3213,
+      "outputQuantity": 1.11,
+      "unsoldQuantity": 1.01,
+      "capitalReserves": 2.00,
+      "revenue": 81.53,
+      "inputCost": 39.98,
+      "wagesPaid": 21.16,
+      "injectedMoney": 0.00,
+      "factoryGdp": 15165.07,
+      "profitRank": 46
+    }
+  ],
+  "artisans": [
+    {
+      "externalProvinceId": "674",
+      "countryTag": "TUR",
+      "stateCode": "TUR_blank",
+      "productCode": "luxury_furniture",
+      "artisanType": "luxury_furniture",
+      "spending": 1.17,
+      "income": 1.96,
+      "agdp": 0.79,
+      "productionQuantity": 0.02
+    },
+    {
+      "externalProvinceId": "674",
+      "countryTag": "TUR",
+      "stateCode": "TUR_blank",
+      "productCode": "furniture",
+      "artisanType": "furniture",
+      "spending": 0.22,
+      "income": 0.25,
+      "agdp": 0.03,
+      "productionQuantity": 0.05
+    },
+    {
+      "externalProvinceId": "674",
+      "countryTag": "TUR",
+      "stateCode": "TUR_blank",
+      "productCode": "paper",
+      "artisanType": "paper",
+      "spending": 3.07,
+      "income": 4.39,
+      "agdp": 1.32,
+      "productionQuantity": 1.28
+    }
+  ]
+}
