@@ -182,6 +182,41 @@ private class EconomyCalculationEngineTest {
     }
 
     @isTest
+    static void testCalculateProductStorageContributions_MissingLookupOrPrice() {
+        Id fakeProdId = '01t000000000005AAA';
+        // Junction referencing missing product ID in map
+        Country_Product_Economy__c jMissing = new Country_Product_Economy__c(
+            Product_Economy__c = fakeProdId,
+            Product_Code__c = 'unmapped_good',
+            Sold_Domestic__c = 10.0
+        );
+
+        // Product with null price
+        Id fakeNullPriceProdId = '01t000000000006AAA';
+        Product_Economy__c nullPriceProd = new Product_Economy__c(
+            Id = fakeNullPriceProdId,
+            Product_Code__c = 'null_price_good',
+            Price__c = null
+        );
+
+        Country_Product_Economy__c jNullPrice = new Country_Product_Economy__c(
+            Product_Economy__c = fakeNullPriceProdId,
+            Product_Code__c = 'null_price_good',
+            Sold_Domestic__c = 10.0
+        );
+
+        Map<Id, Product_Economy__c> prodMap = new Map<Id, Product_Economy__c>{ fakeNullPriceProdId => nullPriceProd };
+        List<Country_Product_Economy__c> junctions = new List<Country_Product_Economy__c>{ jMissing, jNullPrice };
+
+        Test.startTest();
+        EconomyCalculationEngine.calculateProductStorageContributions(junctions, prodMap);
+        Test.stopTest();
+
+        System.assertEquals(0.0, jMissing.Total_Supply_Pounds__c, 'Missing lookup should produce 0 supply pounds');
+        System.assertEquals(0.0, jNullPrice.Total_Supply_Pounds__c, 'Null price should produce 0 supply pounds');
+    }
+
+    @isTest
     static void testNegativeIntermediateConsumptionClamping() {
         Id fakeProdId = '01t000000000004AAA';
         Product_Economy__c timberProd = new Product_Economy__c(
@@ -224,8 +259,12 @@ private class EconomyCalculationEngineTest {
             Country_Tag__c = 'FRA',
             Gold_Income__c = 50.0
         );
+        Country_Economy__c c4 = new Country_Economy__c(
+            Country_Tag__c = 'ZUL',
+            Gold_Income__c = 0.0
+        );
 
-        List<Country_Economy__c> countries = new List<Country_Economy__c>{ c1, c2, c3 };
+        List<Country_Economy__c> countries = new List<Country_Economy__c>{ c1, c2, c3, c4 };
 
         Country_Product_Economy__c j1 = new Country_Product_Economy__c(Product_Code__c = 'grain', GDP_Contribution__c = 200.0);
         Country_Product_Economy__c j2 = new Country_Product_Economy__c(Product_Code__c = 'grain', GDP_Contribution__c = 300.0);
@@ -234,9 +273,11 @@ private class EconomyCalculationEngineTest {
         Id fakeId1 = '001000000000001AAA';
         Id fakeId2 = '001000000000002AAA';
         Id fakeId3 = '001000000000003AAA';
+        Id fakeId4 = '001000000000004AAA';
         c1.Id = fakeId1;
         c2.Id = fakeId2;
         c3.Id = fakeId3;
+        c4.Id = fakeId4;
 
         Map<Id, List<Country_Product_Economy__c>> junctionsByCountryId = new Map<Id, List<Country_Product_Economy__c>>{
             fakeId1 => new List<Country_Product_Economy__c>{ j1 },
@@ -252,10 +293,12 @@ private class EconomyCalculationEngineTest {
         System.assertEquals(250.0, c1.GDP__c, 'USA GDP should be 200 + 50 (gold income added because precious_metal junction absent)');
         System.assertEquals(400.0, c2.GDP__c, 'ENG GDP should be 300 + 100');
         System.assertEquals(250.0, c3.GDP__c, 'FRA GDP should be 200 + 50');
+        System.assertEquals(0.0, c4.GDP__c, 'ZUL GDP should be 0');
 
         System.assertEquals(1, c2.GDP_Rank__c, 'ENG should be Rank 1');
         System.assertEquals(2, c3.GDP_Rank__c, 'FRA should be Rank 2 due to alphabetical tie-break over USA');
         System.assertEquals(3, c1.GDP_Rank__c, 'USA should be Rank 3');
+        System.assertEquals(4, c4.GDP_Rank__c, 'ZUL should be Rank 4');
     }
 
     @isTest
