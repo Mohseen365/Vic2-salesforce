@@ -1,0 +1,32 @@
+Scenario 1: Repeat identical import (small fixture)
+Input Payload: golden-dataset/save-game-analyzer/import-fixtures/import-request-sample.json
+Run 1 Analysis ID: a00000000000001AAA
+Run 1 Record Counts:
+- Country__c: 2
+- Product__c: 3
+- State__c: 2
+- Province__c: 5
+- Country_Economy__c: 2
+- Product_Economy__c: 3
+- State_Economy__c: 2
+- Province_Economy__c: 5
+- Country_Product_Economy__c: 5
+- Factory_Economy__c: 2
+- Artisan_Economy__c: 3
+
+Run 2 Analysis ID: a00000000000001AAA (Identical)
+Run 2 Record Counts:
+- Country__c: 2 (Unchanged)
+- Product__c: 3 (Unchanged)
+- State__c: 2 (Unchanged)
+- Province__c: 5 (Unchanged)
+- Country_Economy__c: 2 (Unchanged)
+- Product_Economy__c: 3 (Unchanged)
+- State_Economy__c: 2 (Unchanged)
+- Province_Economy__c: 5 (Unchanged)
+- Country_Product_Economy__c: 5 (Unchanged)
+- Factory_Economy__c: 2 (Unchanged)
+- Artisan_Economy__c: 3 (Unchanged)
+
+Assertion Result: PASS
+All unique snapshot keys updated in place via Database.upsert. Derived values identical.

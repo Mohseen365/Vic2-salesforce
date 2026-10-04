@@ -1,0 +1,13 @@
+Scenario 7: Master auto-provisioning idempotency
+Input Payload: Contained unknown country tag ("XYZ") and unknown product code ("modded_silk").
+
+Run 1 Outcome:
+- Country__c: Auto-provisioned master record Tag__c = "XYZ", Name = "Unknown Tag XYZ"
+- Product__c: Auto-provisioned master record Code__c = "modded_silk", Base_Price__c = 0.0
+
+Run 2 Outcome (Re-import):
+- Country__c: Count for Tag__c = "XYZ" remains 1
+- Product__c: Count for Code__c = "modded_silk" remains 1
+
+Assertion Result: PASS
+Master auto-provisioning queries existing external IDs before insert, preventing master record duplication across re-imports.

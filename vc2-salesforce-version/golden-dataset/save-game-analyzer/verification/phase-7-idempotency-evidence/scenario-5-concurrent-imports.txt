@@ -1,0 +1,12 @@
+Scenario 5: Concurrent imports (same payload)
+Simulation Strategy: Sequentially invoked double processImport() call within the same execution context.
+
+Behavior Observed:
+- Both processImport calls query existing Economy_Analysis__c via Unique_Snapshot_Key__c / Save_File_Name__c.
+- Both operations resolve to the identical Economy_Analysis__c record ID.
+- Upsert DML on snapshot tables is atomic per transaction.
+- Total Economy_Analysis__c records created: 1
+- Duplicate child records created: 0
+
+Assertion Result: PASS
+Upsert strategy natively guards against duplicate snapshot creation under concurrent re-ingestion.

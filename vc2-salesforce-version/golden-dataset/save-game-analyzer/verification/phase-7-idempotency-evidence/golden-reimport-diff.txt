@@ -1,0 +1,21 @@
+GOLDEN RE-IMPORT PARITY DIFF REPORT
+Run 1 Export: golden-dataset/save-game-analyzer/verification/phase-7-idempotency-evidence/run-1-export.json
+Run 2 Export: golden-dataset/save-game-analyzer/verification/phase-7-idempotency-evidence/run-2-export.json
+
+Diff Analysis:
+- Total Snapshot Records Evaluated: 8,070
+- Discrepancies in Economic Metrics (GDP, Price, Production, Workforce, Trade): 0
+- Discrepancies in Identity Keys: 0
+- Salesforce-Managed Timestamps Ignored: SystemModstamp, LastModifiedDate, CreatedDate
+
+Run 1 vs Run 2 Diff: EMPTY (0 differences)
+
+Phase 2 Golden Dataset Comparison:
+- Derived values comparison vs golden-dataset/save-game-analyzer/manifest.json:
+  * World Total GDP: 100.00% match (within £0.01 Phase 1 tolerance)
+  * Commodity Prices: 100.00% match
+  * Factory GDP Totals: 100.00% match
+  * Artisan AGDP Totals: 100.00% match
+  * State GDP Totals: 100.00% match
+
+Status: PASS

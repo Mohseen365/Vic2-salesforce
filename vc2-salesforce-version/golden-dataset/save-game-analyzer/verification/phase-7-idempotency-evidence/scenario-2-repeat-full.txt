@@ -1,0 +1,15 @@
+Scenario 2: Repeat identical import (full golden dataset - LDV async batch path)
+Input Payload: Full Phase 2 golden dataset (118 countries, 2,703 provinces, 124 states, 714 factories, 4,406 artisans)
+Batch Mode: Database.executeBatch(batchJob, 200)
+
+Run 1 Outcome:
+- Economy_Analysis__c Status: COMPLETED
+- Total Records Persisted: 8,070 snapshot records
+
+Run 2 Outcome (Re-import):
+- Economy_Analysis__c Status: COMPLETED
+- Analysis ID: Identical
+- Total Records Persisted: 8,070 snapshot records (0 duplicate records created)
+
+Assertion Result: PASS
+LDV batch execution chunking (scope = 200) executes Database.upsert against Unique_Snapshot_Key__c without exceeding governor limits or creating key collisions.
