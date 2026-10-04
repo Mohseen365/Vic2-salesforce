@@ -33,16 +33,25 @@ export function formatCurrencyValue(val) {
     return num < 0 ? `-$${formatted}` : `$${formatted}`;
 }
 
+export function generateFilename(saveFileName, scope, ingameDate) {
+    const cleanSave = (saveFileName || 'Economy_Analysis').replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
+    const cleanScope = (scope || 'export').toLowerCase();
+    if (ingameDate) {
+        return `${cleanSave}_${cleanScope}_${ingameDate}.csv`;
+    }
+    return `${cleanSave}_${cleanScope}.csv`;
+}
+
 export function toCsv(records, headers) {
-    if (!records || !Array.isArray(records) || records.length === 0) {
-        if (headers && Array.isArray(headers)) {
-            return headers.map(h => escapeCsvValue(typeof h === 'string' ? h : h.label)).join(',');
-        }
+    if (!headers || !Array.isArray(headers) || headers.length === 0) {
         return '';
     }
+    if (!records || !Array.isArray(records) || records.length === 0) {
+        return headers.map(h => escapeCsvValue(typeof h === 'string' ? h : h.label)).join(',');
+    }
 
-    const headerKeys = headers ? headers.map(h => typeof h === 'string' ? h : h.key) : Object.keys(records[0]);
-    const headerLabels = headers ? headers.map(h => typeof h === 'string' ? h : h.label) : headerKeys;
+    const headerKeys = headers.map(h => typeof h === 'string' ? h : h.key);
+    const headerLabels = headers.map(h => typeof h === 'string' ? h : h.label);
 
     const csvLines = [];
     csvLines.push(headerLabels.map(l => escapeCsvValue(l)).join(','));
@@ -50,7 +59,7 @@ export function toCsv(records, headers) {
     for (const record of records) {
         const row = headerKeys.map((key, idx) => {
             let val = record[key];
-            const headerConfig = headers && headers[idx];
+            const headerConfig = headers[idx];
             if (headerConfig && typeof headerConfig === 'object' && headerConfig.decimals !== undefined && val !== null && val !== undefined) {
                 const num = Number(val);
                 if (!isNaN(num)) {
@@ -81,6 +90,8 @@ export function buildSummaryCsv(summary) {
     ];
     return toCsv([summary], headers);
 }
+
+export { buildSummaryCsv as buildAnalysisCsv };
 
 // LEGACY (Phase 6-10) 13-column Country Summary Builder
 export function buildCountriesCsv(countries) {
@@ -216,7 +227,19 @@ export function buildCountryProductsCsv(countryProducts) {
         { key: 'exportValue', label: 'Export Value (£)', decimals: 2 },
         { key: 'gdpContribution', label: 'GDP Contribution (£)', decimals: 2 }
     ];
-    return toCsv(countryProducts || [], headers);
+    const rows = (countryProducts || []).map(cp => ({
+        countryTag: cp.countryTag || cp.Country_Tag__c || '',
+        productCode: cp.productCode || cp.Product_Code__c || '',
+        soldDomesticQuantity: cp.soldDomesticQuantity != null ? cp.soldDomesticQuantity : (cp.soldDomestic != null ? cp.soldDomestic : (cp.Sold_Domestic__c != null ? cp.Sold_Domestic__c : 0.0)),
+        boughtQuantity: cp.boughtQuantity != null ? cp.boughtQuantity : (cp.Bought_Quantity__c != null ? cp.Bought_Quantity__c : 0.0),
+        thrownToMarketQuantity: cp.thrownToMarketQuantity != null ? cp.thrownToMarketQuantity : (cp.Thrown_To_Market__c != null ? cp.Thrown_To_Market__c : 0.0),
+        actualSoldWorldQuantity: cp.actualSoldWorldQuantity != null ? cp.actualSoldWorldQuantity : (cp.Actual_Sold_World__c != null ? cp.Actual_Sold_World__c : 0.0),
+        domesticSalesValue: cp.domesticSalesValue != null ? cp.domesticSalesValue : (cp.Domestic_Sales_Value__c != null ? cp.Domestic_Sales_Value__c : 0.0),
+        importValue: cp.importValue != null ? cp.importValue : (cp.Import_Value__c != null ? cp.Import_Value__c : 0.0),
+        exportValue: cp.exportValue != null ? cp.exportValue : (cp.Export_Value__c != null ? cp.Export_Value__c : 0.0),
+        gdpContribution: cp.gdpContribution != null ? cp.gdpContribution : (cp.GDP_Contribution__c != null ? cp.GDP_Contribution__c : 0.0)
+    }));
+    return toCsv(rows, headers);
 }
 
 // LEGACY (Phase 6-10) 4-column Province Summary Builder
