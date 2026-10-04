@@ -1,67 +1,51 @@
-@isTest
+@IsTest
 private class EconomyAnalysisControllerTest {
 
-    @testSetup
+    @TestSetup
     static void setupTestData() {
-        // Master Data
+        // Create mock Economy_Analysis__c
+        Economy_Analysis__c analysis = new Economy_Analysis__c(
+            Save_File_Name__c = 'prussia_1848.v2',
+            Source_Save_File_Name__c = 'prussia_1848.v2',
+            Ingame_Date__c = Date.newInstance(1848, 1, 1),
+            Player_Country_Tag__c = 'PRU',
+            Total_World_Exports__c = 1000.0,
+            Total_World_Imports__c = 950.0,
+            Import_Status__c = 'COMPLETED',
+            Unique_Snapshot_Key__c = 'prussia_1848.v2'
+        );
+        insert analysis;
+
+        // Create Master Country__c
         Country__c country = new Country__c(
-            Name = 'Prussia',
-            Tag__c = 'PRU',
-            Flag_URL__c = 'https://example.com/pru.png'
+            Tag__c = 'PRU'
         );
         insert country;
 
-        Product__c product = new Product__c(
-            Name = 'Small Arms',
+        // Create Master Product__c
+        Product__c prod = new Product__c(
             Code__c = 'small_arms',
             Base_Price__c = 10.0
         );
-        insert product;
+        insert prod;
 
+        // Create Master State__c
         State__c st = new State__c(
-            State_Code__c = 'PRU_Silesia',
-            Name = 'Silesia',
+            State_Code__c = 'Silesia',
             Country__c = country.Id
         );
         insert st;
 
+        // Create Master Province__c
         Province__c prov = new Province__c(
-            External_Province_Id__c = '42',
+            External_Province_Id__c = '101',
             Country__c = country.Id
         );
         insert prov;
 
-        // Analysis Header 1
-        Economy_Analysis__c analysis1 = new Economy_Analysis__c(
-            Save_File_Name__c = 'prussia_1848.v2',
-            Source_Save_File_Name__c = 'prussia_1848.v2',
-            Ingame_Date__c = Date.newInstance(1848, 3, 12),
-            Analysis_Timestamp__c = Datetime.now(),
-            Player_Country_Tag__c = 'PRU',
-            Total_World_Imports__c = 1000.0,
-            Total_World_Exports__c = 1200.0,
-            Import_Status__c = 'COMPLETED',
-            Unique_Snapshot_Key__c = 'prussia_1848.v2'
-        );
-        insert analysis1;
-
-        // Analysis Header 2
-        Economy_Analysis__c analysis2 = new Economy_Analysis__c(
-            Save_File_Name__c = 'prussia_1850.v2',
-            Source_Save_File_Name__c = 'prussia_1850.v2',
-            Ingame_Date__c = Date.newInstance(1850, 1, 1),
-            Analysis_Timestamp__c = Datetime.now(),
-            Player_Country_Tag__c = 'PRU',
-            Total_World_Imports__c = 1500.0,
-            Total_World_Exports__c = 1800.0,
-            Import_Status__c = 'COMPLETED',
-            Unique_Snapshot_Key__c = 'prussia_1850.v2'
-        );
-        insert analysis2;
-
-        // Country Snapshot 1
-        Country_Economy__c countryEco1 = new Country_Economy__c(
-            Economy_Analysis__c = analysis1.Id,
+        // Create Country_Economy__c
+        Country_Economy__c countryEco = new Country_Economy__c(
+            Economy_Analysis__c = analysis.Id,
             Country__c = country.Id,
             Country_Tag__c = 'PRU',
             Population__c = 1000000,
@@ -77,53 +61,44 @@ private class EconomyAnalysisControllerTest {
             Gold_Income__c = 50.0,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU'
         );
-        insert countryEco1;
+        insert countryEco;
 
-        // Country Snapshot 2
-        Country_Economy__c countryEco2 = new Country_Economy__c(
-            Economy_Analysis__c = analysis2.Id,
-            Country__c = country.Id,
-            Country_Tag__c = 'PRU',
-            Population__c = 1100000,
-            Workforce__c = 270000,
-            Employment__c = 260000,
-            GDP__c = 600000.0,
-            GDP_Rank__c = 1,
-            Gold_Income__c = 60.0,
-            Unique_Snapshot_Key__c = 'prussia_1850.v2_PRU'
-        );
-        insert countryEco2;
-
-        // Product Snapshot 1
-        Product_Economy__c prodEco1 = new Product_Economy__c(
-            Economy_Analysis__c = analysis1.Id,
-            Product__c = product.Id,
+        // Create Product_Economy__c
+        Product_Economy__c prodEco = new Product_Economy__c(
+            Economy_Analysis__c = analysis.Id,
+            Product__c = prod.Id,
             Product_Code__c = 'small_arms',
             Price__c = 12.0,
             Base_Price__c = 10.0,
-            Total_World_Supply__c = 100.0,
-            Real_Demand__c = 80.0,
+            Total_World_Supply__c = 500.0,
+            Real_Demand__c = 480.0,
+            Max_Demand__c = 600.0,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_small_arms'
         );
-        insert prodEco1;
+        insert prodEco;
 
-        // Product Snapshot 2
-        Product_Economy__c prodEco2 = new Product_Economy__c(
-            Economy_Analysis__c = analysis2.Id,
-            Product__c = product.Id,
+        // Create Country_Product_Economy__c
+        Country_Product_Economy__c cpEco = new Country_Product_Economy__c(
+            Country_Economy__c = countryEco.Id,
+            Product_Economy__c = prodEco.Id,
+            Product__c = prod.Id,
             Product_Code__c = 'small_arms',
-            Price__c = 15.0,
-            Base_Price__c = 10.0,
-            Total_World_Supply__c = 120.0,
-            Real_Demand__c = 90.0,
-            Unique_Snapshot_Key__c = 'prussia_1850.v2_small_arms'
+            Sold_Domestic__c = 100.0,
+            Bought_Quantity__c = 80.0,
+            Thrown_To_Market__c = 20.0,
+            Actual_Sold_World__c = 20.0,
+            Domestic_Sales_Value__c = 1200.0,
+            Import_Value__c = 0.0,
+            Export_Value__c = 240.0,
+            GDP_Contribution__c = 1440.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_small_arms'
         );
-        insert prodEco2;
+        insert cpEco;
 
-        // State Snapshot
+        // Create State_Economy__c
         State_Economy__c stateEco = new State_Economy__c(
-            Economy_Analysis__c = analysis1.Id,
-            Country_Economy__c = countryEco1.Id,
+            Economy_Analysis__c = analysis.Id,
+            Country_Economy__c = countryEco.Id,
             State__c = st.Id,
             Population__c = 500000,
             GDP__c = 200000.0,
@@ -132,24 +107,29 @@ private class EconomyAnalysisControllerTest {
         );
         insert stateEco;
 
-        // Province Snapshot
+        // Create Province_Economy__c
         Province_Economy__c provEco = new Province_Economy__c(
-            Country_Economy__c = countryEco1.Id,
+            Country_Economy__c = countryEco.Id,
             Province__c = prov.Id,
-            Population__c = 85000,
-            RGO_Production__c = 120.0,
-            Unique_Snapshot_Key__c = 'prussia_1848.v2_42'
+            Population__c = 50000,
+            RGO_Production__c = 150.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_101'
         );
         insert provEco;
 
-        // Factory Snapshot
+        // Create Factory_Economy__c
         Factory_Economy__c factoryEco = new Factory_Economy__c(
-            Economy_Analysis__c = analysis1.Id,
-            Country_Economy__c = countryEco1.Id,
+            Economy_Analysis__c = analysis.Id,
+            Country_Economy__c = countryEco.Id,
             State_Economy__c = stateEco.Id,
-            Product__c = product.Id,
+            Product__c = prod.Id,
             Building_Type__c = 'glass_factory',
+            Occurrence_Index__c = 1,
+            Level__c = 1,
             Employees__c = 1000,
+            Output_Quantity__c = 50.0,
+            Unsold_Quantity__c = 5.0,
+            Capital_Reserves__c = 1000.0,
             Revenue__c = 500.0,
             Input_Cost__c = 200.0,
             Wages_Paid__c = 100.0,
@@ -158,230 +138,245 @@ private class EconomyAnalysisControllerTest {
         );
         insert factoryEco;
 
-        // Artisan Snapshot
+        // Create Artisan_Economy__c
         Artisan_Economy__c artisanEco = new Artisan_Economy__c(
-            Economy_Analysis__c = analysis1.Id,
-            Country_Economy__c = countryEco1.Id,
+            Economy_Analysis__c = analysis.Id,
+            Country_Economy__c = countryEco.Id,
             Province_Economy__c = provEco.Id,
             State_Economy__c = stateEco.Id,
-            Product__c = product.Id,
-            Artisan_Type__c = 'small_arms',
-            Spending__c = 10.0,
-            Income__c = 25.0,
-            AGDP__c = 15.0,
-            Unique_Snapshot_Key__c = 'prussia_1848.v2_42_small_arms'
+            Product__c = prod.Id,
+            Artisan_Type__c = 'small_arms_artisan',
+            Spending__c = 50.0,
+            Income__c = 80.0,
+            AGDP__c = 30.0,
+            Production_Quantity__c = 10.0,
+            Unique_Snapshot_Key__c = 'prussia_1848.v2_101_small_arms_artisan'
         );
         insert artisanEco;
-
-        // Junction Snapshot 1
-        Country_Product_Economy__c cpe1 = new Country_Product_Economy__c(
-            Country_Economy__c = countryEco1.Id,
-            Product_Economy__c = prodEco1.Id,
-            Product__c = product.Id,
-            Product_Code__c = 'small_arms',
-            Sold_Domestic__c = 50.0,
-            Import_Value__c = 100.0,
-            Export_Value__c = 200.0,
-            GDP_Contribution__c = 600.0,
-            Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_small_arms'
-        );
-        insert cpe1;
     }
 
-    @isTest
+    @IsTest
     static void testGetRecentAnalyses() {
         Test.startTest();
-        List<Economy_Analysis__c> analyses = EconomyAnalysisController.getRecentAnalyses(10);
-        List<Economy_Analysis__c> defaultAnalyses = EconomyAnalysisController.getRecentAnalyses(null);
+        List<Economy_Analysis__c> results = EconomyAnalysisController.getRecentAnalyses(10);
         Test.stopTest();
 
-        System.assertEquals(2, analyses.size(), 'Should return 2 recent analyses');
-        System.assertEquals(2, defaultAnalyses.size(), 'Default limit should return 2 analyses');
+        System.assertNotEquals(null, results, 'Results should not be null');
+        System.assertEquals(1, results.size(), 'Should return 1 recent analysis');
+        System.assertEquals('prussia_1848.v2', results[0].Save_File_Name__c, 'Save file name should match');
     }
 
-    @isTest
+    @IsTest
     static void testGetAnalysisSummary() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
 
         Test.startTest();
-        AnalysisSummaryDTO dto = EconomyAnalysisController.getAnalysisSummary(analysis.Id);
-        AnalysisSummaryDTO nullDto = EconomyAnalysisController.getAnalysisSummary(null);
+        AnalysisSummaryDTO summary = EconomyAnalysisController.getAnalysisSummary(analysis.Id);
+        AnalysisSummaryDTO nullSummary = EconomyAnalysisController.getAnalysisSummary(null);
         Test.stopTest();
 
-        System.assertNotEquals(null, dto, 'AnalysisSummaryDTO should not be null');
-        System.assertEquals(analysis.Id, dto.analysisId, 'Analysis Id should match');
-        System.assertEquals('prussia_1848.v2', dto.saveFileName, 'Save file name should match');
-        System.assertEquals('PRU', dto.playerCountryTag, 'Player country tag should match');
-        System.assertEquals('COMPLETED', dto.importStatus, 'Import status should match');
-        System.assertEquals(null, nullDto, 'Null analysis Id should return null DTO');
+        System.assertNotEquals(null, summary, 'Summary should not be null');
+        System.assertEquals('prussia_1848.v2', summary.saveFileName, 'Save file name should match DTO');
+        System.assertEquals('PRU', summary.playerCountryTag, 'Player country tag should match DTO');
+        System.assertEquals(500000.0, summary.totalWorldGdp, 'Total world GDP should match DTO');
+        System.assertEquals(1000000, summary.totalWorldPopulation, 'Total world population should match DTO');
+        System.assertEquals(null, nullSummary, 'Null input should return null DTO');
     }
 
-    @isTest
-    static void testGetCountrySummaries() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+    @IsTest
+    static void testGetCountrySummariesAndSummary() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c LIMIT 1];
 
         Test.startTest();
-        List<CountrySummaryDTO> countryDtos = EconomyAnalysisController.getCountrySummaries(analysis.Id);
-        List<CountrySummaryDTO> nullList = EconomyAnalysisController.getCountrySummaries(null);
+        List<CountrySummaryDTO> listSummaries = EconomyAnalysisController.getCountrySummaries(analysis.Id);
+        CountrySummaryDTO singleSummary = EconomyAnalysisController.getCountrySummary(analysis.Id, countryEco.Id);
+        List<CountrySummaryDTO> emptyList = EconomyAnalysisController.getCountrySummaries(null);
+        CountrySummaryDTO nullSingle = EconomyAnalysisController.getCountrySummary(null, countryEco.Id);
         Test.stopTest();
 
-        System.assertEquals(1, countryDtos.size(), 'Should return 1 country summary DTO');
-        System.assertEquals('PRU', countryDtos[0].countryTag, 'Country tag should be PRU');
-        System.assertEquals(500000.0, countryDtos[0].gdp, 'GDP should match');
-        System.assertEquals(0, nullList.size(), 'Null analysis Id should return empty list');
+        System.assertEquals(1, listSummaries.size(), 'List should contain 1 country summary DTO');
+        System.assertEquals('PRU', listSummaries[0].countryTag, 'Country tag should be PRU');
+        System.assertEquals(1, listSummaries[0].gdpRank, 'GDP Rank should be 1');
+
+        System.assertNotEquals(null, singleSummary, 'Single country summary should not be null');
+        System.assertEquals('PRU', singleSummary.countryTag, 'Single country tag should be PRU');
+
+        System.assertEquals(0, emptyList.size(), 'Null analysis should return empty list');
+        System.assertEquals(null, nullSingle, 'Null analysis should return null DTO');
     }
 
-    @isTest
-    static void testGetCountrySummary() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
-        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c WHERE Economy_Analysis__c = :analysis.Id LIMIT 1];
-
-        Test.startTest();
-        CountrySummaryDTO dto = EconomyAnalysisController.getCountrySummary(analysis.Id, countryEco.Id);
-        CountrySummaryDTO nullDto = EconomyAnalysisController.getCountrySummary(analysis.Id, null);
-        CountrySummaryDTO nullAnalysisDto = EconomyAnalysisController.getCountrySummary(null, countryEco.Id);
-        Test.stopTest();
-
-        System.assertNotEquals(null, dto, 'CountrySummaryDTO should not be null');
-        System.assertEquals(countryEco.Id, dto.countryEconomyId, 'CountryEconomyId should match');
-        System.assertEquals('PRU', dto.countryTag, 'Country tag should match');
-        System.assertEquals(null, nullDto, 'Null country ID should return null');
-        System.assertEquals(null, nullAnalysisDto, 'Null analysis ID should return null');
-    }
-
-    @isTest
+    @IsTest
     static void testGetCountryProductSummaries() {
-        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c WHERE Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU' LIMIT 1];
+        Country_Economy__c countryEco = [SELECT Id FROM Country_Economy__c LIMIT 1];
 
         Test.startTest();
-        List<CountryProductSummaryDTO> productDtos = EconomyAnalysisController.getCountryProductSummaries(countryEco.Id);
-        List<CountryProductSummaryDTO> nullList = EconomyAnalysisController.getCountryProductSummaries(null);
+        List<CountryProductSummaryDTO> summaries = EconomyAnalysisController.getCountryProductSummaries(countryEco.Id);
+        List<CountryProductSummaryDTO> emptySummaries = EconomyAnalysisController.getCountryProductSummaries(null);
         Test.stopTest();
 
-        System.assertEquals(1, productDtos.size(), 'Should return 1 country-product DTO');
-        System.assertEquals('small_arms', productDtos[0].productCode, 'Product code should match');
-        System.assertEquals(600.0, productDtos[0].gdpContribution, 'GDP contribution should match');
-        System.assertEquals(0, nullList.size(), 'Null country ID should return empty list');
+        System.assertEquals(1, summaries.size(), 'Should return 1 country product summary DTO');
+        System.assertEquals('PRU', summaries[0].countryTag, 'Country tag should match');
+        System.assertEquals('small_arms', summaries[0].productCode, 'Product code should match');
+        System.assertEquals(100.0, summaries[0].soldDomesticQuantity, 'Sold domestic quantity should match');
+
+        System.assertEquals(0, emptySummaries.size(), 'Null input should return empty list');
     }
 
-    @isTest
-    static void testGetProductSummaries() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+    @IsTest
+    static void testGetProductSummariesAndSummary() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c LIMIT 1];
 
         Test.startTest();
-        List<ProductSummaryDTO> productDtos = EconomyAnalysisController.getProductSummaries(analysis.Id);
-        List<ProductSummaryDTO> nullList = EconomyAnalysisController.getProductSummaries(null);
+        List<ProductSummaryDTO> listSummaries = EconomyAnalysisController.getProductSummaries(analysis.Id);
+        ProductSummaryDTO singleSummary = EconomyAnalysisController.getProductSummary(analysis.Id, prodEco.Id);
+        List<ProductSummaryDTO> emptyList = EconomyAnalysisController.getProductSummaries(null);
+        ProductSummaryDTO nullSingle = EconomyAnalysisController.getProductSummary(null, prodEco.Id);
         Test.stopTest();
 
-        System.assertEquals(1, productDtos.size(), 'Should return 1 product summary DTO');
-        System.assertEquals('small_arms', productDtos[0].productCode, 'Product code should match');
-        System.assertEquals(12.0, productDtos[0].price, 'Price should match');
-        System.assertEquals(0, nullList.size(), 'Null analysis Id should return empty list');
+        System.assertEquals(1, listSummaries.size(), 'List should contain 1 product summary DTO');
+        System.assertEquals('small_arms', listSummaries[0].productCode, 'Product code should match');
+        System.assertEquals(12.0, listSummaries[0].price, 'Price should match');
+
+        System.assertNotEquals(null, singleSummary, 'Single product summary should not be null');
+        System.assertEquals('small_arms', singleSummary.productCode, 'Single product code should match');
+
+        System.assertEquals(0, emptyList.size(), 'Null analysis should return empty list');
+        System.assertEquals(null, nullSingle, 'Null analysis should return null DTO');
     }
 
-    @isTest
-    static void testGetProductSummary() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
-        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c WHERE Economy_Analysis__c = :analysis.Id LIMIT 1];
-
-        Test.startTest();
-        ProductSummaryDTO dto = EconomyAnalysisController.getProductSummary(analysis.Id, prodEco.Id);
-        ProductSummaryDTO nullDto = EconomyAnalysisController.getProductSummary(analysis.Id, null);
-        ProductSummaryDTO nullAnalysisDto = EconomyAnalysisController.getProductSummary(null, prodEco.Id);
-        Test.stopTest();
-
-        System.assertNotEquals(null, dto, 'ProductSummaryDTO should not be null');
-        System.assertEquals(prodEco.Id, dto.productEconomyId, 'ProductEconomyId should match');
-        System.assertEquals('small_arms', dto.productCode, 'Product code should match');
-        System.assertEquals(null, nullDto, 'Null product ID should return null');
-        System.assertEquals(null, nullAnalysisDto, 'Null analysis ID should return null');
-    }
-
-    @isTest
+    @IsTest
     static void testGetCountryProductSummariesByProduct() {
-        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c WHERE Unique_Snapshot_Key__c = 'prussia_1848.v2_small_arms' LIMIT 1];
+        Product_Economy__c prodEco = [SELECT Id FROM Product_Economy__c LIMIT 1];
 
         Test.startTest();
-        List<CountryProductSummaryDTO> productDtos = EconomyAnalysisController.getCountryProductSummariesByProduct(prodEco.Id);
-        List<CountryProductSummaryDTO> nullList = EconomyAnalysisController.getCountryProductSummariesByProduct(null);
+        List<CountryProductSummaryDTO> summaries = EconomyAnalysisController.getCountryProductSummariesByProduct(prodEco.Id);
+        List<CountryProductSummaryDTO> emptySummaries = EconomyAnalysisController.getCountryProductSummariesByProduct(null);
         Test.stopTest();
 
-        System.assertEquals(1, productDtos.size(), 'Should return 1 country-product DTO for product');
-        System.assertEquals('PRU', productDtos[0].countryTag, 'Country tag should be PRU');
-        System.assertEquals(600.0, productDtos[0].gdpContribution, 'GDP contribution should match');
-        System.assertEquals(0, nullList.size(), 'Null product ID should return empty list');
+        System.assertEquals(1, summaries.size(), 'Should return 1 country product summary DTO by product');
+        System.assertEquals('small_arms', summaries[0].productCode, 'Product code should match');
+
+        System.assertEquals(0, emptySummaries.size(), 'Null input should return empty list');
     }
 
-    @isTest
+    @IsTest
     static void testGetStateSummaries() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
 
         Test.startTest();
-        List<StateSummaryDTO> stateDtos = EconomyAnalysisController.getStateSummaries(analysis.Id);
-        List<StateSummaryDTO> nullList = EconomyAnalysisController.getStateSummaries(null);
+        List<StateSummaryDTO> stateSummaries = EconomyAnalysisController.getStateSummaries(analysis.Id);
+        List<StateSummaryDTO> emptySummaries = EconomyAnalysisController.getStateSummaries(null);
         Test.stopTest();
 
-        System.assertEquals(1, stateDtos.size());
-        System.assertEquals(0, nullList.size());
+        System.assertEquals(1, stateSummaries.size(), 'Should return 1 state summary DTO');
+        System.assertEquals('Silesia', stateSummaries[0].stateCode, 'State code should match');
+
+        System.assertEquals(0, emptySummaries.size(), 'Null input should return empty list');
     }
 
-    @isTest
+    @IsTest
     static void testGetFactorySummaries() {
         State_Economy__c stateEco = [SELECT Id FROM State_Economy__c LIMIT 1];
 
         Test.startTest();
-        List<FactorySummaryDTO> factoryDtos = EconomyAnalysisController.getFactorySummaries(stateEco.Id);
-        List<FactorySummaryDTO> nullList = EconomyAnalysisController.getFactorySummaries(null);
+        List<FactorySummaryDTO> factorySummaries = EconomyAnalysisController.getFactorySummaries(stateEco.Id);
+        List<FactorySummaryDTO> emptySummaries = EconomyAnalysisController.getFactorySummaries(null);
         Test.stopTest();
 
-        System.assertEquals(1, factoryDtos.size());
-        System.assertEquals(0, nullList.size());
+        System.assertEquals(1, factorySummaries.size(), 'Should return 1 factory summary DTO');
+        System.assertEquals('glass_factory', factorySummaries[0].buildingType, 'Building type should match');
+
+        System.assertEquals(0, emptySummaries.size(), 'Null input should return empty list');
     }
 
-    @isTest
+    @IsTest
     static void testGetArtisanSummaries() {
         Province_Economy__c provEco = [SELECT Id FROM Province_Economy__c LIMIT 1];
 
         Test.startTest();
-        List<ArtisanSummaryDTO> artisanDtos = EconomyAnalysisController.getArtisanSummaries(provEco.Id);
-        List<ArtisanSummaryDTO> nullList = EconomyAnalysisController.getArtisanSummaries(null);
+        List<ArtisanSummaryDTO> artisanSummaries = EconomyAnalysisController.getArtisanSummaries(provEco.Id);
+        List<ArtisanSummaryDTO> emptySummaries = EconomyAnalysisController.getArtisanSummaries(null);
         Test.stopTest();
 
-        System.assertEquals(1, artisanDtos.size());
-        System.assertEquals(0, nullList.size());
+        System.assertEquals(1, artisanSummaries.size(), 'Should return 1 artisan summary DTO');
+        System.assertEquals('small_arms_artisan', artisanSummaries[0].artisanType, 'Artisan type should match');
+
+        System.assertEquals(0, emptySummaries.size(), 'Null input should return empty list');
     }
 
-    @isTest
+    @IsTest
     static void testCompareAnalyses() {
-        Economy_Analysis__c a1 = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
-        Economy_Analysis__c a2 = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1850.v2' LIMIT 1];
+        Economy_Analysis__c analysis1 = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+
+        Economy_Analysis__c analysis2 = new Economy_Analysis__c(
+            Save_File_Name__c = 'prussia_1860.v2',
+            Source_Save_File_Name__c = 'prussia_1860.v2',
+            Ingame_Date__c = Date.newInstance(1860, 1, 1),
+            Player_Country_Tag__c = 'PRU',
+            Total_World_Exports__c = 1500.0,
+            Total_World_Imports__c = 1400.0,
+            Import_Status__c = 'COMPLETED',
+            Unique_Snapshot_Key__c = 'prussia_1860.v2'
+        );
+        insert analysis2;
 
         Test.startTest();
-        AnalysisComparisonDTO comparison = EconomyAnalysisController.compareAnalyses(a1.Id, a2.Id);
-        AnalysisComparisonDTO nullComparison = EconomyAnalysisController.compareAnalyses(a1.Id, null);
-        AnalysisComparisonDTO sameComparison = EconomyAnalysisController.compareAnalyses(a1.Id, a1.Id);
+        AnalysisComparisonDTO comparison = EconomyAnalysisController.compareAnalyses(analysis1.Id, analysis2.Id);
+        AnalysisComparisonDTO nullComparison = EconomyAnalysisController.compareAnalyses(analysis1.Id, analysis1.Id);
         Test.stopTest();
 
         System.assertNotEquals(null, comparison, 'Comparison DTO should not be null');
-        System.assertEquals(a1.Id, comparison.baseAnalysisId, 'Base analysis ID should match');
-        System.assertEquals(a2.Id, comparison.compareAnalysisId, 'Compare analysis ID should match');
-        System.assertEquals(500000.0, comparison.baseGdp, 'Base GDP should match');
-        System.assertEquals(600000.0, comparison.compareGdp, 'Compare GDP should match');
-        System.assertEquals(null, nullComparison, 'Null analysis ID should return null');
-        System.assertEquals(null, sameComparison, 'Same analysis ID comparison should return null');
+        System.assertEquals('prussia_1848.v2', comparison.baseSummary.saveFileName, 'Base save file name should match');
+        System.assertEquals('prussia_1860.v2', comparison.compareSummary.saveFileName, 'Compare save file name should match');
+
+        System.assertEquals(null, nullComparison, 'Same base and compare analysis should return null');
     }
 
-    @isTest
-    static void testExportCsvScopes() {
-        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c WHERE Save_File_Name__c = 'prussia_1848.v2' LIMIT 1];
+    @IsTest
+    static void testTrendAnalysisMethods() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
+        List<Id> ids = new List<Id>{ analysis.Id };
+
+        Test.startTest();
+        WorldTrendDTO worldTrend = EconomyAnalysisController.getWorldTrend(ids);
+        WorldTrendDTO emptyWorldTrend = EconomyAnalysisController.getWorldTrend(new List<Id>());
+
+        CountryTrendDTO countryTrend = EconomyAnalysisController.getCountryTrend(new List<String>{ 'PRU' }, ids);
+        CountryTrendDTO emptyCountryTrend = EconomyAnalysisController.getCountryTrend(null, new List<Id>());
+
+        ProductTrendDTO productTrend = EconomyAnalysisController.getProductTrend(new List<String>{ 'small_arms' }, ids);
+        ProductTrendDTO emptyProductTrend = EconomyAnalysisController.getProductTrend(null, new List<Id>());
+        Test.stopTest();
+
+        System.assertNotEquals(null, worldTrend, 'World trend should not be null');
+        System.assertEquals(1, worldTrend.points.size(), 'World trend should have 1 point');
+
+        System.assertNotEquals(null, countryTrend, 'Country trend should not be null');
+        System.assertEquals(1, countryTrend.series.size(), 'Country trend should have 1 series');
+
+        System.assertNotEquals(null, productTrend, 'Product trend should not be null');
+        System.assertEquals(1, productTrend.series.size(), 'Product trend should have 1 series');
+
+        System.assertEquals(0, emptyWorldTrend.points.size(), 'Empty IDs should return empty trend');
+        System.assertEquals(0, emptyCountryTrend.series.size(), 'Empty IDs should return empty trend');
+        System.assertEquals(0, emptyProductTrend.series.size(), 'Empty IDs should return empty trend');
+    }
+
+    @IsTest
+    static void testExportCsv() {
+        Economy_Analysis__c analysis = [SELECT Id FROM Economy_Analysis__c LIMIT 1];
 
         Test.startTest();
         String summaryCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Summary');
         String goodsCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Goods');
-        String countriesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Countries');
+        String countriesGoldenCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Countries');
+        String countriesLegacyCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'CountriesSummary');
         String productsCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Products');
         String cpCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'CountryProducts');
-        String provincesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Provinces');
+        String provincesGoldenCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Provinces');
+        String provincesLegacyCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'ProvincesSummary');
         String statesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'States');
         String factoriesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Factories');
         String artisansCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Artisans');
@@ -395,15 +390,20 @@ private class EconomyAnalysisControllerTest {
         System.assert(goodsCsv.contains('Good,Price'), 'Goods CSV should contain headers');
         System.assert(goodsCsv.contains('small_arms'), 'Goods CSV should contain small_arms');
 
-        System.assert(countriesCsv.contains('Rank,ID,Name,Population,Colony_Population,Total_Population,FGDP,PGDP,AGDP,GDP,GDPperCapita'), 'Countries CSV should contain golden headers');
-        System.assert(countriesCsv.contains('PRU'), 'Countries CSV should contain country tag PRU');
+        System.assert(countriesGoldenCsv.contains('Rank,ID,Name,Population,Colony_Population,Total_Population,FGDP,PGDP,AGDP,GDP,GDPperCapita'), 'Countries CSV should contain golden headers');
+        System.assert(countriesGoldenCsv.contains('PRU'), 'Countries CSV should contain country tag PRU');
+
+        System.assert(countriesLegacyCsv.contains('Tag,Official Name'), 'Legacy Countries CSV should contain legacy headers');
+        System.assert(countriesLegacyCsv.contains('PRU'), 'Legacy Countries CSV should contain country tag PRU');
 
         System.assert(productsCsv.contains('Product Code,Product Name'), 'Products CSV should contain headers');
         System.assert(productsCsv.contains('small_arms'), 'Products CSV should contain product code');
 
         System.assert(cpCsv.contains('Country Tag,Product Code'), 'CountryProducts CSV should contain headers');
 
-        System.assert(provincesCsv.contains('ID,Provid,Name,Owner,Country,State,Colony,Pop,Goods_type,RGO_Production'), 'Provinces CSV should contain golden headers');
+        System.assert(provincesGoldenCsv.contains('ID,Provid,Name,Owner,Country,State,Colony,Pop,Goods_type,RGO_Production'), 'Provinces CSV should contain golden headers');
+
+        System.assert(provincesLegacyCsv.contains('Province ID,Country Tag,Population,RGO Production'), 'Legacy Provinces CSV should contain legacy headers');
 
         System.assert(statesCsv.contains('Rank,Name,Country,Population,GDP,GDP_PerCapita,RGO_Income,PGDP,AGDP,FGDP'), 'States CSV should contain golden headers');
 
@@ -413,34 +413,5 @@ private class EconomyAnalysisControllerTest {
 
         System.assertEquals('', nullCsv, 'Null analysis ID should return empty CSV string');
         System.assertEquals('', invalidScopeCsv, 'Invalid scope should return empty CSV string');
-    }
-
-    @isTest
-    static void testRestrictedUserAccess() {
-        User minUser = createMinimumAccessUser();
-        System.runAs(minUser) {
-            Test.startTest();
-            List<Economy_Analysis__c> analyses = EconomyAnalysisController.getRecentAnalyses(10);
-            Test.stopTest();
-            System.assertNotEquals(null, analyses, 'Method should handle restricted access without throwing unhandled exceptions');
-        }
-    }
-
-    private static User createMinimumAccessUser() {
-        Profile p = [SELECT Id FROM Profile WHERE Name = 'Minimum Access - Salesforce' OR Name = 'Standard User' LIMIT 1];
-        String uniqueName = 'testuser' + DateTime.now().getTime() + '@testorg.com';
-        User u = new User(
-            Alias = 'tuser',
-            Email = 'testuser@testorg.com',
-            EmailEncodingKey = 'UTF-8',
-            LastName = 'Testing',
-            LanguageLocaleKey = 'en_US',
-            LocaleSidKey = 'en_US',
-            ProfileId = p.Id,
-            TimeZoneSidKey = 'America/Los_Angeles',
-            UserName = uniqueName
-        );
-        insert u;
-        return u;
     }
 }

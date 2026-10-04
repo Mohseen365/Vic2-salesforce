@@ -210,8 +210,9 @@ public with sharing class EconomyAnalysisController {
     /**
      * @description Generates a CSV string for the specified analysis and scope.
      * Used as Apex fallback for high row-count datasets or server-side CSV generation.
+     * Supports both Phase 11 Golden Unpivoted CSV formats and Phase 6-10 Legacy Summary CSV formats.
      * @param analysisId Target Economy_Analysis__c Id.
-     * @param scope Scope of export ('Summary', 'Countries', 'Products', 'CountryProducts', 'Provinces').
+     * @param scope Scope of export ('Summary', 'Countries', 'CountriesSummary', 'Products', 'Goods', 'CountryProducts', 'Provinces', 'ProvincesSummary', 'States', 'Factories', 'Artisans').
      * @return CSV formatted String.
      */
     @AuraEnabled
@@ -251,7 +252,32 @@ public with sharing class EconomyAnalysisController {
                 }));
             }
             return String.join(lines, '\n');
+        } else if (normalizedScope == 'countriessummary' || normalizedScope == 'countries_summary') {
+            // LEGACY (Phase 6-10) 13-column Country Summary CSV
+            List<CountrySummaryDTO> dtos = EconomyAnalysisService.getCountrySummaries(analysisId);
+            List<String> lines = new List<String>{
+                'Tag,Official Name,GDP Rank,GDP (£),GDP Per Capita (£),GDP Share %,Population,Workforce,Employment,Unemployment Rate %,Total Imports (£),Total Exports (£),Gold Income (£)'
+            };
+            for (CountrySummaryDTO c : dtos) {
+                lines.add(String.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}', new List<Object>{
+                    c.countryTag != null ? c.countryTag : '',
+                    escapeCsv(c.countryName),
+                    c.gdpRank != null ? String.valueOf(c.gdpRank) : '',
+                    c.gdp != null ? String.valueOf(c.gdp.setScale(2)) : '0.00',
+                    c.gdpPerCapita != null ? String.valueOf(c.gdpPerCapita.setScale(2)) : '0.00',
+                    c.gdpShare != null ? String.valueOf(c.gdpShare.setScale(4)) : '0.0000',
+                    c.population != null ? String.valueOf(c.population) : '0',
+                    c.workforce != null ? String.valueOf(c.workforce) : '0',
+                    c.employment != null ? String.valueOf(c.employment) : '0',
+                    c.unemploymentRate != null ? String.valueOf(c.unemploymentRate.setScale(2)) : '0.00',
+                    c.totalImports != null ? String.valueOf(c.totalImports.setScale(2)) : '0.00',
+                    c.totalExports != null ? String.valueOf(c.totalExports.setScale(2)) : '0.00',
+                    c.goldIncome != null ? String.valueOf(c.goldIncome.setScale(2)) : '0.00'
+                }));
+            }
+            return String.join(lines, '\n');
         } else if (normalizedScope == 'countries') {
+            // NEW (Phase 11) Golden Unpivoted Country CSV (60 Columns)
             List<Country_Economy__c> countries = EconomyAnalysisSelector.selectCountryEconomies(analysisId);
             List<Country_Product_Economy__c> junctions = EconomyAnalysisSelector.selectCountryProductEconomiesByAnalysis(analysisId);
 
@@ -345,7 +371,25 @@ public with sharing class EconomyAnalysisController {
                 }));
             }
             return String.join(lines, '\n');
+        } else if (normalizedScope == 'provincessummary' || normalizedScope == 'provinces_summary') {
+            // LEGACY (Phase 6-10) 4-column Province Summary CSV
+            List<Province_Economy__c> provinces = EconomyAnalysisSelector.selectProvinceEconomiesByAnalysis(analysisId);
+            List<String> lines = new List<String>{
+                'Province ID,Country Tag,Population,RGO Production'
+            };
+            for (Province_Economy__c pe : provinces) {
+                String provId = pe.Province_r != null && pe.Province__r.External_Province_Id__c != null ? pe.Province__r.External_Province_Id__c : '';
+                String tag = pe.Country_Economy__r != null && pe.Country_Economy__r.Country_Tag__c != null ? pe.Country_Economy__r.Country_Tag__c : '';
+                lines.add(String.format('{0},{1},{2},{3}', new List<Object>{
+                    provId,
+                    tag,
+                    pe.Population__c != null ? String.valueOf(pe.Population__c) : '0',
+                    pe.RGO_Production__c != null ? String.valueOf(pe.RGO_Production__c.setScale(4)) : '0.0000'
+                }));
+            }
+            return String.join(lines, '\n');
         } else if (normalizedScope == 'provinces') {
+            // NEW (Phase 11) Golden 15-column Province CSV
             List<Province_Economy__c> provinces = EconomyAnalysisSelector.selectProvinceEconomiesByAnalysis(analysisId);
             List<String> lines = new List<String>{
                 'ID,Provid,Name,Owner,Country,State,Colony,Pop,Goods_type,RGO_Production,Last_income,GDP,Last_Spending,Production_Income,AGDP'

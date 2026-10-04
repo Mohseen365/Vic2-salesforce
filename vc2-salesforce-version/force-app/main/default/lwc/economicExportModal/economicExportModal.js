@@ -2,6 +2,7 @@ import { LightningElement, api, wire, track } from 'lwc';
 import getAnalysisSummary from '@salesforce/apex/EconomyAnalysisController.getAnalysisSummary';
 import getCountrySummaries from '@salesforce/apex/EconomyAnalysisController.getCountrySummaries';
 import getProductSummaries from '@salesforce/apex/EconomyAnalysisController.getProductSummaries';
+import getCountryProductSummariesByProduct from '@salesforce/apex/EconomyAnalysisController.getCountryProductSummariesByProduct';
 import exportCsv from '@salesforce/apex/EconomyAnalysisController.exportCsv';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import {
@@ -12,6 +13,7 @@ import {
     buildProductsCsv,
     buildCountryProductsCsv,
     buildProvincesCsv,
+    buildProvincesCsvLegacy,
     buildStatesCsv,
     buildFactoriesCsv,
     buildArtisansCsv
@@ -84,10 +86,12 @@ export default class EconomicExportModal extends LightningElement {
         return [
             { label: 'Analysis Summary (1 row)', value: 'Summary' },
             { label: 'Countries (Sovereign States — Country.csv)', value: 'Countries' },
+            { label: 'Countries Summary (13 Columns)', value: 'CountriesSummary' },
             { label: 'Products (Commodity World Market)', value: 'Products' },
             { label: 'Goods & Prices (Goods.csv)', value: 'Goods' },
             { label: 'Country × Product (Trade & GDP)', value: 'CountryProducts' },
             { label: 'Provinces (Provinces.csv)', value: 'Provinces' },
+            { label: 'Provinces Summary (4 Columns)', value: 'ProvincesSummary' },
             { label: 'States (States.csv)', value: 'States' },
             { label: 'Factories (Factory.csv)', value: 'Factories' },
             { label: 'Artisans (Artisans.csv)', value: 'Artisans' }
@@ -105,6 +109,7 @@ export default class EconomicExportModal extends LightningElement {
             case 'Summary':
                 return 1;
             case 'Countries':
+            case 'CountriesSummary':
                 return this.countrySummaries ? this.countrySummaries.length : 0;
             case 'Products':
             case 'Goods':
@@ -115,6 +120,7 @@ export default class EconomicExportModal extends LightningElement {
                 return cCount * pCount;
             }
             case 'Provinces':
+            case 'ProvincesSummary':
                 return 2703;
             case 'States':
                 return 124;
@@ -181,6 +187,9 @@ export default class EconomicExportModal extends LightningElement {
                     case 'Goods':
                         csvContent = buildGoodsCsv(this.productSummaries);
                         break;
+                    case 'CountriesSummary':
+                        csvContent = buildCountriesCsv(this.countrySummaries);
+                        break;
                     case 'Countries':
                         // Fetch unpivoted CSV via Apex for full country-commodity completeness
                         csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'Countries' });
@@ -190,6 +199,9 @@ export default class EconomicExportModal extends LightningElement {
                         break;
                     case 'CountryProducts':
                         csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'CountryProducts' });
+                        break;
+                    case 'ProvincesSummary':
+                        csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'ProvincesSummary' });
                         break;
                     case 'Provinces':
                         csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'Provinces' });

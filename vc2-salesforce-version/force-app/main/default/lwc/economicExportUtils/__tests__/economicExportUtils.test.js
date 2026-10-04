@@ -5,9 +5,11 @@ import {
     buildAnalysisCsv,
     buildGoodsCsv,
     buildCountriesCsv,
+    buildCountriesCsv49Good,
     buildProductsCsv,
     buildCountryProductsCsv,
     buildProvincesCsv,
+    buildProvincesCsvLegacy,
     buildStatesCsv,
     buildFactoriesCsv,
     buildArtisansCsv,
@@ -81,6 +83,29 @@ describe('economicExportUtils', () => {
             expect(csv).toContain('ammunition,18.83130');
         });
 
+        it('builds Countries Summary CSV correctly', () => {
+            const countries = [
+                {
+                    countryTag: 'ENG',
+                    countryName: 'United Kingdom',
+                    gdpRank: 1,
+                    gdp: 5000000.5,
+                    gdpPerCapita: 120.5,
+                    gdpShare: 0.3542,
+                    population: 1000000,
+                    workforce: 250000,
+                    employment: 240000,
+                    unemploymentRate: 4.0,
+                    totalImports: 50000.0,
+                    totalExports: 75000.0,
+                    goldIncome: 1000.0
+                }
+            ];
+            const csv = buildCountriesCsv(countries);
+            expect(csv).toContain('Tag,Official Name,GDP Rank');
+            expect(csv).toContain('ENG,United Kingdom,1,5000000.50,120.50,0.3542,1000000,250000,240000,4.00,50000.00,75000.00,1000.00');
+        });
+
         it('builds Countries CSV with 49-good unpivot correctly', () => {
             const countries = [
                 {
@@ -100,7 +125,7 @@ describe('economicExportUtils', () => {
                 { countryTag: 'TUR', productCode: 'ammunition', soldDomestic: 25.5 },
                 { countryTag: 'TUR', productCode: 'small_arms', soldDomestic: 8.4 }
             ];
-            const csv = buildCountriesCsv(countries, null, junctions);
+            const csv = buildCountriesCsv49Good(countries, junctions);
             expect(csv).toContain('Rank,ID,Name,Population,Colony_Population,Total_Population,FGDP,PGDP,AGDP,GDP,GDPperCapita');
             for (const comm of GOLDEN_COMMODITIES) {
                 expect(csv).toContain(comm);
@@ -124,6 +149,15 @@ describe('economicExportUtils', () => {
             const csv = buildCountryProductsCsv(cp);
             expect(csv).toContain('Country Tag,Product Code');
             expect(csv).toContain('PRU,small_arms,50.0000');
+        });
+
+        it('builds Legacy Provinces CSV correctly', () => {
+            const provs = [
+                { externalProvinceId: '101', countryTag: 'PRU', population: 45000, rgoProduction: 120.5 }
+            ];
+            const csv = buildProvincesCsvLegacy(provs);
+            expect(csv).toContain('Province ID,Country Tag,Population');
+            expect(csv).toContain('101,PRU,45000,120.5000');
         });
 
         it('builds Provinces CSV matching golden structure', () => {
