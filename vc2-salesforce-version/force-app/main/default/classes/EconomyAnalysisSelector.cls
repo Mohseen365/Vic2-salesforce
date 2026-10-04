@@ -230,6 +230,30 @@ public with sharing class EconomyAnalysisSelector {
     }
 
     /**
+     * @description Selects Province_Economy__c records for an entire Economy_Analysis__c Id.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of Province_Economy__c records.
+     */
+    public static List<Province_Economy__c> selectProvinceEconomiesByAnalysis(Id analysisId) {
+        if (analysisId == null || !Schema.sObjectType.Province_Economy__c.isAccessible()) {
+            return new List<Province_Economy__c>();
+        }
+
+        List<Province_Economy__c> records = [
+            SELECT Id, Name, Country_Economy__c, Province__c, Population__c, RGO_Production__c,
+                   Colony__c, RGO_Income__c, RGO_GDP__c, Artisan_Spending__c, Artisan_Income__c, Artisan_GDP__c,
+                   Unique_Snapshot_Key__c, Province__r.External_Province_Id__c, Province__r.Name,
+                   Country_Economy__r.Country_Tag__c
+            FROM Province_Economy__c
+            WHERE Country_Economy__r.Economy_Analysis__c = :analysisId
+            LIMIT 50000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Province_Economy__c>) decision.getRecords();
+    }
+
+    /**
      * @description Selects State_Economy__c records for a given Economy_Analysis__c Id.
      * @param analysisId Parent Economy_Analysis__c Id.
      * @return List of State_Economy__c records.
@@ -281,6 +305,33 @@ public with sharing class EconomyAnalysisSelector {
     }
 
     /**
+     * @description Selects Factory_Economy__c records for an entire Economy_Analysis__c Id.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of Factory_Economy__c records.
+     */
+    public static List<Factory_Economy__c> selectFactoryEconomiesByAnalysis(Id analysisId) {
+        if (analysisId == null || !Schema.sObjectType.Factory_Economy__c.isAccessible()) {
+            return new List<Factory_Economy__c>();
+        }
+
+        List<Factory_Economy__c> records = [
+            SELECT Id, Name, Economy_Analysis__c, Country_Economy__c, State_Economy__c, Product__c,
+                   Building_Type__c, Occurrence_Index__c, Level__c, Employees__c, Output_Quantity__c,
+                   Unsold_Quantity__c, Capital_Reserves__c, Revenue__c, Input_Cost__c, Wages_Paid__c,
+                   Profit__c, Factory_GDP__c, Productivity__c, Average_Wage__c, Profit_Rank__c,
+                   Unique_Snapshot_Key__c, State_Economy__r.State__r.State_Code__c,
+                   Country_Economy__r.Country_Tag__c
+            FROM Factory_Economy__c
+            WHERE Economy_Analysis__c = :analysisId
+            ORDER BY Profit__c DESC
+            LIMIT 50000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Factory_Economy__c>) decision.getRecords();
+    }
+
+    /**
      * @description Selects Artisan_Economy__c records for a given Province_Economy__c Id.
      * @param provinceEconomyId Parent Province_Economy__c Id.
      * @return List of Artisan_Economy__c records.
@@ -300,6 +351,32 @@ public with sharing class EconomyAnalysisSelector {
             WHERE Province_Economy__c = :provinceEconomyId
             ORDER BY AGDP__c DESC
             LIMIT 5000
+        ];
+
+        SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);
+        return (List<Artisan_Economy__c>) decision.getRecords();
+    }
+
+    /**
+     * @description Selects Artisan_Economy__c records for an entire Economy_Analysis__c Id.
+     * @param analysisId Parent Economy_Analysis__c Id.
+     * @return List of Artisan_Economy__c records.
+     */
+    public static List<Artisan_Economy__c> selectArtisanEconomiesByAnalysis(Id analysisId) {
+        if (analysisId == null || !Schema.sObjectType.Artisan_Economy__c.isAccessible()) {
+            return new List<Artisan_Economy__c>();
+        }
+
+        List<Artisan_Economy__c> records = [
+            SELECT Id, Name, Economy_Analysis__c, Country_Economy__c, Province_Economy__c, State_Economy__c,
+                   Product__c, Artisan_Type__c, Spending__c, Income__c, AGDP__c, Production_Quantity__c,
+                   Unique_Snapshot_Key__c, Province_Economy__r.Province__r.External_Province_Id__c,
+                   Province_Economy__r.Province__r.Name, Country_Economy__r.Country_Tag__c,
+                   State_Economy__r.State__r.State_Code__c
+            FROM Artisan_Economy__c
+            WHERE Economy_Analysis__c = :analysisId
+            ORDER BY AGDP__c DESC
+            LIMIT 50000
         ];
 
         SObjectAccessDecision decision = Security.stripInaccessible(AccessType.READABLE, records);

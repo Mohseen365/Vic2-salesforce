@@ -65,9 +65,14 @@ private class EconomyAnalysisControllerTest {
             Country__c = country.Id,
             Country_Tag__c = 'PRU',
             Population__c = 1000000,
+            Core_Population__c = 900000,
+            Colony_Population__c = 100000,
             Workforce__c = 250000,
             Employment__c = 240000,
             GDP__c = 500000.0,
+            Factory_GDP__c = 200000.0,
+            Province_GDP__c = 280000.0,
+            Artisan_GDP__c = 20000.0,
             GDP_Rank__c = 1,
             Gold_Income__c = 50.0,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU'
@@ -122,6 +127,7 @@ private class EconomyAnalysisControllerTest {
             State__c = st.Id,
             Population__c = 500000,
             GDP__c = 200000.0,
+            GDP_Rank__c = 1,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_Silesia'
         );
         insert stateEco;
@@ -147,6 +153,7 @@ private class EconomyAnalysisControllerTest {
             Revenue__c = 500.0,
             Input_Cost__c = 200.0,
             Wages_Paid__c = 100.0,
+            Profit_Rank__c = 1,
             Unique_Snapshot_Key__c = 'prussia_1848.v2_PRU_Silesia_glass_factory_1'
         );
         insert factoryEco;
@@ -370,10 +377,14 @@ private class EconomyAnalysisControllerTest {
 
         Test.startTest();
         String summaryCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Summary');
+        String goodsCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Goods');
         String countriesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Countries');
         String productsCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Products');
         String cpCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'CountryProducts');
         String provincesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Provinces');
+        String statesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'States');
+        String factoriesCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Factories');
+        String artisansCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'Artisans');
         String nullCsv = EconomyAnalysisController.exportCsv(null, 'Summary');
         String invalidScopeCsv = EconomyAnalysisController.exportCsv(analysis.Id, 'InvalidScope');
         Test.stopTest();
@@ -381,15 +392,24 @@ private class EconomyAnalysisControllerTest {
         System.assert(summaryCsv.contains('Analysis ID,Save File Name'), 'Summary CSV should contain headers');
         System.assert(summaryCsv.contains('prussia_1848.v2'), 'Summary CSV should contain save file name');
 
-        System.assert(countriesCsv.contains('Tag,Official Name'), 'Countries CSV should contain headers');
-        System.assert(countriesCsv.contains('PRU'), 'Countries CSV should contain country tag');
+        System.assert(goodsCsv.contains('Good,Price'), 'Goods CSV should contain headers');
+        System.assert(goodsCsv.contains('small_arms'), 'Goods CSV should contain small_arms');
+
+        System.assert(countriesCsv.contains('Rank,ID,Name,Population,Colony_Population,Total_Population,FGDP,PGDP,AGDP,GDP,GDPperCapita'), 'Countries CSV should contain golden headers');
+        System.assert(countriesCsv.contains('PRU'), 'Countries CSV should contain country tag PRU');
 
         System.assert(productsCsv.contains('Product Code,Product Name'), 'Products CSV should contain headers');
         System.assert(productsCsv.contains('small_arms'), 'Products CSV should contain product code');
 
         System.assert(cpCsv.contains('Country Tag,Product Code'), 'CountryProducts CSV should contain headers');
 
-        System.assert(provincesCsv.contains('Province ID,Country Tag'), 'Provinces CSV should contain headers');
+        System.assert(provincesCsv.contains('ID,Provid,Name,Owner,Country,State,Colony,Pop,Goods_type,RGO_Production'), 'Provinces CSV should contain golden headers');
+
+        System.assert(statesCsv.contains('Rank,Name,Country,Population,GDP,GDP_PerCapita,RGO_Income,PGDP,AGDP,FGDP'), 'States CSV should contain golden headers');
+
+        System.assert(factoriesCsv.contains('Rank,State,Tag,Country,Building,Level,Employees,Produces'), 'Factories CSV should contain golden headers');
+
+        System.assert(artisansCsv.contains('ID,Provid,Name,Country,State,artisan_type,last_spending'), 'Artisans CSV should contain golden headers');
 
         System.assertEquals('', nullCsv, 'Null analysis ID should return empty CSV string');
         System.assertEquals('', invalidScopeCsv, 'Invalid scope should return empty CSV string');

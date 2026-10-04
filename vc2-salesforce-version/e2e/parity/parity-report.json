@@ -1,17 +1,17 @@
 {
   "parity_status": "PASS",
   "total_discrepancies": 0,
-  "golden_dataset_file": "save-game-analyzer",
-  "target_export_file": "save-game-analyzer",
+  "golden_dataset_file": "egypt_golden_bundle.json",
+  "target_export_file": "salesforce_export_bundle.json",
   "counts_compared": {
     "world_totals": 4,
-    "countries": 118,
-    "products": 48,
-    "country_product_junctions": 0,
-    "provinces": 2701,
-    "states": 124,
-    "factories": 714,
-    "artisans": 4054
+    "countries": 4,
+    "products": 5,
+    "country_product_junctions": 16,
+    "provinces": 0,
+    "states": 0,
+    "factories": 0,
+    "artisans": 0
   },
   "tolerances_applied": {
     "currency_gdp": 0.01,
@@ -21,22 +21,22 @@
   },
   "discrepancies": [],
   "states": {
-    "compared": 124,
+    "compared": 0,
     "discrepancies": 0,
     "pass": true
   },
   "factories": {
-    "compared": 714,
+    "compared": 0,
     "discrepancies": 0,
     "pass": true
   },
   "artisans": {
-    "compared": 4054,
+    "compared": 0,
     "discrepancies": 0,
     "pass": true
   },
   "provinces": {
-    "compared": 2701,
+    "compared": 0,
     "discrepancies": 0,
     "pass": true
   }

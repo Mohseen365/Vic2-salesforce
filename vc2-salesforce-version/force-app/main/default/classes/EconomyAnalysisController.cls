@@ -241,27 +241,69 @@ public with sharing class EconomyAnalysisController {
                 })
             };
             return String.join(lines, '\n');
-        } else if (normalizedScope == 'countries') {
-            List<CountrySummaryDTO> dtos = EconomyAnalysisService.getCountrySummaries(analysisId);
-            List<String> lines = new List<String>{
-                'Tag,Official Name,GDP Rank,GDP (£),GDP Per Capita (£),GDP Share %,Population,Workforce,Employment,Unemployment Rate %,Total Imports (£),Total Exports (£),Gold Income (£)'
-            };
-            for (CountrySummaryDTO c : dtos) {
-                lines.add(String.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}', new List<Object>{
-                    c.countryTag != null ? c.countryTag : '',
-                    escapeCsv(c.countryName),
-                    c.gdpRank != null ? String.valueOf(c.gdpRank) : '',
-                    c.gdp != null ? String.valueOf(c.gdp.setScale(2)) : '0.00',
-                    c.gdpPerCapita != null ? String.valueOf(c.gdpPerCapita.setScale(2)) : '0.00',
-                    c.gdpShare != null ? String.valueOf(c.gdpShare.setScale(4)) : '0.0000',
-                    c.population != null ? String.valueOf(c.population) : '0',
-                    c.workforce != null ? String.valueOf(c.workforce) : '0',
-                    c.employment != null ? String.valueOf(c.employment) : '0',
-                    c.unemploymentRate != null ? String.valueOf(c.unemploymentRate.setScale(2)) : '0.00',
-                    c.totalImports != null ? String.valueOf(c.totalImports.setScale(2)) : '0.00',
-                    c.totalExports != null ? String.valueOf(c.totalExports.setScale(2)) : '0.00',
-                    c.goldIncome != null ? String.valueOf(c.goldIncome.setScale(2)) : '0.00'
+        } else if (normalizedScope == 'goods') {
+            List<ProductSummaryDTO> dtos = EconomyAnalysisService.getProductSummaries(analysisId);
+            List<String> lines = new List<String>{ 'Good,Price' };
+            for (ProductSummaryDTO p : dtos) {
+                lines.add(String.format('{0},{1}', new List<Object>{
+                    p.productCode != null ? p.productCode : '',
+                    p.price != null ? String.valueOf(p.price.setScale(5)) : '0.00000'
                 }));
+            }
+            return String.join(lines, '\n');
+        } else if (normalizedScope == 'countries') {
+            List<Country_Economy__c> countries = EconomyAnalysisSelector.selectCountryEconomies(analysisId);
+            List<Country_Product_Economy__c> junctions = EconomyAnalysisSelector.selectCountryProductEconomiesByAnalysis(analysisId);
+
+            Map<String, Decimal> unpivotMap = new Map<String, Decimal>();
+            for (Country_Product_Economy__c j : junctions) {
+                String tag = (j.Country_Economy__r != null && j.Country_Economy__r.Country_Tag__c != null) ? j.Country_Economy__r.Country_Tag__c : '';
+                String code = j.Product_Code__c != null ? j.Product_Code__c : '';
+                Decimal qty = j.Sold_Domestic__c != null ? j.Sold_Domestic__c : 0.0;
+                if (String.isNotBlank(tag) && String.isNotBlank(code)) {
+                    unpivotMap.put(tag + '_' + code, qty);
+                }
+            }
+
+            List<String> goldenCommodities = new List<String>{
+                'ammunition', 'small_arms', 'artillery', 'canned_food', 'barrels', 'aeroplanes',
+                'cotton', 'dye', 'wool', 'silk', 'coal', 'sulphur', 'iron', 'timber', 'tropical_wood',
+                'rubber', 'oil', 'precious_metal', 'precious_goods', 'steel', 'cement', 'machine_parts',
+                'glass', 'fuel', 'fertilizer', 'explosives', 'clipper_convoy', 'steamer_convoy',
+                'electric_gear', 'fabric', 'lumber', 'paper', 'cattle', 'fish', 'fruit', 'grain',
+                'tobacco', 'tea', 'coffee', 'opium', 'automobiles', 'telephones', 'wine', 'liquor',
+                'regular_clothes', 'luxury_clothes', 'furniture', 'luxury_furniture', 'radio'
+            };
+
+            List<String> headerCols = new List<String>{
+                'Rank', 'ID', 'Name', 'Population', 'Colony_Population', 'Total_Population', 'FGDP', 'PGDP', 'AGDP', 'GDP', 'GDPperCapita'
+            };
+            headerCols.addAll(goldenCommodities);
+            List<String> lines = new List<String>{ String.join(headerCols, ',') };
+
+            for (Country_Economy__c c : countries) {
+                String tag = c.Country_Tag__c != null ? c.Country_Tag__c : '';
+                List<String> row = new List<String>{
+                    c.GDP_Rank__c != null ? String.valueOf(c.GDP_Rank__c.intValue()) : '',
+                    tag,
+                    tag,
+                    c.Core_Population__c != null ? String.valueOf(c.Core_Population__c.setScale(1)) : '0.0',
+                    c.Colony_Population__c != null ? String.valueOf(c.Colony_Population__c.setScale(1)) : '0.0',
+                    c.Population__c != null ? String.valueOf(c.Population__c.setScale(1)) : '0.0',
+                    formatCurrency(c.Factory_GDP__c),
+                    formatCurrency(c.Province_GDP__c),
+                    formatCurrency(c.Artisan_GDP__c),
+                    formatCurrency(c.GDP__c),
+                    c.GDP_Per_Capita__c != null ? '$' + String.valueOf(c.GDP_Per_Capita__c.setScale(2)) : '$0.00'
+                };
+
+                for (String comm : goldenCommodities) {
+                    String key = tag + '_' + comm;
+                    Decimal val = unpivotMap.containsKey(key) ? unpivotMap.get(key) : 0.0;
+                    row.add(String.valueOf(val.setScale(1)));
+                }
+
+                lines.add(String.join(row, ','));
             }
             return String.join(lines, '\n');
         } else if (normalizedScope == 'products') {
@@ -304,28 +346,123 @@ public with sharing class EconomyAnalysisController {
             }
             return String.join(lines, '\n');
         } else if (normalizedScope == 'provinces') {
-            List<Province_Economy__c> provinces = [
-                SELECT Id, External_Province_Id__c, Country_Economy__r.Country_Tag__c, Population__c, RGO_Production__c
-                FROM Province_Economy__c
-                WHERE Country_Economy__r.Economy_Analysis__c = :analysisId
-                WITH SECURITY_ENFORCED
-                LIMIT 50000
-            ];
+            List<Province_Economy__c> provinces = EconomyAnalysisSelector.selectProvinceEconomiesByAnalysis(analysisId);
             List<String> lines = new List<String>{
-                'Province ID,Country Tag,Population,RGO Production'
+                'ID,Provid,Name,Owner,Country,State,Colony,Pop,Goods_type,RGO_Production,Last_income,GDP,Last_Spending,Production_Income,AGDP'
             };
             for (Province_Economy__c pe : provinces) {
-                lines.add(String.format('{0},{1},{2},{3}', new List<Object>{
-                    pe.External_Province_Id__c != null ? pe.External_Province_Id__c : '',
-                    pe.Country_Economy__r != null && pe.Country_Economy__r.Country_Tag__c != null ? pe.Country_Economy__r.Country_Tag__c : '',
-                    pe.Population__c != null ? String.valueOf(pe.Population__c) : '0',
-                    pe.RGO_Production__c != null ? String.valueOf(pe.RGO_Production__c.setScale(4)) : '0.0000'
+                String provId = pe.Province_r != null && pe.Province__r.External_Province_Id__c != null ? pe.Province__r.External_Province_Id__c : '';
+                String name = pe.Province_r != null && pe.Province__r.Name != null ? pe.Province__r.Name : '';
+                String tag = pe.Country_Economy__r != null && pe.Country_Economy__r.Country_Tag__c != null ? pe.Country_Economy__r.Country_Tag__c : '';
+                lines.add(String.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}', new List<Object>{
+                    provId,
+                    provId,
+                    escapeCsv(name),
+                    tag,
+                    tag,
+                    'blank',
+                    pe.Colony__c != null && pe.Colony__c ? 'True' : 'False',
+                    pe.Population__c != null ? String.valueOf(pe.Population__c.setScale(1)) : '0.0',
+                    '',
+                    pe.RGO_Production__c != null ? String.valueOf(pe.RGO_Production__c.setScale(6)) : '0.000000',
+                    pe.RGO_Income__c != null ? String.valueOf(pe.RGO_Income__c.setScale(8)) : '0.00000000',
+                    pe.RGO_GDP__c != null ? String.valueOf(pe.RGO_GDP__c.setScale(8)) : '0.00000000',
+                    pe.Artisan_Spending__c != null ? String.valueOf(pe.Artisan_Spending__c.setScale(6)) : '0.000000',
+                    pe.Artisan_Income__c != null ? String.valueOf(pe.Artisan_Income__c.setScale(6)) : '0.000000',
+                    pe.Artisan_GDP__c != null ? String.valueOf(pe.Artisan_GDP__c.setScale(16)) : '0.0000000000000000'
+                }));
+            }
+            return String.join(lines, '\n');
+        } else if (normalizedScope == 'states') {
+            List<State_Economy__c> states = EconomyAnalysisSelector.selectStateEconomies(analysisId);
+            List<String> lines = new List<String>{
+                'Rank,Name,Country,Population,GDP,GDP_PerCapita,RGO_Income,PGDP,AGDP,FGDP,Employees,Revenue,Profit'
+            };
+            for (State_Economy__c se : states) {
+                String stateCode = se.State_r != null && se.State__r.State_Code__c != null ? se.State__r.State_Code__c : 'blank';
+                String tag = se.Country_Economy__r != null && se.Country_Economy__r.Country_Tag__c != null ? se.Country_Economy__r.Country_Tag__c : '';
+                lines.add(String.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12}', new List<Object>{
+                    se.GDP_Rank__c != null ? String.valueOf(se.GDP_Rank__c.intValue()) : '',
+                    escapeCsv(stateCode),
+                    tag,
+                    se.Population__c != null ? String.valueOf(se.Population__c.setScale(1)) : '0.0',
+                    formatCurrency(se.GDP__c),
+                    se.GDP_Per_Capita__c != null ? '$' + String.valueOf(se.GDP_Per_Capita__c.setScale(2)) : '$0.00',
+                    formatCurrency(se.RGO_Income__c),
+                    formatCurrency(se.PGDP__c),
+                    formatCurrency(se.AGDP__c),
+                    formatCurrency(se.FGDP__c),
+                    se.Factory_Employees__c != null ? String.valueOf(se.Factory_Employees__c.intValue()) : '0',
+                    formatCurrency(se.Factory_Revenue__c),
+                    formatCurrency(se.Factory_Profit__c)
+                }));
+            }
+            return String.join(lines, '\n');
+        } else if (normalizedScope == 'factories' || normalizedScope == 'factory') {
+            List<Factory_Economy__c> factories = EconomyAnalysisSelector.selectFactoryEconomiesByAnalysis(analysisId);
+            List<String> lines = new List<String>{
+                'Rank,State,Tag,Country,Building,Level,Employees,Produces,Leftover,Money,Revenue,Input Costs,Pops_paychecks,Profit,GDP,Productivity,AvgWage'
+            };
+            for (Factory_Economy__c fe : factories) {
+                String stateCode = fe.State_Economy__r != null && fe.State_Economy__r.State__r != null && fe.State_Economy__r.State__r.State_Code__c != null ? fe.State_Economy__r.State__r.State_Code__c : '';
+                String tag = fe.Country_Economy__r != null && fe.Country_Economy__r.Country_Tag__c != null ? fe.Country_Economy__r.Country_Tag__c : '';
+                lines.add(String.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16}', new List<Object>{
+                    fe.Profit_Rank__c != null ? String.valueOf(fe.Profit_Rank__c.intValue()) : '',
+                    escapeCsv(stateCode),
+                    tag,
+                    tag,
+                    fe.Building_Type__c != null ? fe.Building_Type__c : '',
+                    fe.Level__c != null ? String.valueOf(fe.Level__c.intValue()) : '1',
+                    fe.Employees__c != null ? String.valueOf(fe.Employees__c.setScale(1)) : '0.0',
+                    fe.Output_Quantity__c != null ? String.valueOf(fe.Output_Quantity__c.setScale(5)) : '0.00000',
+                    fe.Unsold_Quantity__c != null ? String.valueOf(fe.Unsold_Quantity__c.setScale(5)) : '0.00000',
+                    formatCurrency(fe.Capital_Reserves__c),
+                    formatCurrency(fe.Revenue__c),
+                    formatCurrency(fe.Input_Cost__c),
+                    formatCurrency(fe.Wages_Paid__c),
+                    formatCurrency(fe.Profit__c),
+                    fe.Factory_GDP__c != null ? String.valueOf(fe.Factory_GDP__c.setScale(8)) : '0.00000000',
+                    fe.Productivity__c != null ? String.valueOf(fe.Productivity__c.setScale(16)) : '0.0000000000000000',
+                    fe.Average_Wage__c != null ? String.valueOf(fe.Average_Wage__c.setScale(16)) : '0.0000000000000000'
+                }));
+            }
+            return String.join(lines, '\n');
+        } else if (normalizedScope == 'artisans') {
+            List<Artisan_Economy__c> artisans = EconomyAnalysisSelector.selectArtisanEconomiesByAnalysis(analysisId);
+            List<String> lines = new List<String>{
+                'ID,Provid,Name,Country,State,artisan_type,last_spending,production_income,AGDP,Production'
+            };
+            for (Artisan_Economy__c ae : artisans) {
+                String provId = ae.Province_Economy__r != null && ae.Province_Economy__r.Province__r != null && ae.Province_Economy__r.Province__r.External_Province_Id__c != null ? ae.Province_Economy__r.Province__r.External_Province_Id__c : '';
+                String name = ae.Province_Economy__r != null && ae.Province_Economy__r.Province__r != null && ae.Province_Economy__r.Province__r.Name != null ? ae.Province_Economy__r.Province__r.Name : '';
+                String tag = ae.Country_Economy__r != null && ae.Country_Economy__r.Country_Tag__c != null ? ae.Country_Economy__r.Country_Tag__c : '';
+                String stateCode = ae.State_Economy__r != null && ae.State_Economy__r.State__r != null && ae.State_Economy__r.State__r.State_Code__c != null ? ae.State_Economy__r.State__r.State_Code__c : 'blank';
+                lines.add(String.format('{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}', new List<Object>{
+                    provId,
+                    provId,
+                    escapeCsv(name),
+                    tag,
+                    escapeCsv(stateCode),
+                    ae.Artisan_Type__c != null ? ae.Artisan_Type__c : '',
+                    ae.Spending__c != null ? String.valueOf(ae.Spending__c.setScale(8)) : '0.00000000',
+                    ae.Income__c != null ? String.valueOf(ae.Income__c.setScale(8)) : '0.00000000',
+                    ae.AGDP__c != null ? String.valueOf(ae.AGDP__c.setScale(16)) : '0.0000000000000000',
+                    ae.Production_Quantity__c != null ? String.valueOf(ae.Production_Quantity__c.setScale(16)) : '0.0000000000000000'
                 }));
             }
             return String.join(lines, '\n');
         }
 
         return '';
+    }
+
+    private static String formatCurrency(Decimal val) {
+        if (val == null) {
+            return '$0.00';
+        }
+        Decimal scaled = val.setScale(2);
+        String formatted = String.valueOf(Math.abs(scaled));
+        return scaled < 0 ? '-$' + formatted : '$' + formatted;
     }
 
     private static String escapeCsv(String val) {

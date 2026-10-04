@@ -2,16 +2,19 @@ import { LightningElement, api, wire, track } from 'lwc';
 import getAnalysisSummary from '@salesforce/apex/EconomyAnalysisController.getAnalysisSummary';
 import getCountrySummaries from '@salesforce/apex/EconomyAnalysisController.getCountrySummaries';
 import getProductSummaries from '@salesforce/apex/EconomyAnalysisController.getProductSummaries';
-import getCountryProductSummariesByProduct from '@salesforce/apex/EconomyAnalysisController.getCountryProductSummariesByProduct';
 import exportCsv from '@salesforce/apex/EconomyAnalysisController.exportCsv';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import {
     generateFilename,
     buildAnalysisCsv,
+    buildGoodsCsv,
     buildCountriesCsv,
     buildProductsCsv,
     buildCountryProductsCsv,
-    buildProvincesCsv
+    buildProvincesCsv,
+    buildStatesCsv,
+    buildFactoriesCsv,
+    buildArtisansCsv
 } from 'c/economicExportUtils';
 
 const CLIENT_ROW_THRESHOLD = 5000;
@@ -80,10 +83,14 @@ export default class EconomicExportModal extends LightningElement {
     get scopeOptions() {
         return [
             { label: 'Analysis Summary (1 row)', value: 'Summary' },
-            { label: 'Countries (Sovereign States)', value: 'Countries' },
+            { label: 'Countries (Sovereign States — Country.csv)', value: 'Countries' },
             { label: 'Products (Commodity World Market)', value: 'Products' },
+            { label: 'Goods & Prices (Goods.csv)', value: 'Goods' },
             { label: 'Country × Product (Trade & GDP)', value: 'CountryProducts' },
-            { label: 'Provinces (Regional Territories)', value: 'Provinces' }
+            { label: 'Provinces (Provinces.csv)', value: 'Provinces' },
+            { label: 'States (States.csv)', value: 'States' },
+            { label: 'Factories (Factory.csv)', value: 'Factories' },
+            { label: 'Artisans (Artisans.csv)', value: 'Artisans' }
         ];
     }
 
@@ -100,6 +107,7 @@ export default class EconomicExportModal extends LightningElement {
             case 'Countries':
                 return this.countrySummaries ? this.countrySummaries.length : 0;
             case 'Products':
+            case 'Goods':
                 return this.productSummaries ? this.productSummaries.length : 0;
             case 'CountryProducts': {
                 const cCount = this.countrySummaries ? this.countrySummaries.length : 0;
@@ -107,7 +115,13 @@ export default class EconomicExportModal extends LightningElement {
                 return cCount * pCount;
             }
             case 'Provinces':
-                return 3248; // Estimated average provinces in Vic2
+                return 2703;
+            case 'States':
+                return 124;
+            case 'Factories':
+                return 714;
+            case 'Artisans':
+                return 4406;
             default:
                 return 0;
         }
@@ -159,28 +173,38 @@ export default class EconomicExportModal extends LightningElement {
                 // Apex fallback path for high row counts
                 csvContent = await exportCsv({ analysisId: this.analysisId, scope: this.selectedScope });
             } else {
-                // Client-side path
+                // Client-side or hybrid routing
                 switch (this.selectedScope) {
                     case 'Summary':
                         csvContent = buildAnalysisCsv(this.analysisSummary);
                         break;
+                    case 'Goods':
+                        csvContent = buildGoodsCsv(this.productSummaries);
+                        break;
                     case 'Countries':
-                        csvContent = buildCountriesCsv(this.countrySummaries);
+                        // Fetch unpivoted CSV via Apex for full country-commodity completeness
+                        csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'Countries' });
                         break;
                     case 'Products':
                         csvContent = buildProductsCsv(this.productSummaries);
                         break;
-                    case 'CountryProducts': {
-                        // Fetch all junction records if client side
+                    case 'CountryProducts':
                         csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'CountryProducts' });
                         break;
-                    }
-                    case 'Provinces': {
+                    case 'Provinces':
                         csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'Provinces' });
                         break;
-                    }
+                    case 'States':
+                        csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'States' });
+                        break;
+                    case 'Factories':
+                        csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'Factories' });
+                        break;
+                    case 'Artisans':
+                        csvContent = await exportCsv({ analysisId: this.analysisId, scope: 'Artisans' });
+                        break;
                     default:
-                        csvContent = buildCountriesCsv(this.countrySummaries);
+                        csvContent = await exportCsv({ analysisId: this.analysisId, scope: this.selectedScope });
                 }
             }
 

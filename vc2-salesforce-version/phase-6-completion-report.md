@@ -29,6 +29,10 @@
   > **Re-introduced (2026-10-04) — Phase 10**
   > Built `c-product-dashboard` LWC bundle (`productDashboard`) rendering commodity KPI cards and country trade contribution sub-tables.
   > *RESTORED: Re-introduced in Phase 10 aligned with Phase 8 DTOs. See `phase-10-completion-report.md` for details.*
+- Built `c-economic-export-modal` LWC bundle and `economicExportUtils` client CSV generation utilities supporting legacy CSV export scopes. — *SUPERSEDED: No export modal or CSV exporter was created in merged Phase 6.*
+  > **Re-introduced (2026-10-04) — Phase 11**
+  > Built `c-economic-export-modal` LWC bundle, `economicExportUtils` client CSV builder, and `EconomyAnalysisController.exportCsv` supporting 9 export scopes and 49-good commodity unpivoting.
+  > *RESTORED: Re-introduced and extended in Phase 11 aligned with Phase 8 facade and Phase 10 shell. See `phase-11-completion-report.md` for details.*
 - Updated `c-economy-analyzer-shell` LWC bundle (`economyAnalyzerShell`) replacing the Product Market tab placeholder with interactive view-swapping between `c-product-list-view` and `c-product-dashboard`. — *SUPERSEDED.*
   > **Re-introduced (2026-10-04) — Phase 10**
   > Extended `c-economy-analyzer-shell` LWC bundle (`economyAnalyzerShell`) supporting view-swapping and workspace tabs across Country Explorer, Product Market, State Explorer, Factory Explorer, Artisan Explorer, Analytics, and Compare Saves.

@@ -18,6 +18,7 @@ from compare import run_parity_comparison, sanitize_value, is_close
 from scopes.states import compare_states
 from scopes.factories import compare_factories
 from scopes.artisans import compare_artisans
+from test_csv_export_parity import TestCsvExportParity
 
 class TestParityHarness(unittest.TestCase):
 
