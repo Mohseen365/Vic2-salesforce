@@ -6,6 +6,8 @@ export default class EconomyAnalyzerShell extends LightningElement {
     selectedAnalysisId;
     selectedCountryEconomyId;
     selectedProductEconomyId;
+    selectedStateEconomyId;
+    selectedProvinceEconomyId;
     analysesData = [];
     errorData;
     isLoading = false;
@@ -47,7 +49,6 @@ export default class EconomyAnalyzerShell extends LightningElement {
                         p.catch(() => {});
                     }
                 }
-                // Trigger refresh on child header component if present
                 const headerComp = this.shadowRoot.querySelector('c-economy-analysis-header');
                 if (headerComp && typeof headerComp.handleRefresh === 'function') {
                     const p2 = headerComp.handleRefresh();
@@ -80,6 +81,8 @@ export default class EconomyAnalyzerShell extends LightningElement {
         this.selectedAnalysisId = event.detail.value;
         this.selectedCountryEconomyId = undefined;
         this.selectedProductEconomyId = undefined;
+        this.selectedStateEconomyId = undefined;
+        this.selectedProvinceEconomyId = undefined;
     }
 
     handleGlobalCountrySelect(event) {
@@ -108,6 +111,16 @@ export default class EconomyAnalyzerShell extends LightningElement {
 
     handleProductBack() {
         this.selectedProductEconomyId = undefined;
+    }
+
+    handleStateSelect(event) {
+        if (event && event.detail) {
+            this.selectedStateEconomyId = event.detail.stateEconomyId;
+        }
+        const tabset = this.template.querySelector('[data-testid="tabset"]');
+        if (tabset) {
+            tabset.activeTabValue = 'factory-explorer';
+        }
     }
 
     handleOpenExport(event) {

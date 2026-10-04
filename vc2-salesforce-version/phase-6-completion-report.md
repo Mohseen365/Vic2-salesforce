@@ -22,9 +22,21 @@
   > Updated `EconomyAnalysisControllerTest.cls` achieving 100% test coverage across all controller facade methods.
   > *RESTORED: Re-introduced full unit test coverage for `EconomyAnalysisController.cls` in Phase 8.*
 - Built `c-product-list-view` LWC bundle (`productListView`) rendering a searchable `lightning-datatable` of all commodity market records with column sorting and a row action button emitting `productselect` events. — *SUPERSEDED: Zero LWC components were created in Phase 6 (per Zero Scope Creep Attestation).*
+  > **Re-introduced (2026-10-04) — Phase 10**
+  > Built `c-product-list-view` LWC bundle (`productListView`) rendering searchable `lightning-datatable` of commodity market records.
+  > *RESTORED: This component was re-introduced in Phase 10 aligned with Phase 8 DTOs. See `phase-10-completion-report.md` for details.*
 - Built `c-product-dashboard` LWC bundle (`productDashboard`) rendering commodity KPI cards (Price, Base Price, Inflation Rate, Overproduction Rate, World Supply, Real Demand, Max Demand), SLDS trend badges, country trade contribution sub-table, and "Back to Commodity List" button. — *SUPERSEDED.*
+  > **Re-introduced (2026-10-04) — Phase 10**
+  > Built `c-product-dashboard` LWC bundle (`productDashboard`) rendering commodity KPI cards and country trade contribution sub-tables.
+  > *RESTORED: Re-introduced in Phase 10 aligned with Phase 8 DTOs. See `phase-10-completion-report.md` for details.*
 - Updated `c-economy-analyzer-shell` LWC bundle (`economyAnalyzerShell`) replacing the Product Market tab placeholder with interactive view-swapping between `c-product-list-view` and `c-product-dashboard`. — *SUPERSEDED.*
+  > **Re-introduced (2026-10-04) — Phase 10**
+  > Extended `c-economy-analyzer-shell` LWC bundle (`economyAnalyzerShell`) supporting view-swapping and workspace tabs across Country Explorer, Product Market, State Explorer, Factory Explorer, Artisan Explorer, Analytics, and Compare Saves.
+  > *RESTORED: Re-introduced and extended in Phase 10. See `phase-10-completion-report.md` for details.*
 - Implemented comprehensive Jest unit test suites for `c-product-list-view` (6 tests), `c-product-dashboard` (5 tests), and extended `c-economy-analyzer-shell` (5 tests). All 29 LWC Jest tests pass with 100% success. — *SUPERSEDED: Replaced by Apex unit test suites (see Test Results below).*
+  > **Re-introduced (2026-10-04) — Phase 10**
+  > Implemented comprehensive Jest unit test suites for all LWC components (88 tests passing across 15 test suites).
+  > *RESTORED: Re-introduced in Phase 10 with 100% test pass rate across all LWC Jest suites.*
 - Verified schema metadata and byte-for-byte golden dataset determinism across all validation scripts. — *RETAINED: Still verified in merged Phase 6.*
 
 ### Superseded: Technical Details (Pre-Commit)
@@ -33,11 +45,14 @@
 c-economy-analyzer-shell (Analysis Switcher Combobox & Workspace Tabset)
   ├── c-economy-analysis-header (Save Metadata, Global KPIs, Status Badge, Diagnostic Banner)
   ├── c-country-dashboard (Country Explorer Tab)
-  └── Product Market Tab
-      ├── [selectedProductEconomyId == null] → c-product-list-view (Commodity Table & Search)
-      └── [selectedProductEconomyId != null] → c-product-dashboard (Commodity Details, KPIs & Country Breakdown)
+  ├── c-product-list-view / c-product-dashboard (Product Market Tab)
+  ├── c-state-dashboard (State Explorer Tab - Phase 10)
+  ├── c-factory-dashboard (Factory Explorer Tab - Phase 10)
+  ├── c-artisan-dashboard (Artisan Explorer Tab - Phase 10)
+  ├── c-economic-charts-container (Analytics & Visualizations Tab)
+  └── c-analysis-compare (Compare Saves Tab - Phase 11)
 ```
-> *SUPERSEDED: No LWC components exist in Phase 6. See "REST Endpoint" section below for the actual interface.*
+> *Re-introduced (2026-10-04) — Phase 10: Component hierarchy reinstated and extended with State, Factory, and Artisan dashboards.*
 
 #### Superseded: Apex Methods Consumed & DTO Return Types
 - `EconomyAnalysisController.getRecentAnalyses(limitCount)` → `List<Economy_Analysis__c>`
@@ -76,6 +91,7 @@ c-economy-analyzer-shell (Analysis Switcher Combobox & Workspace Tabset)
 - `c-product-dashboard`: 5 / 5 tests PASS
 - `c-economy-analyzer-shell`: 5 / 5 tests PASS
 - **Total LWC Jest Tests:** 29 / 29 PASS (100% pass rate)
+  > *Re-introduced (2026-10-04) — Phase 10: Extended to 15 test suites and 88 passing Jest unit tests.*
 
 ---
 

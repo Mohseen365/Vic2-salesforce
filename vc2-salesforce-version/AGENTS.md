@@ -2,7 +2,8 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** **Phase 9 Complete — Parity Harness Extended.**
+- **Current Status:** **Phase 10 Complete — LWC Dashboards Live.**
+- **Phase 10 Report Pointer:** [`phase-10-completion-report.md`](./phase-10-completion-report.md)
 - **Phase 9 Report Pointer:** [`PARITY_HARNESS_EXTENSION_REPORT.md`](./PARITY_HARNESS_EXTENSION_REPORT.md)
 - **Phase 8 Report Pointer:** [`phase-8-completion-report.md`](./phase-8-completion-report.md)
 - **Phase 7 Report Pointer:** [`IDEMPOTENCY_REPORT.md`](./IDEMPOTENCY_REPORT.md)
@@ -17,45 +18,39 @@
 
 ---
 
-## Phase 9 Parity Harness Inventory & Scope Structure
+## Phase 10 LWC Dashboard Inventory & Shell Structure
 
-### Extended Comparison Tool (`e2e/parity/compare.py`)
-- **Unified Harness Entry Point:** Runs comparisons across all 8 entity scopes (`world_totals`, `country`, `product`, `country_product_junctions`, `province`, `states`, `factories`, `artisans`).
-- **Scope Modules Location:** `e2e/parity/scopes/`
-  - `states.py`: `compare_states`
-  - `factories.py`: `compare_factories`
-  - `artisans.py`: `compare_artisans`
-- **Extended Scope Comparators (Pattern C - Additive):**
-  - `country`: `fgdp`, `pgdp`, `agdp`, `corePopulation`, `colonyPopulation` added below existing country fields.
-  - `province`: `colony`, `rgoIncome`, `rgoGdp`, `artisanSpending`, `artisanIncome`, `artisanGdp` added below existing province fields.
-- **Harness Test Suite:** `e2e/parity/test_compare.py` (6 unit tests, 100% pass rate).
-- **Determinism Evidence:** `e2e/parity/verification/phase-9-determinism-diff.txt` (empty / byte-identical execution).
+### LWC Component Inventory (`force-app/main/default/lwc/`)
+1. `c-economy-analyzer-shell` (`economyAnalyzerShell`): Analysis switcher toolbar, watcher status, header, export modal, and 8-tab workspace tabset.
+2. `c-economy-analysis-header` (`economyAnalysisHeader`): Save file header metadata and global world KPIs.
+3. `c-country-dashboard` (`countryDashboard`): Country-level KPI cards and CountryxProduct trade datatable.
+4. `c-product-list-view` (`productListView`): Searchable commodity market datatable.
+5. `c-product-dashboard` (`productDashboard`): Commodity detail KPI cards and country contribution sub-table.
+6. `c-state-dashboard` (`stateDashboard`): State KPI cards and datatable bound to `getStateSummaries`.
+7. `c-factory-dashboard` (`factoryDashboard`): Factory KPI cards and datatable bound to `getFactorySummaries`.
+8. `c-artisan-dashboard` (`artisanDashboard`): Artisan KPI cards and datatable bound to `getArtisanSummaries`.
+9. `c-economic-charts-container` (`economicChartsContainer`): SVG-native visualizations (GDP distribution, trade balance, supply/demand).
+10. `c-save-game-watcher-status` (`saveGameWatcherStatus`): Real-time Platform Event watcher status pill.
+11. `c-economic-export-modal` (`economicExportModal`): Export dialog.
+12. `c-economic-export-utils` (`economicExportUtils`): Client-side CSV export utility.
 
-### Scope Inventory & Tolerance Table
-| Scope | Record Count | Field Comparisons | Tolerance Applied | Pattern Applied |
-|---|---|---|---|---|
-| `world_totals` | 1 | 4 | £0.01 currency, integer exact | Preserved |
-| `country` | 118 | 19 | £0.01 currency, 0.01% percent, exact integer | C (Additive) |
-| `product` | 48 | 7 | 0.0001 price/qty, 0.01% percent | Preserved |
-| `country_product_junctions` | 0 (bundle) / N | 8 | £0.01 currency, 0.0001 qty | Preserved |
-| `province` | 2,701 | 8 | £0.01 currency, 0.0001 qty, string match | C (Additive) |
-| `states` | 124 | 14 | £0.01 currency, exact integer, string match | A (Extension) |
-| `factories` | 714 | 18 | £0.01 currency, 0.0001 qty, exact integer | A (Extension) |
-| `artisans` | 4,054 (active) | 9 | £0.01 currency, 0.0001 qty, string match | A (Extension) |
+### Shell Tab Order
+`Global Overview` → `Country Explorer` → `Product Market` → `State Explorer` → `Factory Explorer` → `Artisan Explorer` → `Analytics & Visualizations` → `Compare Saves`
 
 ---
 
-## Rules for Phase 10 (LWC Dashboards)
+## Rules for Phase 11 (CSV Export Parity & Deferred UI Closure)
 
-1. **Consume Phase 8 Controller Facade:** Phase 10 LWCs must bind to `@AuraEnabled` methods in `EconomyAnalysisController.cls`, not directly to python scripts.
-2. **Merge Discipline (Section 0):** When extending `c-economy-analyzer-shell` or existing LWC components to add new state/factory/artisan tabs, Phase 10 must **combine** new tabs with existing Country Explorer and Product Market tabs, not replace them (PATTERN A).
-3. **Zero Scope Creep:** No Apex class or schema change occurred in Phase 9; Phase 10 owns LWC component additions.
+1. **Phase 11 Tab Population:** Fill the `Global Overview` (`c-global-economy-dashboard`) and `Compare Saves` (`c-analysis-compare`) tab placeholders.
+2. **Merge Discipline (Section 0):** Extend shell and export modal using PATTERN A. Do not remove or replace existing tabs 2–7 or existing export scopes.
+3. **Zero Scope Creep:** Keep all changes local without `git push`.
 
 ---
 
 ## Maintenance & Test Execution Guidelines
 
 - **Run Apex Test Suite:** Execute all Apex unit tests (`EconomyAnalysisSelectorTest`, `EconomyAnalysisControllerTest`, `EconomyAnalysisServiceTest`, `DTOsTest`, `EconomyImportIdempotencyTest`, etc.).
+- **Run LWC Jest Test Suite:** `npm run test:lwc`
 - **Run Parity Verification Harness:** `python3 vc2-salesforce-version/e2e/parity/compare.py`
 - **Run Parity Test Suite:** `python3 vc2-salesforce-version/e2e/parity/test_compare.py`
 - **Run Metadata Validator:** `python3 vc2-salesforce-version/scripts/validate_metadata.py`
