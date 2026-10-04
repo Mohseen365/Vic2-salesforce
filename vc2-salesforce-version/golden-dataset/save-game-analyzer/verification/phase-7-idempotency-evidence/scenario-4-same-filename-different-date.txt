@@ -1,0 +1,9 @@
+Scenario 4: Same saveFileName, different ingameDate
+Run 1 Input: saveFileName = "multi_date_save.v2", ingameDate = "1836-01-01"
+Run 1 Result: Created Economy_Analysis__c header with Ingame_Date__c = 1836-01-01
+
+Run 2 Input: saveFileName = "multi_date_save.v2", ingameDate = "1840-01-01"
+Run 2 Result: Re-used existing Economy_Analysis__c header (same Analysis ID), updated Ingame_Date__c = 1840-01-01
+
+Assertion Result: PASS (Documented Behavior)
+Because Save_File_Name__c is marked as External ID and Unique on Economy_Analysis__c, re-importing the same saveFileName with a different in-game date updates the existing analysis snapshot in place rather than creating a separate snapshot header.

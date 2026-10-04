@@ -1,0 +1,18 @@
+Snapshot Integrity Assertion Results
+Analysis Key: integrity_sample.v2
+
+1. Key Format Verification:
+- Country_Economy__c: <AnalysisId>_<CountryTag> -> integrity_sample.v2_TUR (PASS)
+- Product_Economy__c: <AnalysisId>_<ProductCode> -> integrity_sample.v2_ammunition (PASS)
+- State_Economy__c: <AnalysisId>_<StateCode> -> integrity_sample.v2_TUR_blank (PASS)
+- Province_Economy__c: <AnalysisId>_<ExternalProvId> -> integrity_sample.v2_674 (PASS)
+- Factory_Economy__c: <AnalysisId>_<StateCode>_<BuildingType>_<OccurrenceIndex> -> integrity_sample.v2_TUR_blank_ammunition_factory_1 (PASS)
+- Artisan_Economy__c: <AnalysisId>_<ExternalProvId>_<ProductCode> -> integrity_sample.v2_674_ammunition (PASS)
+
+2. Uniqueness Verification:
+- SOQL GROUP BY Unique_Snapshot_Key__c HAVING COUNT(Id) > 1 -> 0 groups returned across all snapshot tables (PASS)
+
+3. Referential Integrity Verification:
+- All Factory_Economy__c records linked to active Economy_Analysis__c header (PASS)
+- All Artisan_Economy__c records linked to active Economy_Analysis__c header (PASS)
+- Zero orphan snapshot records detected (PASS)

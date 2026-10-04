@@ -1,0 +1,14 @@
+Scenario 3: Modified re-import (changed RAW values)
+Input Payload: sample_egypt_turkey_1836.v2
+Modified Field: Country_Product_Economy__c (TUR, ammunition) Sold_Domestic__c: 15.0 -> 45.0
+
+Run 1 Snapshot Value:
+- Sold_Domestic__c: 15.0
+- Record ID: a03000000000001AAA
+
+Run 2 Snapshot Value (After Re-import):
+- Sold_Domestic__c: 45.0
+- Record ID: a03000000000001AAA (Identical Record ID)
+
+Assertion Result: PASS
+Record updated in place via Database.upsert. Derived total GDP and trade balances recomputed cleanly without record duplication or orphaned junctions.

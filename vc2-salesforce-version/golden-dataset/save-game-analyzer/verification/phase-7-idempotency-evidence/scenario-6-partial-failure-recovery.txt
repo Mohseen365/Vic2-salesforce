@@ -1,0 +1,15 @@
+Scenario 6: Partial-failure recovery
+Phase 1 - Ingestion with Malformed Payload:
+- Payload: contractVersion = "9.9.9" (invalid contract version)
+- Result: Transaction aborted before snapshot DML.
+- Economy_Analysis__c Status: FAILED
+- Import_Diagnostic_Message__c: "Contract version mismatch: Expected major version 1.x.x, received: 9.9.9"
+
+Phase 2 - Fix and Retry Ingestion:
+- Payload: contractVersion = "1.0.0" (valid contract version)
+- Result: Full 13-step pipeline completed successfully.
+- Economy_Analysis__c Status: COMPLETED
+- Master & Snapshot Records: Successfully upserted without duplication.
+
+Assertion Result: PASS
+Failed transactions log diagnostic messages cleanly and leave the system in a clean state recoverable by subsequent valid re-imports.
