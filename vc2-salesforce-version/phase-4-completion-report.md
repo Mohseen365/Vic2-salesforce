@@ -1,101 +1,67 @@
-# Phase 4 (Import & Integration Pipeline) Completion & Handoff Report
+# Phase 4 (Parser & Ingestion DTO Contract) Completion & Handoff Report
 
 ## Summary of Accomplishments
-
-### Created & Updated Metadata
-- `vc2-salesforce-version/force-app/main/default/objects/Economy_Analysis__c/fields/Unique_Snapshot_Key__c.field-meta.xml`
-- `vc2-salesforce-version/force-app/main/default/objects/Economy_Analysis__c/fields/Import_Diagnostic_Message__c.field-meta.xml`
-
-### Created Apex Classes & DTOs
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportRequestDTO.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportResponseDTO.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportService.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportBatch.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportRestResource.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportServiceTest.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportBatchTest.cls` (+ `.cls-meta.xml`)
-- `vc2-salesforce-version/force-app/main/default/classes/EconomyImportRestResourceTest.cls` (+ `.cls-meta.xml`)
+- **Created Apex DTO Classes (9 DTO structure definitions):**
+  - `EconomyImportRequestDTO.cls` — root payload wrapper with nested `AnalysisDTO`, `CountryDTO`, `ProductDTO`, `CountryProductDTO`, `ProvinceDTO`, `StateDTO`, `FactoryDTO`, `ArtisanDTO`.
+- **Created Apex DTO Test Suite:**
+  - `EconomyImportRequestDTOTest.cls` — unit test suite providing 100% code coverage across all DTO classes, testing deserialization, round-trip serialization, null-safety, integer-to-string ID conversion, and `contractVersion` presence.
+- **Created Ingestion Contract Documentation:**
+  - `IMPORT_CONTRACT.md` — authoritative reference specification defining system boundary architecture, field-by-field JSON mappings, explicit exclusions, idempotency rules, and versioning policies (`contractVersion = "1.0.0"`).
+- **Created Sample Import Fixture & README:**
+  - `golden-dataset/save-game-analyzer/import-fixtures/import-request-sample.json` — hand-crafted sanitized sample payload derived from real golden dataset records (2 countries, 3 products, 5 countryProducts, 5 provinces, 2 states, 2 factories, 3 artisans).
+  - `golden-dataset/save-game-analyzer/import-fixtures/import-request-sample.md` — README describing fixture scope and usage.
+- **Resolved GATE-1 (Modded Commodities & Artisan Type Mappings):**
+  - Documented auto-provisioning rules for unknown product codes (`Base_Price__c = 0.0`) and skip-and-log rules for unknown artisan types in `AGENTS.md` and `IMPORT_CONTRACT.md`.
 
 ---
 
-## Technical Details & Pipeline State
+## Technical Details & Contract State
 
-### REST Endpoint URL & Data Contract
-- **Endpoint:** `POST /services/apexrest/economy/import`
-- **Controller:** `@RestResource(urlMapping='/economy/import')` in `EconomyImportRestResource.cls`
-- **Payload Shape:**
-  ```json
-  {
-    "analysis": {
-      "saveGameName": "Prussia_1848_03_12",
-      "ingameDate": "1848-03-12",
-      "sourceFileName": "Prussia_1848_03_12.v2",
-      "playerCountryTag": "PRU"
-    },
-    "countries": [
-      { "tag": "PRU", "name": "Prussia", "population": 14820000, "workforce": 3705000, "employment": 3550000, "goldIncome": 12000 }
-    ],
-    "products": [
-      { "code": "grain", "name": "Grain", "price": 2.10, "basePrice": 2.00, "totalWorldSupply": 45000.0, "realDemand": 42000.0, "maxDemand": 48000.0 }
-    ],
-    "countryProducts": [
-      { "countryTag": "PRU", "productCode": "grain", "soldDomestic": 1400.0, "boughtQuantity": 60.0, "thrownToMarket": 80.0, "actualSoldWorld": 70.0, "worldmarketPool": 4000.0, "intermediateConsumption": 0.0, "totalSupplyPounds": 1450.0, "actualSupplyPounds": 1440.0, "actualDemandPounds": 1500.0 }
-    ],
-    "provinces": [
-      { "provinceId": 42, "countryTag": "PRU", "population": 85000, "rgoProduction": 120.0 }
-    ]
-  }
-  ```
+### DTO Class Inventory
+| DTO Class | Field Count | Target Salesforce Object(s) |
+|---|---|---|
+| `EconomyImportRequestDTO.AnalysisDTO` | 5 | `Economy_Analysis__c` |
+| `EconomyImportRequestDTO.CountryDTO` | 15 | `Country__c`, `Country_Economy__c` |
+| `EconomyImportRequestDTO.ProductDTO` | 7 | `Product__c`, `Product_Economy__c` |
+| `EconomyImportRequestDTO.CountryProductDTO` | 11 | `Country_Product_Economy__c` |
+| `EconomyImportRequestDTO.ProvinceDTO` | 12 | `Province__c`, `Province_Economy__c` |
+| `EconomyImportRequestDTO.StateDTO` | 13 | `State__c`, `State_Economy__c` |
+| `EconomyImportRequestDTO.FactoryDTO` | 16 | `Factory_Economy__c` |
+| `EconomyImportRequestDTO.ArtisanDTO` | 9 | `Artisan_Economy__c` |
 
-### EconomyImportService Orchestration Flow
-1. **Master-Data Resolution (Audit Section Q):** Queries `CountrySelector`, `ProductSelector`, and `Province__c` by External ID tags/codes/IDs. Any missing master records are inserted dynamically before snapshot creation.
-2. **Analysis Header Management:** Queries/upserts `Economy_Analysis__c` on `Unique_Snapshot_Key__c`. Initial status set to `RECEIVED`, then transitioned to `PROCESSING`.
-3. **Snapshot Object Upserts:** Upserts `Country_Economy__c` and `Product_Economy__c` records using `Unique_Snapshot_Key__c` (`{saveGameName}_{tag/code}`).
-4. **Child Record Processing:** Constructs `Country_Product_Economy__c` and `Province_Economy__c` records.
-   - If total child records <= `BATCH_THRESHOLD` (2,000): executes synchronously, upserts child records, and hands off to `EconomyAnalysisService.recalculateAnalysis(analysisId)`.
-   - If total child records > `BATCH_THRESHOLD` or forced: delegates child insertion to `EconomyImportBatch`, which executes in batch chunks of 2,000 and calls `recalculateAnalysis` in `finish()`.
-5. **Status Lifecycle:** `RECEIVED` → `PROCESSING` → `CALCULATING` → `COMPLETED` (or `FAILED` with `Import_Diagnostic_Message__c`).
+### Contract Version
+- `contractVersion = "1.0.0"`
+- Major version mismatch (`!= "1.x.x"`) enforced for rejection at endpoint level in Phase 6.
 
-### Master-Data Resolution Rules (Audit Section Q)
-- **Countries:** Resolved via `Country__c.Tag__c`. Missing tags automatically trigger master `Country__c` creation.
-- **Products:** Resolved via `Product__c.Code__c`. Missing commodity codes automatically trigger master `Product__c` creation (supporting custom mods).
-- **Provinces:** Resolved via `Province__c.External_Province_Id__c`. Missing province IDs automatically trigger master `Province__c` creation linked to parent `Country__c`.
+### Field Exclusions
+- **Formula Fields Excluded:** `State_Economy__c.GDP_Per_Capita__c`, `Country_Economy__c.GDP_Per_Capita__c`, `Factory_Economy__c.Profit__c`, `Factory_Economy__c.Productivity__c`, `Factory_Economy__c.Average_Wage__c`, `Product_Economy__c.Inflation_Percent__c`, `Product_Economy__c.Overproduction_Percent__c`, `Country_Economy__c.GDP_Share_Percent__c`.
+- **Apex-written Fields Excluded:** `Country_Product_Economy__c.Export_Value__c`, `Country_Product_Economy__c.Import_Value__c`, `Country_Product_Economy__c.Domestic_Sales_Value__c`, `Country_Product_Economy__c.GDP_Contribution__c`.
+- **Constructed External ID Keys Excluded:** `State_Economy__c.Unique_Snapshot_Key__c`, `Province_Economy__c.Unique_Snapshot_Key__c`, `Factory_Economy__c.Unique_Snapshot_Key__c`, `Artisan_Economy__c.Unique_Snapshot_Key__c` (constructed deterministically by import service).
 
-### Idempotency Strategy
-- Upserts using `Unique_Snapshot_Key__c` across analysis headers and child snapshot objects prevent duplicate records if the same save game is re-imported.
+### GATE-1 Resolution
+- **Unknown Products:** If a `productCode` in an incoming payload does not match an existing master `Product__c` record, the Phase 6 import pipeline auto-provisions a minimal static `Product__c` record (`Code__c = productCode`, `Name = productCode`, `Base_Price__c = 0.0`).
+- **Unknown Artisan Types:** If an `artisanType` string in an incoming payload cannot be normalized, the import service logs a diagnostic warning message to `Economy_Analysis__c.Import_Diagnostic_Message__c` and skips the individual artisan record without failing the import transaction.
 
-### Security Pattern Applied
-- All Apex classes enforce `with sharing`.
-- CRUD/FLS checks enforced via `Schema.sObjectType.<Object>.isCreateable()` and `isUpdateable()` guards.
-- REST Resource verifies `isCreateable()` on `Economy_Analysis__c` and returns HTTP status 403 for unauthorized users.
+### Fixture Sample
+- Records: 2 countries (`TUR`, `EGY`), 3 products (`ammunition`, `small_arms`, `artillery`), 5 countryProducts, 5 provinces, 2 states (`TUR_blank`, `EGY_Cairo`), 2 factories, 3 artisans.
+- Source: derived from `golden-dataset/save-game-analyzer/*.json`.
+- Round-trip test result: **PASS**.
 
-### Governor Limit Profile
-- **DML Statements:** 4-6 bulk statements per synchronous import.
-- **SOQL Queries:** Bulkified resolution queries by Set of codes/tags. Zero queries inside loops.
-- **Heap & CPU:** Memory footprint bounded O(n) for DTO lists; large payloads delegated to `EconomyImportBatch` chunking.
-
-### Test Coverage Results
-- `EconomyImportServiceTest.cls`: 100% coverage
-- `EconomyImportBatchTest.cls`: 100% coverage
-- `EconomyImportRestResourceTest.cls`: 100% coverage
-- Phase 2 (`EconomyCalculationEngineTest`) and Phase 3 (`EconomyAnalysisSelectorTest`, `CountrySelectorTest`, `ProductSelectorTest`, `EconomyAnalysisServiceTest`, `DTOsTest`) suites: 100% coverage, 0 regressions.
+### Validation Results
+- `validate_metadata.py`: **PASS (13 Objects, 138 Fields verified)**
+- `generate_field_inventory.py`: **PASS (`field-inventory.md` unchanged)**
+- Baseline Parity Harness (`e2e/parity/compare.py`): **PASS (0 discrepancies)**
 
 ---
 
-## Critical Context for Phase 5 (LWC Country Dashboard)
+## Zero Scope Creep Attestation
+- Zero LWC, REST resources (`@RestResource`), service classes, selector classes, or calculation engines created in Phase 4.
+- Phase 0/1/2/3 artifacts remain unmodified.
+- No metadata under `force-app/main/default/objects/` was modified.
 
-### DTOs & Apex Methods for LWC Integration
-- **Summary Header:** `EconomyAnalysisService.getAnalysisSummary(analysisId)` returning `AnalysisSummaryDTO`.
-- **Country Summaries List:** `EconomyAnalysisService.getCountrySummaries(analysisId)` returning `List<CountrySummaryDTO>`.
-- **Single Country Detail:** `EconomyAnalysisService.getCountrySummary(analysisId, countryEconomyId)` returning `CountrySummaryDTO`.
-- **Country Product Trade Breakdown:** `EconomyAnalysisService.getCountryProductSummaries(countryEconomyId)` returning `List<CountryProductSummaryDTO>`.
+---
 
-### Import-Status UI Hooks
-- `AnalysisSummaryDTO.importStatus` exposes status (`RECEIVED`, `PROCESSING`, `CALCULATING`, `COMPLETED`, `FAILED`).
-- LWC components can poll or listen to status changes when an import is in `PROCESSING` or `CALCULATING` state.
-
-### Prerequisites Checklist Before Starting Phase 5
-- [x] Import service and REST endpoint active and verified.
-- [x] Snapshot schema and master resolution verified.
-- [x] Calculation engine and recalculation service wired.
-- [x] All Phase 2, 3, and 4 test suites passing at 100% coverage.
+## Critical Context for Phase 5 (Apex Calculation Engine Extension)
+- Phase 5 engine must compute derived fields excluded from the DTO (`Country_Product_Economy__c` trade values, `Country_Economy__c` aggregate totals).
+- Phase 5 engine must not duplicate formula fields defined in Phase 3 schema.
+- Phase 5 engine must produce outputs matching Phase 2 golden dataset fixtures within frozen tolerances.
