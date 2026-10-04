@@ -2,7 +2,8 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** Phase 2 (Golden Dataset Extension) **VERIFIED AND COMPLETE** — Golden dataset extended.
+- **Current Status:** Phase 3 (Salesforce Metadata Schema) **VERIFIED AND COMPLETE** — Schema frozen and deployed.
+- **Field Inventory Reference:** [`field-inventory.md`](./field-inventory.md)
 - **Semantic Contract Reference:** [`SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Audit Reference:** [`SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
 - **Golden Dataset Location:** `golden-dataset/` & `golden-dataset/save-game-analyzer/`
@@ -31,13 +32,33 @@
 
 ---
 
-## Rules & Guidelines for Phase 3 (Salesforce Metadata Schema)
+## Schema Summary (Phase 3 Complete)
 
-- Phase 3 must deploy custom objects `State__c`, `State_Economy__c`, `Factory_Economy__c`, and `Artisan_Economy__c`.
-- Phase 3 must add extended custom fields to `Province_Economy__c` (`Colony__c`, `RGO_Income__c`, `RGO_GDP__c`, `Artisan_Spending__c`, `Artisan_Income__c`, `Artisan_GDP__c`) and `Country_Economy__c` (`Core_Population__c`, `Colony_Population__c`, `Factory_GDP__c`, `Province_GDP__c`, `Artisan_GDP__c`).
-- Phase 3 must deploy unique external ID fields matching the frozen snapshot key contracts.
-- Phase 3 must resolve `GATE-2` (State Name Variance Across Mods).
-- Zero Apex, metadata (`force-app/`), LWCs, or tests were created in Phase 2.
+- **Total Custom Objects:** 13 (8 baseline + 4 new custom objects + 1 import platform event).
+  - New Custom Objects: `State__c`, `State_Economy__c`, `Factory_Economy__c`, `Artisan_Economy__c`.
+- **Total Custom Fields:** 138 custom fields verified across all objects.
+- **Canonical Units & Precision:** 100% compliant with Phase 1 frozen unit definitions (Daily £, Annual £, Per-person wages/productivity, physical quantities, headcount counts, ranks).
+- **Field Inventory:** Updated authoritative mapping available at [`field-inventory.md`](./field-inventory.md).
+- **Zero Scope Creep Attestation:** Zero Apex classes (`.cls`), LWCs (`.js`/`.html`), DTOs, or tests created or modified in Phase 3.
+
+---
+
+## Architecture Review Gates Status
+
+- **GATE-1 (Modded Commodity & Artisan Type Mappings):** OPEN — Target Phase 4 (Parser & Ingestion DTO Contract).
+- **GATE-2 (State Name Variance Across Mods — HPM/GFM/Vanilla):** RESOLVED in Phase 3.
+  - *Strategy:* Use composite key `State_Code__c = <CountryTag>_<StateName>` (e.g. `EGY_Cairo`, `TUR_blank`).
+  - *Analysis:* Inspection of `golden-dataset/save-game-analyzer/states.json` confirms 124 state records with 124 unique composite key values (100% uniqueness).
+  - *Residual Risk:* In modded saves where state names vary across languages/mods or where `blank` state names recur across different states within the same country, collision handling at import time is carried forward as a non-blocking consideration for Phase 6.
+- **GATE-3 (Asynchronous Import Queue Scope for Large Saves):** OPEN — Target Phase 6 (Import Layer).
+
+---
+
+## Directives & Rules for Phase 4 (Parser & Ingestion DTO Contract)
+
+- `EconomyImportRequestDTO` must emit exactly the fields the Phase 3 schema persists — no more, no less.
+- DTO structures must map directly to snapshot external ID keys (`Unique_Snapshot_Key__c`) and lookups.
+- Parser boundaries must handle unmapped artisan types dynamically (GATE-1 resolution).
 
 ---
 
