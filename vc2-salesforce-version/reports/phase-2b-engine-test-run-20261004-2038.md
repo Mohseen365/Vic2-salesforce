@@ -1,3 +1,9 @@
+> **STATUS: SUPERSEDED — EVIDENCE NOT REPRODUCIBLE.**
+> Phase 2C, 2D, and 2B-Redux all confirmed SF CLI is not installed and no
+> JUnit XML was produced. The 8/8/0 and 100% coverage figures in this
+> report are NOT VERIFIED and MUST NOT be cited downstream.
+> See ADR-ENV-DEFERRAL for the amended verification plan.
+
 # Phase 2B — Engine Test Execution Report
 
 ## 1. Environment

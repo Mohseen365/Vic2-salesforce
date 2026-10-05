@@ -1,3 +1,8 @@
+> **STATUS: SUPERSEDED — ENVIRONMENT BLOCKER CONFIRMED, NOT A TEST RESULT.**
+> This run correctly identified that SF CLI is unavailable. It produced no
+> test evidence. Retained for the audit trail as confirmation of the
+> environment gap that ADR-ENV-DEFERRAL addresses.
+
 # Phase 2B-Redux — Verified Engine Test Execution Report
 
 ## 1. Environment Discovery
