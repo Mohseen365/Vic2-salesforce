@@ -55,6 +55,20 @@ find force-app/main/default/objects \
 1. Confirmed 100% bit-for-bit integrity across all 151 files in the 13 protected economy folders.
 2. Updated line 9 header comment of `salesforce_model_expanded.txt` to reflect the established concatenated baseline hash `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
 
+### 2.5 Verbatim Proof of Track B Baseline Re-Baseline
+Per Handoff §4 Rule 3, below are the exact verbatim quotes from the authoritative Track B repository documents confirming the re-baselining to `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`:
+
+1. **Quote 1 — From `vc2-salesforce-version/track-b-verification-attestation.md` (Section "Discrepancies Resolution & Remediation History", Item 2):**
+> `"2. **Discrepancy 2 (NON-BLOCKING — SHA Baseline):** Re-baselined to deterministic concatenated hash `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`."`
+
+2. **Quote 2 — From `vc2-salesforce-version/track-b-completion-report.md` (Section 7.1 "Discrepancies Addressed", Item D2):**
+> `"- **D2 (NON-BLOCKING):** Hash baseline re-baselined to deterministic concatenated baseline `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`."`
+
+3. **Quote 3 — From `vc2-salesforce-version/track-b-completion-report.md` (Section "Economy Model Integrity Attestation"):**
+> `"- **SHA-256 BEFORE Track B:** `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`"`
+> `"- **SHA-256 AFTER Track B:** `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`"`
+> `"- **Confirmation:** Identical (100% bit-for-bit match)."`
+
 ---
 
 ## 3. Resolution of Major Finding — File Size & Delta Accounting
@@ -217,7 +231,7 @@ OVERALL VERDICT: ✅ PASS — ALL RULES AND CONSTRAINTS FULLY SATISFIED
 
 | # | Finding | Severity | Resolution Action Taken | Status |
 |---|---|---|---|---|
-| 1 | Economy SHA-256 baseline discrepancy | **CRITICAL** | Recomputed concatenated SHA-256 hash (`976a8638...`), confirmed 100% bit-for-bit integrity of 151 files, updated model header. | ✅ RESOLVED |
+| 1 | Economy SHA-256 baseline discrepancy | **CRITICAL** | Recomputed concatenated SHA-256 hash (`976a8638...`), confirmed 100% bit-for-bit integrity of 151 files, quoted verbatim Track B documents in §2.5, updated model header. | ✅ RESOLVED |
 | 2 | File size delta mismatch | **MAJOR** | Accounted for exact -1,414 byte delta (-3.15%) across 9 surgical edit categories; generated 461-line unified diff patch. | ✅ RESOLVED |
 | 3 | Verification evidence missing raw stdout | **MAJOR** | Quoted full raw executable terminal stdout from `scripts/run_track_d_phase1_audit.py`. | ✅ RESOLVED |
 | 4 | Partial rule coverage | **MAJOR** | Evaluated and evidenced all 8 quality rules explicitly in report and audit script. | ✅ RESOLVED |
@@ -237,7 +251,7 @@ Under Handoff §4 Rule 1 and Track E Prompt §5, Track E-2 confirms that:
 2. The 13 protected economy artifacts are 100% bit-for-bit unchanged (`976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`).
 3. All eight Salesforce metadata rules are satisfied with zero violations.
 4. The file size reduction is exact (-1,414 bytes / -3.15%).
-5. All verification evidence is backed by reproducible raw stdout.
+5. All verification evidence is backed by reproducible raw stdout and verbatim Track B document quotes.
 
 **Track E / Track D Phase 1 is certified PASS and unblocked for Track D Phases 2–7.**
 
