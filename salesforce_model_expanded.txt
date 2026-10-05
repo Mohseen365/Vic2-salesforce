@@ -6,7 +6,7 @@ Object count: 124 Save-Game Objects & Junctions + 13 Protected Economy Artifacts
 
 RECONCILIATION SUMMARY
 ------------------------------------------------------------------------
-- Protected Economy Objects (13): Preserved bit-for-bit (SHA256 dd00e83a599db3e4d2028b6166b769a9faccc0e4f41a23fca16283d8f13d7c1b)
+- Protected Economy Objects (13): Preserved bit-for-bit (SHA256 976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38)
 - Renamed Entities: Country_Save_State__c, Province_Save_State__c, State_Save_State__c, Value__c
 - Flattened Sub-objects: Ideology__c, Issue__c -> Pop__c custom fields
 - Junction Patterns Added: Save_Game_Country_Ref__c (271-lookup fix), Country_Country_Ref__c (116-lookup fix)
