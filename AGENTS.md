@@ -74,6 +74,8 @@
 - **Run Parity Verification Harness:** `python3 vc2-salesforce-version/e2e/parity/compare.py`
 - **Run Metadata Validator:** `python3 vc2-salesforce-version/scripts/validate_metadata.py`
 
+---
+
 ## Track B — Comprehensive Save-Game Data Model Expansion Status
 - **Status:** `COMPLETE — ATTESTED` (Track B Remediation completed; reference integrity restored).
 - **Deliverables & Verification Reports:**
@@ -86,8 +88,21 @@
   - `field-inventory.md`: Extended field inventory covering both Economy Model and Track B Full Save-Game Model.
 - **Protected Economy Artifacts Integrity:**
   - 151 files across 13 protected economy object folders verified bit-for-bit unchanged (`git status` clean). Deterministic SHA-256 baseline: `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
-- **Delivered Model Summary:**
-  - Delivered object count: 139 custom objects (13 protected economy artifacts + 126 save entities & junction objects).
-- **Rules for Future Tracks:**
-  - Any future track extending non-economy entities must respect the junction patterns (`Save_Game_Country_Ref__c`, `Country_Country_Ref__c`).
-  - Do not alter any of the 13 protected economy artifacts or `EconomyCalculationEngine.cls`.
+
+---
+
+## Track C — Data Model Possibility Map & Project Roadmap Planning Status
+- **Status:** `COMPLETE — AUDITED & PLANNED` (Planning artifact complete; feature execution is a separate project owner decision).
+- **Deliverables & Artifact Pointers:**
+  - [`vc2-salesforce-version/track-c-data-model-audit.md`](./vc2-salesforce-version/track-c-data-model-audit.md): Data Model Quality Audit (58 defects found; 15 BLOCKING defects evaluated; Verdict: 🛑 **BLOCKED** until Phase 0 metadata remediation).
+  - [`vc2-salesforce-version/track-c-asset-inventory.md`](./vc2-salesforce-version/track-c-asset-inventory.md): Inventory of 41 Apex classes and 15 LWC bundles with reusability scores and domain extension guidance.
+  - [`vc2-salesforce-version/track-c-possibility-map.md`](./vc2-salesforce-version/track-c-possibility-map.md): Master Possibility Map cataloguing 125 capabilities across 12 domains mapped to 16 features.
+  - [`vc2-salesforce-version/track-c-roadmap.md`](./vc2-salesforce-version/track-c-roadmap.md): Prioritised, dependency-ordered roadmap with Value x Effort matrix, ranked build order (Top 5: Save Header, Politics Explorer, Military OOB, Sphere & Focus, Rebel Monitor), dependency graph, and "Do Not Build" list.
+  - [`vc2-salesforce-version/track-c-risk-register.md`](./vc2-salesforce-version/track-c-risk-register.md): Comprehensive risk register covering data model defects, governor limits, ingestion gaps, and security permissions.
+- **Summary Metrics:**
+  - Capabilities catalogued: **125**
+  - Features ranked: **16**
+  - Top 5 recommended build order: `FEAT-01` Save Header, `FEAT-05` Politics Explorer, `FEAT-06` Military OOB, `FEAT-08` Sphere & Focus, `FEAT-12` Rebel Insurgency.
+  - Deployment-blocking metadata defects: **15** (must be fixed in Phase 0 prior to feature development).
+- **Protected Economy Artifacts Integrity:**
+  - Track C is a planning-only track. Zero Apex, LWC, metadata, or economy artifacts were created or modified.
