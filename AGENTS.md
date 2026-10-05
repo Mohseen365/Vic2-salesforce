@@ -2,7 +2,7 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** Phase 6 (Import & Persistence Layer) **VERIFIED AND COMPLETE** — Ingestion service, REST API resource, and batch persistence pipeline live.
+- **Current Status:** Phase 6 & Enhancement Track C **VERIFIED AND COMPLETE** — Ingestion service, REST API resource, batch persistence pipeline live, and permission sets provisioned.
 - **Semantic Contract Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Audit Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
 - **Import Contract Reference:** [`vc2-salesforce-version/IMPORT_CONTRACT.md`](./vc2-salesforce-version/IMPORT_CONTRACT.md)
@@ -88,21 +88,78 @@
   - `field-inventory.md`: Extended field inventory covering both Economy Model and Track B Full Save-Game Model.
 - **Protected Economy Artifacts Integrity:**
   - 151 files across 13 protected economy object folders verified bit-for-bit unchanged (`git status` clean). Deterministic SHA-256 baseline: `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
+# Track C — Data Model Possibility Map, Roadmap Planning & Permission Set Provisioning
+
+## Status
+- **COMPLETE — AUDITED & PLANNED**  
+  (Planning artifact complete; feature execution is a separate project owner decision)  
+- **COMPLETE — ATTESTED**  
+  (Permission set provisioning, out of original audit scope — Enhancement Track)
 
 ---
 
-## Track C — Data Model Possibility Map & Project Roadmap Planning Status
-- **Status:** `COMPLETE — AUDITED & PLANNED` (Planning artifact complete; feature execution is a separate project owner decision).
-- **Deliverables & Artifact Pointers:**
-  - [`vc2-salesforce-version/track-c-data-model-audit.md`](./vc2-salesforce-version/track-c-data-model-audit.md): Data Model Quality Audit (58 defects found; 15 BLOCKING defects evaluated; Verdict: 🛑 **BLOCKED** until Phase 0 metadata remediation).
-  - [`vc2-salesforce-version/track-c-asset-inventory.md`](./vc2-salesforce-version/track-c-asset-inventory.md): Inventory of 41 Apex classes and 15 LWC bundles with reusability scores and domain extension guidance.
-  - [`vc2-salesforce-version/track-c-possibility-map.md`](./vc2-salesforce-version/track-c-possibility-map.md): Master Possibility Map cataloguing 125 capabilities across 12 domains mapped to 16 features.
-  - [`vc2-salesforce-version/track-c-roadmap.md`](./vc2-salesforce-version/track-c-roadmap.md): Prioritised, dependency-ordered roadmap with Value x Effort matrix, ranked build order (Top 5: Save Header, Politics Explorer, Military OOB, Sphere & Focus, Rebel Monitor), dependency graph, and "Do Not Build" list.
-  - [`vc2-salesforce-version/track-c-risk-register.md`](./vc2-salesforce-version/track-c-risk-register.md): Comprehensive risk register covering data model defects, governor limits, ingestion gaps, and security permissions.
-- **Summary Metrics:**
-  - Capabilities catalogued: **125**
-  - Features ranked: **16**
-  - Top 5 recommended build order: `FEAT-01` Save Header, `FEAT-05` Politics Explorer, `FEAT-06` Military OOB, `FEAT-08` Sphere & Focus, `FEAT-12` Rebel Insurgency.
-  - Deployment-blocking metadata defects: **15** (must be fixed in Phase 0 prior to feature development).
-- **Protected Economy Artifacts Integrity:**
-  - Track C is a planning-only track. Zero Apex, LWC, metadata, or economy artifacts were created or modified.
+## Delivered Model Summary
+- **139 custom objects** delivered  
+  - 13 protected economy artifacts  
+  - 126 save entities & junction objects  
+- **Rules for Future Tracks:**  
+  - Any future track extending non-economy entities must respect junction patterns  
+    (`Save_Game_Country_Ref__c`, `Country_Country_Ref__c`)  
+  - Do not alter any of the 13 protected economy artifacts or `EconomyCalculationEngine.cls`
+
+---
+
+## Planning Deliverables & Artifact Pointers
+- `track-c-data-model-audit.md`: Data Model Quality Audit (58 defects found; 15 BLOCKING defects evaluated; Verdict: 🛑 **BLOCKED** until Phase 0 metadata remediation)  
+- `track-c-asset-inventory.md`: Inventory of 41 Apex classes and 15 LWC bundles with reusability scores and domain extension guidance  
+- `track-c-possibility-map.md`: Master Possibility Map cataloguing 125 capabilities across 12 domains mapped to 16 features  
+- `track-c-roadmap.md`: Prioritised, dependency-ordered roadmap with Value x Effort matrix, ranked build order (Top 5: Save Header, Politics Explorer, Military OOB, Sphere & Focus, Rebel Monitor), dependency graph, and "Do Not Build" list  
+- `track-c-risk-register.md`: Comprehensive risk register covering data model defects, governor limits, ingestion gaps, and security permissions
+
+---
+
+## Permission Set Deliverables
+- `Economy_Analyzer_User.permissionset-meta.xml`: Read-only permission set for all 139 objects and 997 fields  
+- `Economy_Analyzer_Admin.permissionset-meta.xml`: Full read/write/delete permission set for all 139 objects and 997 fields  
+- `track-c-generate-permission-sets.py`: Deterministic python generator script  
+- `PERMISSION_SET_MATRIX.md`: 139-row permission matrix  
+- `track-c-assignment-guide.md`: Single-System-Admin context explanation and assignment guide  
+- `track-c-completion-report.md`: Final completion report with quoted static verification evidence
+
+---
+
+## Summary Metrics
+- Capabilities catalogued: **125**  
+- Features ranked: **16**  
+- Top 5 recommended build order:  
+  - `FEAT-01` Save Header  
+  - `FEAT-05` Politics Explorer  
+  - `FEAT-06` Military OOB  
+  - `FEAT-08` Sphere & Focus  
+  - `FEAT-12` Rebel Insurgency  
+- Deployment-blocking metadata defects: **15**  
+  (must be fixed in Phase 0 prior to feature development)
+
+---
+
+## Protected Economy Artifacts Integrity
+- Track C is a planning-only track. Zero Apex, LWC, metadata, or economy artifacts were created or modified  
+- SHA-256 hash unchanged:  
+  `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`
+
+---
+
+## Single-User Operating Context
+- Exactly one active user (System Administrator)  
+- Profile grants `View All Data` and `Modify All Data`  
+- Permission sets are forward-looking artifacts for codification, future user onboarding, and auditability  
+- No custom profiles were created or modified
+
+---
+
+## Rules for Future Tracks
+Any change to object or field metadata in future tracks (e.g. Track D/E) **MUST** be accompanied by executing:
+
+```bash
+python3 vc2-salesforce-version/track-c-generate-permission-sets.py
+
