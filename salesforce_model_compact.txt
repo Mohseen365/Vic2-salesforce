@@ -1,0 +1,1975 @@
+SALESFORCE DATA MODEL (compact)
+Generated from a Victoria 2 (Clausewitz) save file
+========================================================================
+
+Object count: 126
+
+RELATIONSHIP OVERVIEW
+------------------------------------------------------------------------
+Save_Game__c
+  └─ Game_Flag__c  (MD, from `flags`)
+  └─ Gameplay_Settings__c  (LK, from `gameplaysettings`)
+  └─ World_Market__c  (LK, from `worldmarket`)
+  └─ Overseas_Penalty__c  (MD, from `overseas_penalty`)
+  └─ Unit_Cost__c  (MD, from `unit_cost`)
+  └─ BudgetBalance__c  (LK, from `budget_balance`)
+  └─ PlayerMonthlyPopGrowth__c  (LK, from `player_monthly_pop_growth`)
+  └─ Fascist__c  (LK, from `fascist`)
+  └─ Socialist__c  (LK, from `socialist`)
+  └─ Communist__c  (LK, from `communist`)
+  └─ AnarchoLiberal__c  (LK, from `anarcho_liberal`)
+  └─ Canal__c  (LK, from `canals`)
+  └─ Goods_Vector_Line__c  (MD, from `id`)
+  └─ Fired_Events__c  (LK, from `fired_events`)
+  └─ Province__c  (MD, from `1`)
+  └─ Country__c  (LK, from `REB, ENG, RUS, FRA, PRU, GER, AUS, USA, JAP, ITA, KUK, DEN, FIN, NOR, SCA, SWE, BEL, CA...`)
+  └─ RebelFaction__c  (MD, from `rebel_faction`)
+  └─ Diplomacy__c  (LK, from `diplomacy`)
+  └─ Combat__c  (LK, from `combat`)
+  └─ ActiveWar__c  (MD, from `active_war`)
+  └─ PreviousWar__c  (MD, from `previous_war`)
+  └─ Invention__c  (LK, from `invention`)
+  └─ GreatNation__c  (LK, from `great_nations`)
+  └─ Outliner__c  (LK, from `outliner`)
+  └─ NewsCollector__c  (LK, from `news_collector`)
+  └─ CrisisManager__c  (LK, from `crisis_manager`)
+  └─ Region__c  (MD, from `region`)
+
+Game_Flag__c  (parent: Save_Game__c, MD)
+
+Gameplay_Settings__c  (parent: Save_Game__c, MD)
+  └─ Setgameplayoption__c  (LK, from `setgameplayoptions`)
+
+Setgameplayoption__c  (parent: Gameplay_Settings__c, MD)
+
+World_Market__c  (parent: Save_Game__c, MD)
+  └─ Market_Line__c  (MD, from `worldmarket_pool, price_pool, last_price_history, supply_pool, last_supply_pool, price_...`)
+  └─ Price_Snapshot__c  (MD, from `price_history`)
+  └─ Consumption_Cache__c  (MD, from `player_pops_consumption_cache`)
+
+Price_Snapshot__c  (parent: World_Market__c, MD)
+
+Consumption_Cache__c  (parent: World_Market__c, MD)
+
+Overseas_Penalty__c  (parent: Save_Game__c, MD)
+
+Unit_Cost__c  (parent: Save_Game__c, MD)
+
+BudgetBalance__c  (parent: Save_Game__c, MD)
+
+PlayerMonthlyPopGrowth__c  (parent: Save_Game__c, MD)
+
+Fascist__c  (parent: Save_Game__c, MD)
+
+Socialist__c  (parent: Save_Game__c, MD)
+
+Communist__c  (parent: Save_Game__c, MD)
+
+AnarchoLiberal__c  (parent: Save_Game__c, MD)
+
+Canal__c  (parent: Save_Game__c, MD)
+
+Goods_Vector_Line__c  (parent: Save_Game__c, MD)
+
+Fired_Events__c  (parent: Save_Game__c, MD)
+  └─ Fired_Event__c  (MD, from `id`)
+
+Fired_Event__c  (parent: Fired_Events__c, MD)
+
+Province__c  (parent: Save_Game__c, MD)
+  └─ Pop__c  (MD, from `aristocrats, artisans, bureaucrats, clergymen, labourers, officers, soldiers`)
+  └─ Construction__c  (LK, from `building_construction`)
+  └─ RGO__c  (LK, from `rgo`)
+
+Pop__c  (parent: Province__c, MD)
+  └─ Ideology__c  (LK, from `ideology`)
+  └─ Issue__c  (LK, from `issues`)
+  └─ Pop_Stockpile__c  (MD, from `stockpile`)
+  └─ Pop_Need__c  (MD, from `need`)
+
+Ideology__c  (parent: Pop__c, MD)
+  └─ Ideology__c  (MD, from `2`)
+
+Issue__c  (parent: Pop__c, MD)
+  └─ Issue__c  (MD, from `1`)
+
+Pop_Stockpile__c  (parent: Pop__c, MD)
+
+Pop_Need__c  (parent: Pop__c, MD)
+
+Construction__c  (parent: Province__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id`)
+
+RGO__c  (parent: Province__c, MD)
+  └─ RGO_Employment__c  (LK, from `employment`)
+
+RGO_Employment__c  (parent: RGO__c, MD)
+  └─ Employee__c  (MD, from `employees`)
+
+Employee__c  (parent: RGO_Employment__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `province_pop_id`)
+
+Flag__c  (parent: Country__c, MD)
+
+Variable__c  (parent: Country__c, MD)
+
+Technology__c  (parent: Country__c, MD)
+  └─ Technology_Toggle__c  (LK, from `post_napoleonic_thought, flintlock_rifles, muzzle_loaded_rifles, breech_loaded_rifles, ...`)
+
+UpperHouse__c  (parent: Country__c, MD)
+
+RichTax__c  (parent: Country__c, MD)
+  └─ TaxIncome__c  (LK, from `tax_income`)
+  └─ TaxEff__c  (LK, from `tax_eff`)
+
+TaxIncome__c  (parent: RichTax__c, MD)
+
+TaxEff__c  (parent: RichTax__c, MD)
+
+MiddleTax__c  (parent: Country__c, MD)
+  └─ TaxIncome__c  (LK, from `tax_income`)
+  └─ TaxEff__c  (LK, from `tax_eff`)
+
+PoorTax__c  (parent: Country__c, MD)
+  └─ TaxIncome__c  (LK, from `tax_income`)
+  └─ TaxEff__c  (LK, from `tax_eff`)
+
+Leader__c  (parent: Country__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id`)
+
+Army__c  (parent: Country__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id, leader`)
+  └─ Path__c  (LK, from `path`)
+  └─ Regiment__c  (MD, from `regiment`)
+
+Path__c  (parent: Army__c, MD)
+
+Regiment__c  (parent: Army__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id, pop`)
+
+IllegalInvention__c  (parent: Country__c, MD)
+
+GovernmentFlag__c  (parent: Country__c, MD)
+
+AiHardStrategy__c  (parent: Country__c, MD)
+
+Ai__c  (parent: Country__c, MD)
+  └─ ConquerProv__c  (MD, from `conquer_prov`)
+  └─ Threat__c  (MD, from `threat`)
+  └─ Antagonize__c  (MD, from `antagonize`)
+  └─ Befriend__c  (MD, from `befriend`)
+  └─ Protect__c  (MD, from `protect`)
+  └─ Rival__c  (MD, from `rival`)
+  └─ BuildingProv__c  (LK, from `building_prov`)
+  └─ WarWith__c  (LK, from `war_with`)
+  └─ MilitaryAcces__c  (MD, from `military_access`)
+
+BuyDomestic__c  (parent: Country__c, MD)
+
+Trade__c  (parent: Country__c, MD)
+  └─ Trade_Good__c  (LK, from `ammunition, small_arms, artillery, canned_food, barrels, aeroplanes, cotton, dye, wool,...`)
+
+DomesticSupplyPool__c  (parent: Country__c, MD)
+
+SoldSupplyPool__c  (parent: Country__c, MD)
+
+DomesticDemandPool__c  (parent: Country__c, MD)
+
+ActualSoldDomestic__c  (parent: Country__c, MD)
+
+SavedCountrySupply__c  (parent: Country__c, MD)
+
+MaxBought__c  (parent: Country__c, MD)
+
+NationalFocu__c  (parent: Country__c, MD)
+
+Expense__c  (parent: Country__c, MD)
+
+Income__c  (parent: Country__c, MD)
+
+Research__c  (parent: Country__c, MD)
+
+ActiveParty__c  (parent: Country__c, MD)
+
+Modifier__c  (parent: Country__c, MD)
+
+Navy__c  (parent: Country__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id, leader`)
+  └─ Path__c  (LK, from `path`)
+  └─ Ship__c  (MD, from `ship`)
+  └─ Army__c  (LK, from `army`)
+
+Ship__c  (parent: Navy__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id`)
+
+ActiveInvention__c  (parent: Country__c, MD)
+
+PossibleInvention__c  (parent: Country__c, MD)
+
+ConquerProv__c  (parent: Ai__c, MD)
+
+Threat__c  (parent: Ai__c, MD)
+
+Antagonize__c  (parent: Ai__c, MD)
+
+Befriend__c  (parent: Ai__c, MD)
+
+Protect__c  (parent: Ai__c, MD)
+
+Rival__c  (parent: Ai__c, MD)
+
+ForeignInvestment__c  (parent: Country__c, MD)
+
+Culture__c  (parent: Country__c, MD)
+
+Movement__c  (parent: Country__c, MD)
+
+State__c  (parent: Country__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id`)
+  └─ Province__c  (LK, from `provinces`)
+  └─ StateBuilding__c  (LK, from `state_buildings`)
+  └─ Popproject__c  (LK, from `popproject`)
+
+Colonize__c  (parent: Country__c, MD)
+  └─ Colonize__c  (MD, from `0, 166, 283, 344`)
+
+Influence__c  (parent: Country__c, MD)
+
+InterestingCountrie__c  (parent: Country__c, MD)
+
+Railroad__c  (parent: Country__c, MD)
+  └─ Path__c  (LK, from `path`)
+
+StateBuilding__c  (parent: State__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `employment, stockpile`)
+  └─ Employment__c  (LK, from `employment`)
+  └─ ProfitHistoryEntry__c  (LK, from `profit_history_entry`)
+  └─ Stockpile__c  (LK, from `stockpile`)
+  └─ InputGood__c  (LK, from `input_goods`)
+
+Employment__c  (parent: StateBuilding__c, MD)
+  └─ Employee__c  (MD, from `employees`)
+
+ProfitHistoryEntry__c  (parent: StateBuilding__c, MD)
+
+BuildingProv__c  (parent: Ai__c, MD)
+
+Popproject__c  (parent: State__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `input_goods`)
+  └─ InputGood__c  (LK, from `input_goods`)
+
+Creditor__c  (parent: Country__c, MD)
+
+Stockpile__c  (parent: StateBuilding__c, MD)
+
+InputGood__c  (parent: Popproject__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `goods_demand, input_goods`)
+
+WarWith__c  (parent: Ai__c, MD)
+
+MilitaryAcces__c  (parent: Ai__c, MD)
+
+RebelFaction__c  (parent: Save_Game__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `id, leader`)
+  └─ Pop__c  (MD, from `pop`)
+
+Diplomacy__c  (parent: Save_Game__c, MD)
+  └─ Vassal__c  (LK, from `vassal`)
+  └─ Alliance__c  (LK, from `alliance`)
+  └─ Substate__c  (MD, from `substate`)
+  └─ CasusBelli__c  (LK, from `casus_belli`)
+
+Vassal__c  (parent: Diplomacy__c, MD)
+
+Alliance__c  (parent: Diplomacy__c, MD)
+
+Substate__c  (parent: Diplomacy__c, MD)
+
+CasusBelli__c  (parent: Diplomacy__c, MD)
+
+Combat__c  (parent: Save_Game__c, MD)
+  └─ SiegeCombat__c  (MD, from `siege_combat`)
+
+SiegeCombat__c  (parent: Combat__c, MD)
+  └─ Attacker__c  (LK, from `attacker`)
+  └─ Defender__c  (LK, from `defender`)
+
+Attacker__c  (parent: SiegeCombat__c, MD)
+  └─ Goods_Vector_Line__c  (MD, from `unit`)
+  └─ AccumulatedLosse__c  (LK, from `accumulated_losses`)
+  └─ Front__c  (LK, from `front`)
+  └─ Back__c  (LK, from `back`)
+
+AccumulatedLosse__c  (parent: Attacker__c, MD)
+
+Front__c  (parent: Attacker__c, MD)
+
+Back__c  (parent: Attacker__c, MD)
+
+Defender__c  (parent: SiegeCombat__c, MD)
+  └─ AccumulatedLosse__c  (LK, from `accumulated_losses`)
+  └─ Front__c  (LK, from `front`)
+  └─ Back__c  (LK, from `back`)
+
+ActiveWar__c  (parent: Save_Game__c, MD)
+  └─ History__c  (LK, from `history`)
+  └─ Attacker__c  (MD, from `attacker`)
+  └─ OriginalWargoal__c  (LK, from `original_wargoal`)
+  └─ WarGoal__c  (MD, from `war_goal`)
+
+History__c  (parent: ActiveWar__c, MD)
+  └─ War_History_Entry__c  (MD, from `1870.4.28, 1870.4.29, 1870.6.28, 1870.11.12, 1871.5.24, 1871.6.1, 1871.8.25, 1871.9.8, ...`)
+
+Battle__c  (parent: War_History_Entry__c, MD)
+  └─ Attacker__c  (LK, from `attacker`)
+  └─ Defender__c  (LK, from `defender`)
+
+OriginalWargoal__c  (parent: ActiveWar__c, MD)
+
+WarGoal__c  (parent: ActiveWar__c, MD)
+
+PreviousWar__c  (parent: Save_Game__c, MD)
+  └─ History__c  (LK, from `history`)
+  └─ OriginalWargoal__c  (LK, from `original_wargoal`)
+
+Invention__c  (parent: Save_Game__c, MD)
+
+GreatNation__c  (parent: Save_Game__c, MD)
+
+Outliner__c  (parent: Save_Game__c, MD)
+
+NewsCollector__c  (parent: Save_Game__c, MD)
+  └─ NewsScope__c  (MD, from `news_scope`)
+  └─ BuiltNew__c  (MD, from `built_news`)
+  └─ Flag__c  (LK, from `flags`)
+
+NewsScope__c  (parent: NewsCollector__c, MD)
+  └─ Tag__c  (LK, from `tags`)
+  └─ String__c  (LK, from `strings`)
+  └─ Date__c  (LK, from `dates`)
+  └─ Value__c  (LK, from `values`)
+
+Tag__c  (parent: NewsScope__c, MD)
+
+String__c  (parent: NewsScope__c, MD)
+
+Date__c  (parent: NewsScope__c, MD)
+
+BuiltNew__c  (parent: NewsCollector__c, MD)
+  └─ Article__c  (MD, from `article`)
+
+Article__c  (parent: BuiltNew__c, MD)
+  └─ NewsScope__c  (LK, from `news_scope`)
+
+Value__c  (parent: NewsScope__c, MD)
+
+CrisisManager__c  (parent: Save_Game__c, MD)
+
+Region__c  (parent: Save_Game__c, MD)
+  └─ Colony__c  (MD, from `colony`)
+
+Colony__c  (parent: Region__c, MD)
+
+Country__c  (parent: Save_Game__c, MD)
+  └─ Flag__c  (LK, from `flags`)
+  └─ Variable__c  (LK, from `variables`)
+  └─ Technology__c  (LK, from `technology`)
+  └─ UpperHouse__c  (LK, from `upper_house`)
+  └─ RichTax__c  (LK, from `rich_tax`)
+  └─ MiddleTax__c  (LK, from `middle_tax`)
+  └─ PoorTax__c  (LK, from `poor_tax`)
+  └─ Goods_Vector_Line__c  (MD, from `AFG, ALD, ANH, ARG, AST, ATJ, AUS, AWA, BAD, BAL, BAS, BAV, BEL, BER, BHU, BIK, BOL, BR...`)
+  └─ Leader__c  (MD, from `leader`)
+  └─ Army__c  (MD, from `army`)
+  └─ IllegalInvention__c  (LK, from `illegal_inventions`)
+  └─ GovernmentFlag__c  (LK, from `government_flag`)
+  └─ AiHardStrategy__c  (LK, from `ai_hard_strategy`)
+  └─ Ai__c  (LK, from `ai`)
+  └─ BuyDomestic__c  (LK, from `buy_domestic`)
+  └─ Trade__c  (LK, from `trade`)
+  └─ DomesticSupplyPool__c  (LK, from `domestic_supply_pool`)
+  └─ SoldSupplyPool__c  (LK, from `sold_supply_pool`)
+  └─ DomesticDemandPool__c  (LK, from `domestic_demand_pool`)
+  └─ ActualSoldDomestic__c  (LK, from `actual_sold_domestic`)
+  └─ SavedCountrySupply__c  (LK, from `saved_country_supply`)
+  └─ MaxBought__c  (LK, from `max_bought`)
+  └─ NationalFocu__c  (LK, from `national_focus`)
+  └─ Expense__c  (LK, from `expenses`)
+  └─ Income__c  (LK, from `incomes`)
+  └─ Research__c  (LK, from `research`)
+  └─ ActiveParty__c  (MD, from `active_party`)
+  └─ Modifier__c  (MD, from `modifier`)
+  └─ Navy__c  (LK, from `navy`)
+  └─ Country__c  (LK, from `RUS, FRA, PRU, AUS, USA, JAP, DEN, SWE, BEL, NET, POR, SPA, ANH, BAD, BAV, BRA, BRE, CO...`)
+  └─ ActiveInvention__c  (LK, from `active_inventions`)
+  └─ PossibleInvention__c  (LK, from `possible_inventions`)
+  └─ ForeignInvestment__c  (LK, from `foreign_investment`)
+  └─ Culture__c  (LK, from `culture`)
+  └─ Movement__c  (MD, from `movement`)
+  └─ State__c  (MD, from `state`)
+  └─ Colonize__c  (LK, from `colonize`)
+  └─ Influence__c  (LK, from `influence`)
+  └─ InterestingCountrie__c  (LK, from `interesting_countries`)
+  └─ Railroad__c  (MD, from `railroads`)
+  └─ Creditor__c  (MD, from `creditor`)
+
+Technology_Toggle__c  (parent: Technology__c, MD)
+
+Trade_Good__c  (parent: Trade__c, MD)
+
+War_History_Entry__c  (parent: History__c, MD)
+  └─ Battle__c  (LK, from `battle`)
+
+Market_Line__c  (parent: World_Market__c, MD)
+
+
+OBJECTS AND FIELDS
+========================================================================
+
+OBJECT: Save_Game__c
+Fields:
+  - Date__c (Text)
+  - Player__c (Text)
+  - Government__c (Number(16,5))
+  - Automate_trade__c (Checkbox)
+  - Automate_sliders__c (Number(16,5))
+  - Rebel__c (Number(16,5))
+  - Unit__c (Number(16,5))
+  - State__c (Number(16,5))
+  - Start_date__c (Text)
+  - Start_pop_index__c (Number(16,5))
+  - Great_wars_enabled__c (Checkbox)
+  - Player_monthly_pop_growth_tag__c (Text)
+  - Player_monthly_pop_growth_date__c (Text)
+  - Gameplaysettings__c (Lookup(Gameplay_Settings__c))
+  - Worldmarket__c (Lookup(World_Market__c))
+  - Budget_balance__c (Lookup(BudgetBalance__c))
+  - Player_monthly_pop_growth__c (Lookup(PlayerMonthlyPopGrowth__c))
+  - Fascist__c (Lookup(Fascist__c))
+  - Socialist__c (Lookup(Socialist__c))
+  - Communist__c (Lookup(Communist__c))
+  - Anarcho_liberal__c (Lookup(AnarchoLiberal__c))
+  - Canals__c (Lookup(Canal__c))
+  - Fired_events__c (Lookup(Fired_Events__c))
+  - <Country_Ref__c> (Lookup(Country__c))   // 271 lookup fields, one per source key: REB__c, ENG__c, RUS__c, FRA__c, PRU__c, GER__c, …
+  - Diplomacy__c (Lookup(Diplomacy__c))
+  - Combat__c (Lookup(Combat__c))
+  - Invention__c (Lookup(Invention__c))
+  - Great_nations__c (Lookup(GreatNation__c))
+  - Outliner__c (Lookup(Outliner__c))
+  - News_collector__c (Lookup(NewsCollector__c))
+  - Crisis_manager__c (Lookup(CrisisManager__c))
+Children:
+  - Game_Flag__c (MD, from `flags`)
+  - Gameplay_Settings__c (LK, from `gameplaysettings`)
+  - World_Market__c (LK, from `worldmarket`)
+  - Overseas_Penalty__c (MD, from `overseas_penalty`)
+  - Unit_Cost__c (MD, from `unit_cost`)
+  - BudgetBalance__c (LK, from `budget_balance`)
+  - PlayerMonthlyPopGrowth__c (LK, from `player_monthly_pop_growth`)
+  - Fascist__c (LK, from `fascist`)
+  - Socialist__c (LK, from `socialist`)
+  - Communist__c (LK, from `communist`)
+  - AnarchoLiberal__c (LK, from `anarcho_liberal`)
+  - Canal__c (LK, from `canals`)
+  - Goods_Vector_Line__c (MD, from `id`)
+  - Fired_Events__c (LK, from `fired_events`)
+  - Province__c (MD, from `1`)
+  - Country__c (LK, from `REB, ENG, RUS, FRA, PRU, GER, AUS, USA, JAP, ITA, KUK, DEN, FIN, NOR, SCA, SWE, BEL, CAT, FLA, IRE, NET, POR, SCO, SPA, WLL, ANH, BAD, BA...`)
+  - RebelFaction__c (MD, from `rebel_faction`)
+  - Diplomacy__c (LK, from `diplomacy`)
+  - Combat__c (LK, from `combat`)
+  - ActiveWar__c (MD, from `active_war`)
+  - PreviousWar__c (MD, from `previous_war`)
+  - Invention__c (LK, from `invention`)
+  - GreatNation__c (LK, from `great_nations`)
+  - Outliner__c (LK, from `outliner`)
+  - NewsCollector__c (LK, from `news_collector`)
+  - CrisisManager__c (LK, from `crisis_manager`)
+  - Region__c (MD, from `region`)
+
+OBJECT: Game_Flag__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Flag_Name__c (Text)
+  - Flag_Value__c (Checkbox)
+
+OBJECT: Gameplay_Settings__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Setgameplayoptions__c (Lookup(Setgameplayoption__c))
+Children:
+  - Setgameplayoption__c (LK, from `setgameplayoptions`)
+
+OBJECT: Setgameplayoption__c
+Parent: Gameplay_Settings__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: World_Market__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Price_history_last_update__c (Text)
+Children:
+  - Market_Line__c (MD, from `worldmarket_pool, price_pool, last_price_history, supply_pool, last_supply_pool, price_change, discovered_goods, actual_sold, actual_sold...`)
+  - Price_Snapshot__c (MD, from `price_history`)
+  - Consumption_Cache__c (MD, from `player_pops_consumption_cache`)
+
+OBJECT: Price_Snapshot__c
+Parent: World_Market__c (MD)
+Fields:
+  - Ammunition__c (Number(16,5))
+  - Small_arms__c (Number(16,5))
+  - Artillery__c (Number(16,5))
+  - Canned_food__c (Number(16,5))
+  - Barrels__c (Number(16,5))
+  - Aeroplanes__c (Number(16,5))
+  - Cotton__c (Number(16,5))
+  - Dye__c (Number(16,5))
+  - Wool__c (Number(16,5))
+  - Silk__c (Number(16,5))
+  - Coal__c (Number(16,5))
+  - Sulphur__c (Number(16,5))
+  - Iron__c (Number(16,5))
+  - Timber__c (Number(16,5))
+  - Tropical_wood__c (Number(16,5))
+  - Rubber__c (Number(16,5))
+  - Oil__c (Number(16,5))
+  - Precious_metal__c (Number(16,5))
+  - Steel__c (Number(16,5))
+  - Cement__c (Number(16,5))
+  - Machine_parts__c (Number(16,5))
+  - Glass__c (Number(16,5))
+  - Fuel__c (Number(16,5))
+  - Fertilizer__c (Number(16,5))
+  - Explosives__c (Number(16,5))
+  - Clipper_convoy__c (Number(16,5))
+  - Steamer_convoy__c (Number(16,5))
+  - Electric_gear__c (Number(16,5))
+  - Fabric__c (Number(16,5))
+  - Lumber__c (Number(16,5))
+  - Paper__c (Number(16,5))
+  - Cattle__c (Number(16,5))
+  - Fish__c (Number(16,5))
+  - Fruit__c (Number(16,5))
+  - Grain__c (Number(16,5))
+  - Tobacco__c (Number(16,5))
+  - Tea__c (Number(16,5))
+  - Coffee__c (Number(16,5))
+  - Opium__c (Number(16,5))
+  - Automobiles__c (Number(16,5))
+  - Telephones__c (Number(16,5))
+  - Wine__c (Number(16,5))
+  - Liquor__c (Number(16,5))
+  - Regular_clothes__c (Number(16,5))
+  - Luxury_clothes__c (Number(16,5))
+  - Furniture__c (Number(16,5))
+  - Luxury_furniture__c (Number(16,5))
+  - Radio__c (Number(16,5))
+
+OBJECT: Consumption_Cache__c
+Parent: World_Market__c (MD)
+
+OBJECT: Overseas_Penalty__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Key__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Unit_Cost__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Key__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: BudgetBalance__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: PlayerMonthlyPopGrowth__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Fascist__c
+Parent: Save_Game__c (MD)
+
+OBJECT: Socialist__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Enable__c (Text)
+
+OBJECT: Communist__c
+Parent: Save_Game__c (MD)
+
+OBJECT: AnarchoLiberal__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Enable__c (Text)
+
+OBJECT: Canal__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Goods_Vector_Line__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Key__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Fired_Events__c
+Parent: Save_Game__c (MD)
+Children:
+  - Fired_Event__c (MD, from `id`)
+
+OBJECT: Fired_Event__c
+Parent: Fired_Events__c (MD)
+Fields:
+  - Id__c (Number(16,5))
+  - Type__c (Number(16,5))
+
+OBJECT: Province__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Name__c (Text)
+  - Owner__c (Text)
+  - Controller__c (Text)
+  - Core__c (Text)
+  - Garrison__c (Number(16,5))
+  - Nationalism__c (Number(16,5))
+  - Colonial__c (Number(16,5))
+  - Life_rating__c (Number(16,5))
+  - Last_imigration__c (Text)
+  - Last_controller_change__c (Text)
+  - Value__c (Number(16,5))
+  - Building_construction__c (Lookup(Construction__c))
+  - Rgo__c (Lookup(RGO__c))
+Children:
+  - Pop__c (MD, from `aristocrats, artisans, bureaucrats, clergymen, labourers, officers, soldiers`)
+  - Construction__c (LK, from `building_construction`)
+  - RGO__c (LK, from `rgo`)
+
+OBJECT: Pop__c
+Parent: Province__c (MD)
+Fields:
+  - Pop_Type__c (Text)
+  - Id__c (Number(16,5))
+  - Size__c (Number(16,5))
+  - Native_american_minor__c (Text)
+  - Money__c (Number(16,5))
+  - Con__c (Number(16,5))
+  - Literacy__c (Number(16,5))
+  - Bank__c (Number(16,5))
+  - Con_factor__c (Number(16,5))
+  - Luxury_needs__c (Number(16,5))
+  - Random__c (Number(16,5))
+  - Russian__c (Text)
+  - Mil__c (Number(16,5))
+  - Production_type__c (Text)
+  - Last_spending__c (Number(16,5))
+  - Current_producing__c (Number(16,5))
+  - Percent_afforded__c (Number(16,5))
+  - Percent_sold_domestic__c (Number(16,5))
+  - Percent_sold_export__c (Number(16,5))
+  - Leftover__c (Number(16,5))
+  - Throttle__c (Number(16,5))
+  - Needs_cost__c (Number(16,5))
+  - Production_income__c (Number(16,5))
+  - Demoted__c (Number(16,5))
+  - Converted__c (Number(16,5))
+  - Promoted__c (Number(16,5))
+  - Type__c (Number(16,5))
+  - Ideology__c (Lookup(Ideology__c))
+  - Issues__c (Lookup(Issue__c))
+Children:
+  - Ideology__c (LK, from `ideology`)
+  - Issue__c (LK, from `issues`)
+  - Pop_Stockpile__c (MD, from `stockpile`)
+  - Pop_Need__c (MD, from `need`)
+
+OBJECT: Ideology__c
+Parent: Pop__c (MD)
+Children:
+  - Ideology__c (MD, from `2`)
+
+OBJECT: Issue__c
+Parent: Pop__c (MD)
+Children:
+  - Issue__c (MD, from `1`)
+
+OBJECT: Pop_Stockpile__c
+Parent: Pop__c (MD)
+Fields:
+  - Key__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Pop_Need__c
+Parent: Pop__c (MD)
+Fields:
+  - Key__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Construction__c
+Parent: Province__c (MD)
+Fields:
+  - Start_date__c (Text)
+  - Date__c (Text)
+  - Location__c (Number(16,5))
+  - Country__c (Text)
+  - Building__c (Number(16,5))
+Children:
+  - Goods_Vector_Line__c (MD, from `id`)
+
+OBJECT: RGO__c
+Parent: Province__c (MD)
+Fields:
+  - Last_income__c (Number(16,5))
+  - Goods_type__c (Text)
+  - Employment__c (Lookup(RGO_Employment__c))
+Children:
+  - RGO_Employment__c (LK, from `employment`)
+
+OBJECT: RGO_Employment__c
+Parent: RGO__c (MD)
+Fields:
+  - Province_id__c (Number(16,5))
+Children:
+  - Employee__c (MD, from `employees`)
+
+OBJECT: Employee__c
+Parent: RGO_Employment__c (MD)
+Fields:
+  - Count__c (Number(16,5))
+Children:
+  - Goods_Vector_Line__c (MD, from `province_pop_id`)
+
+OBJECT: Flag__c
+Parent: Country__c (MD)
+Fields:
+  - Corn_laws_repealed_flag__c (Checkbox)
+  - Had_liberal_revolution__c (Checkbox)
+  - Sepoy_rebellion__c (Checkbox)
+  - Webster_ashburton_signed__c (Checkbox)
+  - Botanical_expedition_threatened__c (Checkbox)
+  - NoGoToNile__c (Checkbox)
+  - Participates_in_botanical_expedition__c (Checkbox)
+  - Serfdom_not_abolished__c (Checkbox)
+  - Crisis_on_the_rhine__c (Checkbox)
+  - French_foreign_legion_supported__c (Checkbox)
+  - Lambert_has_been_chartered__c (Checkbox)
+  - Merina_monarchy_is_over__c (Checkbox)
+  - MozartFest1838__c (Checkbox)
+  - State_controlled_rite__c (Checkbox)
+  - Von_moltke__c (Checkbox)
+  - Watching_the_rhine__c (Checkbox)
+  - HungarianLanguage__c (Checkbox)
+  - IlyaGarashinin__c (Checkbox)
+  - Apache_wars__c (Checkbox)
+  - Bixby_letter_sent__c (Checkbox)
+  - Clay_and_douglas_draft_enacted__c (Checkbox)
+  - Corwin_amendment_enacted__c (Checkbox)
+  - Dred_scott_decision__c (Checkbox)
+  - Emigrant_aid_company__c (Checkbox)
+  - Fugitive_slave_act_enacted__c (Checkbox)
+  - Hasmanifestdestiny__c (Checkbox)
+  - House_gag_rule_enacted__c (Checkbox)
+  - John_browns_raid__c (Checkbox)
+  - Kansas_nebraska_act_acting__c (Checkbox)
+  - Nashville_convention_held__c (Checkbox)
+  - YesGoToNile__c (Checkbox)
+  - You_did_try__c (Checkbox)
+  - Cavour_has_done_his__c (Checkbox)
+  - Italia_ulterior__c (Checkbox)
+  - Victoria_regina__c (Checkbox)
+  - LouisPioFirst__c (Checkbox)
+  - SCAStudent__c (Checkbox)
+  - Signed_treay_of_london__c (Checkbox)
+  - Mendizabal_confiscated__c (Checkbox)
+  - Walhalla__c (Checkbox)
+  - Presbyteries_introduced__c (Checkbox)
+  - Code_of_laws__c (Checkbox)
+  - LouisNapoleonExtradited__c (Checkbox)
+  - Voule_ton_ellinon__c (Checkbox)
+  - Kanun_i_esasi_here__c (Checkbox)
+  - YesGoToNileThird__c (Checkbox)
+  - Is_negusa_nagast__c (Checkbox)
+  - Had_orange_river_convention__c (Checkbox)
+  - Zul_cb_taken__c (Checkbox)
+  - That_book_written__c (Checkbox)
+  - Princes_recieve_foreign_education__c (Checkbox)
+  - Dar_al_funun_built__c (Checkbox)
+  - Bonnie_blue_flag__c (Checkbox)
+  - Kellys_irish_brigade__c (Checkbox)
+  - The_slavery_debate__c (Checkbox)
+  - Liberal_revolution_in_progress__c (Checkbox)
+  - Usstatehood_we_have_applied__c (Checkbox)
+  - Facundo__c (Checkbox)
+  - Value__c (Text)
+
+OBJECT: Variable__c
+Parent: Country__c (MD)
+
+OBJECT: Technology__c
+Parent: Country__c (MD)
+Fields:
+  - <Technology_Toggle_Ref__c> (Lookup(Technology_Toggle__c))   // 108 lookup fields, one per source key: Post_napoleonic_thought__c, Flintlock_rifles__c, Muzzle_loaded_rifles__c, Breech_loaded_rifles__c, Bronze_muzzle_loaded_artillery__c, Iron_muzzle_loaded_artillery__c, …
+Children:
+  - Technology_Toggle__c (LK, from `post_napoleonic_thought, flintlock_rifles, muzzle_loaded_rifles, breech_loaded_rifles, bronze_muzzle_loaded_artillery, iron_muzzle_loaded...`)
+
+OBJECT: UpperHouse__c
+Parent: Country__c (MD)
+
+OBJECT: RichTax__c
+Parent: Country__c (MD)
+Fields:
+  - Current__c (Number(16,5))
+  - Total__c (Number(16,5))
+  - RangeLimitMax__c (Number(16,5))
+  - RangeLimitMin__c (Number(16,5))
+  - Max_tax__c (Number(16,5))
+  - Min_tax__c (Number(16,5))
+  - Tax_income__c (Lookup(TaxIncome__c))
+  - Tax_eff__c (Lookup(TaxEff__c))
+Children:
+  - TaxIncome__c (LK, from `tax_income`)
+  - TaxEff__c (LK, from `tax_eff`)
+
+OBJECT: TaxIncome__c
+Parent: RichTax__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: TaxEff__c
+Parent: RichTax__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: MiddleTax__c
+Parent: Country__c (MD)
+Fields:
+  - Current__c (Number(16,5))
+  - Total__c (Number(16,5))
+  - RangeLimitMax__c (Number(16,5))
+  - RangeLimitMin__c (Number(16,5))
+  - Max_tax__c (Number(16,5))
+  - Min_tax__c (Number(16,5))
+  - Tax_income__c (Lookup(TaxIncome__c))
+  - Tax_eff__c (Lookup(TaxEff__c))
+Children:
+  - TaxIncome__c (LK, from `tax_income`)
+  - TaxEff__c (LK, from `tax_eff`)
+
+OBJECT: PoorTax__c
+Parent: Country__c (MD)
+Fields:
+  - Current__c (Number(16,5))
+  - Total__c (Number(16,5))
+  - RangeLimitMax__c (Number(16,5))
+  - RangeLimitMin__c (Number(16,5))
+  - Max_tax__c (Number(16,5))
+  - Min_tax__c (Number(16,5))
+  - Tax_income__c (Lookup(TaxIncome__c))
+  - Tax_eff__c (Lookup(TaxEff__c))
+Children:
+  - TaxIncome__c (LK, from `tax_income`)
+  - TaxEff__c (LK, from `tax_eff`)
+
+OBJECT: Leader__c
+Parent: Country__c (MD)
+Fields:
+  - Name__c (Text)
+  - Date__c (Text)
+  - Type__c (Text)
+  - Personality__c (Text)
+  - Background__c (Text)
+  - Country__c (Text)
+  - Picture__c (Text)
+  - Prestige__c (Number(16,5))
+Children:
+  - Goods_Vector_Line__c (MD, from `id`)
+
+OBJECT: Army__c
+Parent: Country__c (MD)
+Fields:
+  - Name__c (Text)
+  - Previous__c (Number(16,5))
+  - Movement_progress__c (Number(16,5))
+  - Location__c (Number(16,5))
+  - Dig_in_last_date__c (Text)
+  - Supplies__c (Number(16,5))
+  - Base__c (Number(16,5))
+  - Target__c (Number(16,5))
+  - Dig_in__c (Number(16,5))
+  - Path__c (Lookup(Path__c))
+  - Regiment__c (Lookup(Regiment__c))
+Children:
+  - Goods_Vector_Line__c (MD, from `id, leader`)
+  - Path__c (LK, from `path`)
+  - Regiment__c (MD, from `regiment`)
+
+OBJECT: Path__c
+Parent: Army__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Regiment__c
+Parent: Army__c (MD)
+Fields:
+  - Name__c (Text)
+  - Organisation__c (Number(16,5))
+  - Strength__c (Number(16,5))
+  - Count__c (Number(16,5))
+  - Type__c (Text)
+  - Experience__c (Number(16,5))
+Children:
+  - Goods_Vector_Line__c (MD, from `id, pop`)
+
+OBJECT: IllegalInvention__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: GovernmentFlag__c
+Parent: Country__c (MD)
+Fields:
+  - Hms_government__c (Text)
+
+OBJECT: AiHardStrategy__c
+Parent: Country__c (MD)
+Fields:
+  - Initialized__c (Checkbox)
+  - Consolidate__c (Checkbox)
+  - Date__c (Text)
+  - Static__c (Checkbox)
+  - Personality__c (Text)
+
+OBJECT: Ai__c
+Parent: Country__c (MD)
+Fields:
+  - Initialized__c (Checkbox)
+  - Consolidate__c (Checkbox)
+  - Date__c (Text)
+  - Static__c (Checkbox)
+  - Personality__c (Text)
+  - Status__c (Number(16,5))
+  - Building_prov__c (Lookup(BuildingProv__c))
+  - Protect__c (Lookup(Protect__c))
+  - War_with__c (Lookup(WarWith__c))
+  - Rival__c (Lookup(Rival__c))
+  - Antagonize__c (Lookup(Antagonize__c))
+  - Threat__c (Lookup(Threat__c))
+  - Befriend__c (Lookup(Befriend__c))
+  - Military_access__c (Lookup(MilitaryAcces__c))
+Children:
+  - ConquerProv__c (MD, from `conquer_prov`)
+  - Threat__c (MD, from `threat`)
+  - Antagonize__c (MD, from `antagonize`)
+  - Befriend__c (MD, from `befriend`)
+  - Protect__c (MD, from `protect`)
+  - Rival__c (MD, from `rival`)
+  - BuildingProv__c (LK, from `building_prov`)
+  - WarWith__c (LK, from `war_with`)
+  - MilitaryAcces__c (MD, from `military_access`)
+
+OBJECT: BuyDomestic__c
+Parent: Country__c (MD)
+
+OBJECT: Trade__c
+Parent: Country__c (MD)
+Fields:
+  - <Trade_Good_Ref__c> (Lookup(Trade_Good__c))   // 48 lookup fields, one per source key: Ammunition__c, Small_arms__c, Artillery__c, Canned_food__c, Barrels__c, Aeroplanes__c, …
+Children:
+  - Trade_Good__c (LK, from `ammunition, small_arms, artillery, canned_food, barrels, aeroplanes, cotton, dye, wool, silk, coal, sulphur, iron, timber, tropical_wood,...`)
+
+OBJECT: DomesticSupplyPool__c
+Parent: Country__c (MD)
+
+OBJECT: SoldSupplyPool__c
+Parent: Country__c (MD)
+
+OBJECT: DomesticDemandPool__c
+Parent: Country__c (MD)
+
+OBJECT: ActualSoldDomestic__c
+Parent: Country__c (MD)
+
+OBJECT: SavedCountrySupply__c
+Parent: Country__c (MD)
+
+OBJECT: MaxBought__c
+Parent: Country__c (MD)
+
+OBJECT: NationalFocu__c
+Parent: Country__c (MD)
+Fields:
+  - N_202__c (Text)
+  - N_207__c (Text)
+  - N_208__c (Text)
+  - N_209__c (Text)
+  - N_254__c (Text)
+  - N_445__c (Text)
+  - N_446__c (Text)
+  - N_478__c (Text)
+  - N_481__c (Text)
+  - N_484__c (Text)
+  - N_95__c (Text)
+  - N_100__c (Text)
+  - N_212__c (Text)
+  - N_213__c (Text)
+  - N_214__c (Text)
+  - N_522__c (Text)
+  - N_526__c (Text)
+  - N_527__c (Text)
+  - N_529__c (Text)
+  - N_530__c (Text)
+  - N_505__c (Text)
+  - N_507__c (Text)
+  - N_509__c (Text)
+  - N_517__c (Text)
+  - N_3__c (Text)
+  - N_4__c (Text)
+  - N_6__c (Text)
+  - N_7__c (Text)
+  - N_10__c (Text)
+  - N_404__c (Text)
+  - N_406__c (Text)
+  - N_408__c (Text)
+  - N_409__c (Text)
+  - N_410__c (Text)
+  - N_61__c (Text)
+  - N_103__c (Text)
+  - N_105__c (Text)
+  - N_501__c (Text)
+  - N_544__c (Text)
+  - N_246__c (Text)
+  - N_58__c (Text)
+  - N_60__c (Text)
+  - N_249__c (Text)
+  - N_240__c (Text)
+  - N_241__c (Text)
+  - N_242__c (Text)
+  - N_233__c (Text)
+  - N_418__c (Text)
+  - N_72__c (Text)
+  - N_166__c (Text)
+  - N_235__c (Text)
+  - N_236__c (Text)
+  - N_253__c (Text)
+  - N_524__c (Text)
+  - N_534__c (Text)
+  - N_537__c (Text)
+  - N_538__c (Text)
+  - N_540__c (Text)
+  - N_230__c (Text)
+  - N_539__c (Text)
+  - N_536__c (Text)
+  - N_532__c (Text)
+  - N_523__c (Text)
+  - N_525__c (Text)
+  - N_535__c (Text)
+  - N_533__c (Text)
+  - N_503__c (Text)
+  - N_250__c (Text)
+  - N_290__c (Text)
+  - N_68__c (Text)
+  - N_377__c (Text)
+  - N_67__c (Text)
+  - N_183__c (Text)
+  - N_184__c (Text)
+  - N_285__c (Text)
+  - N_380__c (Text)
+  - N_382__c (Text)
+  - N_69__c (Text)
+  - N_175__c (Text)
+  - N_101__c (Text)
+  - N_349__c (Text)
+  - N_90__c (Text)
+  - N_455__c (Text)
+  - N_89__c (Text)
+  - N_458__c (Text)
+  - N_86__c (Text)
+  - N_370__c (Text)
+  - N_372__c (Text)
+  - N_373__c (Text)
+  - N_269__c (Text)
+  - N_274__c (Text)
+  - N_261__c (Text)
+  - N_267__c (Text)
+  - N_258__c (Text)
+  - N_268__c (Text)
+  - N_255__c (Text)
+  - N_262__c (Text)
+  - N_413__c (Text)
+  - N_256__c (Text)
+  - N_257__c (Text)
+  - N_263__c (Text)
+  - N_276__c (Text)
+  - N_99__c (Text)
+  - N_394__c (Text)
+  - N_402__c (Text)
+  - N_397__c (Text)
+  - N_470__c (Text)
+  - N_453__c (Text)
+  - N_429__c (Text)
+  - N_416__c (Text)
+  - N_415__c (Text)
+  - N_414__c (Text)
+  - N_41__c (Text)
+  - N_13__c (Text)
+  - N_26__c (Text)
+  - N_50__c (Text)
+  - N_57__c (Text)
+  - N_110__c (Text)
+  - N_113__c (Text)
+  - N_114__c (Text)
+  - N_117__c (Text)
+  - N_51__c (Text)
+  - N_148__c (Text)
+  - N_158__c (Text)
+  - N_132__c (Text)
+  - N_133__c (Text)
+  - N_135__c (Text)
+  - N_136__c (Text)
+  - N_163__c (Text)
+  - N_53__c (Text)
+  - N_56__c (Text)
+  - N_129__c (Text)
+  - N_147__c (Text)
+  - N_55__c (Text)
+  - N_121__c (Text)
+  - N_76__c (Text)
+  - N_80__c (Text)
+  - N_190__c (Text)
+  - N_194__c (Text)
+  - N_283__c (Text)
+  - N_282__c (Text)
+  - N_281__c (Text)
+
+OBJECT: Expense__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Income__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Research__c
+Parent: Country__c (MD)
+Fields:
+  - Technology__c (Text)
+  - Cost__c (Number(16,5))
+  - Max_producing__c (Number(16,5))
+  - Last_spending__c (Number(16,5))
+  - Active__c (Checkbox)
+
+OBJECT: ActiveParty__c
+Parent: Country__c (MD)
+
+OBJECT: Modifier__c
+Parent: Country__c (MD)
+Fields:
+  - Modifier__c (Text)
+  - Date__c (Text)
+
+OBJECT: Navy__c
+Parent: Country__c (MD)
+Fields:
+  - Name__c (Text)
+  - Previous__c (Number(16,5))
+  - Movement_progress__c (Number(16,5))
+  - Location__c (Number(16,5))
+  - Dig_in_last_date__c (Text)
+  - Supplies__c (Number(16,5))
+  - At_sea__c (Number(16,5))
+  - Path__c (Lookup(Path__c))
+  - Army__c (Lookup(Army__c))
+  - Ship__c (Lookup(Ship__c))
+Children:
+  - Goods_Vector_Line__c (MD, from `id, leader`)
+  - Path__c (LK, from `path`)
+  - Ship__c (MD, from `ship`)
+  - Army__c (LK, from `army`)
+
+OBJECT: Ship__c
+Parent: Navy__c (MD)
+Fields:
+  - Name__c (Text)
+  - Organisation__c (Number(16,5))
+  - Strength__c (Number(16,5))
+  - Experience__c (Number(16,5))
+  - Count__c (Number(16,5))
+  - Type__c (Text)
+Children:
+  - Goods_Vector_Line__c (MD, from `id`)
+
+OBJECT: ActiveInvention__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: PossibleInvention__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: ConquerProv__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Number(16,5))
+  - Value__c (Number(16,5))
+
+OBJECT: Threat__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Antagonize__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Befriend__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Protect__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Rival__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: ForeignInvestment__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Culture__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Text)
+
+OBJECT: Movement__c
+Parent: Country__c (MD)
+Fields:
+  - Issue__c (Text)
+  - Radicalism__c (Number(16,5))
+  - Support__c (Number(16,5))
+  - Cache__c (Number(16,5))
+  - Tag__c (Text)
+
+OBJECT: State__c
+Parent: Country__c (MD)
+Fields:
+  - Is_colonial__c (Number(16,5))
+  - Savings__c (Number(16,5))
+  - Interest__c (Number(16,5))
+  - Flashpoint__c (Checkbox)
+  - Crisis__c (Text)
+  - Is_slave__c (Checkbox)
+  - Provinces__c (Lookup(Province__c))
+  - State_buildings__c (Lookup(StateBuilding__c))
+  - Popproject__c (Lookup(Popproject__c))
+Children:
+  - Goods_Vector_Line__c (MD, from `id`)
+  - Province__c (LK, from `provinces`)
+  - StateBuilding__c (LK, from `state_buildings`)
+  - Popproject__c (LK, from `popproject`)
+
+OBJECT: Colonize__c
+Parent: Country__c (MD)
+Fields:
+  - N_283__c (Number(16,5))
+Children:
+  - Colonize__c (MD, from `0, 166, 283, 344`)
+
+OBJECT: Influence__c
+Parent: Country__c (MD)
+Fields:
+  - BEL__c (Text)
+  - SOK__c (Text)
+  - KAL__c (Text)
+  - KOR__c (Text)
+  - MGL__c (Text)
+  - XIN__c (Text)
+  - MEX__c (Text)
+  - UCA__c (Text)
+  - AST__c (Text)
+  - HEK__c (Text)
+  - LIP__c (Text)
+  - KRA__c (Text)
+  - ALD__c (Text)
+  - PER__c (Text)
+  - CHI__c (Text)
+  - LUA__c (Text)
+  - CLM__c (Text)
+  - ITA__c (Text)
+  - LUX__c (Text)
+  - SWI__c (Text)
+  - ROM__c (Text)
+  - NET__c (Text)
+  - ANH__c (Text)
+  - BRE__c (Text)
+  - MAK__c (Text)
+  - PAN__c (Text)
+  - BAL__c (Text)
+  - BAD__c (Text)
+  - WUR__c (Text)
+  - HOL__c (Text)
+  - BUK__c (Text)
+  - HDJ__c (Text)
+  - KHI__c (Text)
+  - SIK__c (Text)
+  - MCK__c (Text)
+  - CSA__c (Text)
+  - SWE__c (Text)
+  - MON__c (Text)
+  - AFG__c (Text)
+  - OMA__c (Text)
+  - HND__c (Text)
+  - DAI__c (Text)
+  - XBI__c (Text)
+  - MOL__c (Text)
+  - WAL__c (Text)
+  - TUN__c (Text)
+  - SIN__c (Text)
+  - BHU__c (Text)
+  - BUR__c (Text)
+  - D02__c (Text)
+  - D03__c (Text)
+
+OBJECT: InterestingCountrie__c
+Parent: Country__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Railroad__c
+Parent: Country__c (MD)
+Fields:
+  - Path__c (Lookup(Path__c))
+Children:
+  - Path__c (LK, from `path`)
+
+OBJECT: StateBuilding__c
+Parent: State__c (MD)
+Fields:
+  - Building__c (Text)
+  - Level__c (Number(16,5))
+  - Money__c (Number(16,5))
+  - Last_spending__c (Number(16,5))
+  - Last_income__c (Number(16,5))
+  - Pops_paychecks__c (Number(16,5))
+  - Last_investment__c (Number(16,5))
+  - Unprofitable_days__c (Number(16,5))
+  - Subsidised__c (Checkbox)
+  - Leftover__c (Number(16,5))
+  - Injected_money__c (Number(16,5))
+  - Injected_days__c (Number(16,5))
+  - Produces__c (Number(16,5))
+  - Profit_history_days__c (Number(16,5))
+  - Profit_history_current__c (Number(16,5))
+  - Priority__c (Number(16,5))
+  - Days_without_input__c (Number(16,5))
+  - Construction_time_left__c (Number(16,5))
+  - Employment__c (Lookup(Employment__c))
+  - Profit_history_entry__c (Lookup(ProfitHistoryEntry__c))
+  - Stockpile__c (Lookup(Stockpile__c))
+  - Input_goods__c (Lookup(InputGood__c))
+Children:
+  - Goods_Vector_Line__c (MD, from `employment, stockpile`)
+  - Employment__c (LK, from `employment`)
+  - ProfitHistoryEntry__c (LK, from `profit_history_entry`)
+  - Stockpile__c (LK, from `stockpile`)
+  - InputGood__c (LK, from `input_goods`)
+
+OBJECT: Employment__c
+Parent: StateBuilding__c (MD)
+Fields:
+  - State_province_id__c (Number(16,5))
+Children:
+  - Employee__c (MD, from `employees`)
+
+OBJECT: ProfitHistoryEntry__c
+Parent: StateBuilding__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: BuildingProv__c
+Parent: Ai__c (MD)
+Fields:
+  - Key__c (Text)
+  - Id__c (Number(16,5))
+  - Value__c (Number(16,5))
+
+OBJECT: Popproject__c
+Parent: State__c (MD)
+Fields:
+  - Money__c (Number(16,5))
+  - Building__c (Number(16,5))
+  - Province__c (Number(16,5))
+  - Index__c (Number(16,5))
+  - Type__c (Number(16,5))
+  - Money2__c (Checkbox)
+  - Pop__c (Number(16,5))
+  - Input_goods__c (Lookup(InputGood__c))
+Children:
+  - Goods_Vector_Line__c (MD, from `input_goods`)
+  - InputGood__c (LK, from `input_goods`)
+
+OBJECT: Creditor__c
+Parent: Country__c (MD)
+Fields:
+  - Country__c (Text)
+  - Interest__c (Number(16,5))
+  - Debt__c (Number(16,5))
+  - Was_paid__c (Checkbox)
+
+OBJECT: Stockpile__c
+Parent: StateBuilding__c (MD)
+
+OBJECT: InputGood__c
+Parent: Popproject__c (MD)
+Fields:
+  - Money__c (Number(16,5))
+Children:
+  - Goods_Vector_Line__c (MD, from `goods_demand, input_goods`)
+
+OBJECT: WarWith__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: MilitaryAcces__c
+Parent: Ai__c (MD)
+Fields:
+  - Id__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: RebelFaction__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Type__c (Text)
+  - Name__c (Text)
+  - Country__c (Text)
+  - Independence__c (Text)
+  - Culture__c (Text)
+  - Religion__c (Text)
+  - Government__c (Text)
+  - Province__c (Number(16,5))
+  - Organization__c (Number(16,5))
+  - Next_unit__c (Number(16,5))
+Children:
+  - Goods_Vector_Line__c (MD, from `id, leader`)
+  - Pop__c (MD, from `pop`)
+
+OBJECT: Diplomacy__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Vassal__c (Lookup(Vassal__c))
+  - Alliance__c (Lookup(Alliance__c))
+  - Substate__c (Lookup(Substate__c))
+  - Casus_belli__c (Lookup(CasusBelli__c))
+Children:
+  - Vassal__c (LK, from `vassal`)
+  - Alliance__c (LK, from `alliance`)
+  - Substate__c (MD, from `substate`)
+  - CasusBelli__c (LK, from `casus_belli`)
+
+OBJECT: Vassal__c
+Parent: Diplomacy__c (MD)
+Fields:
+  - First__c (Text)
+  - Second__c (Text)
+  - End_date__c (Text)
+  - Start_date__c (Text)
+
+OBJECT: Alliance__c
+Parent: Diplomacy__c (MD)
+Fields:
+  - First__c (Text)
+  - Second__c (Text)
+  - End_date__c (Text)
+  - Start_date__c (Text)
+
+OBJECT: Substate__c
+Parent: Diplomacy__c (MD)
+Fields:
+  - First__c (Text)
+  - Second__c (Text)
+  - End_date__c (Text)
+  - Start_date__c (Text)
+
+OBJECT: CasusBelli__c
+Parent: Diplomacy__c (MD)
+Fields:
+  - Type__c (Text)
+  - First__c (Text)
+  - Second__c (Text)
+  - Start_date__c (Text)
+  - End_date__c (Text)
+
+OBJECT: Combat__c
+Parent: Save_Game__c (MD)
+Children:
+  - SiegeCombat__c (MD, from `siege_combat`)
+
+OBJECT: SiegeCombat__c
+Parent: Combat__c (MD)
+Fields:
+  - Location__c (Number(16,5))
+  - Day__c (Number(16,5))
+  - Duration__c (Number(16,5))
+  - Total__c (Number(16,5))
+  - Attacker__c (Lookup(Attacker__c))
+  - Defender__c (Lookup(Defender__c))
+Children:
+  - Attacker__c (LK, from `attacker`)
+  - Defender__c (LK, from `defender`)
+
+OBJECT: Attacker__c
+Parent: SiegeCombat__c (MD)
+Fields:
+  - Dice__c (Number(16,5))
+  - Losses__c (Number(16,5))
+  - Country__c (Text)
+  - Leader__c (Text)
+  - Irregular__c (Number(16,5))
+  - Accumulated_losses__c (Lookup(AccumulatedLosse__c))
+  - Front__c (Lookup(Front__c))
+  - Back__c (Lookup(Back__c))
+Children:
+  - Goods_Vector_Line__c (MD, from `unit`)
+  - AccumulatedLosse__c (LK, from `accumulated_losses`)
+  - Front__c (LK, from `front`)
+  - Back__c (LK, from `back`)
+
+OBJECT: AccumulatedLosse__c
+Parent: Attacker__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Front__c
+Parent: Attacker__c (MD)
+
+OBJECT: Back__c
+Parent: Attacker__c (MD)
+
+OBJECT: Defender__c
+Parent: SiegeCombat__c (MD)
+Fields:
+  - Dice__c (Number(16,5))
+  - Losses__c (Number(16,5))
+  - Country__c (Text)
+  - Leader__c (Text)
+  - Irregular__c (Number(16,5))
+  - Infantry__c (Number(16,5))
+  - Accumulated_losses__c (Lookup(AccumulatedLosse__c))
+  - Front__c (Lookup(Front__c))
+  - Back__c (Lookup(Back__c))
+Children:
+  - AccumulatedLosse__c (LK, from `accumulated_losses`)
+  - Front__c (LK, from `front`)
+  - Back__c (LK, from `back`)
+
+OBJECT: ActiveWar__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Name__c (Text)
+  - Defender__c (Text)
+  - Original_attacker__c (Text)
+  - Original_defender__c (Text)
+  - Action__c (Text)
+  - History__c (Lookup(History__c))
+  - Original_wargoal__c (Lookup(OriginalWargoal__c))
+Children:
+  - History__c (LK, from `history`)
+  - Attacker__c (MD, from `attacker`)
+  - OriginalWargoal__c (LK, from `original_wargoal`)
+  - WarGoal__c (MD, from `war_goal`)
+
+OBJECT: History__c
+Parent: ActiveWar__c (MD)
+Fields:
+  - Name__c (Text)
+  - N_1870_4_29__c (Lookup(War_History_Entry__c))
+  - N_1870_6_28__c (Lookup(War_History_Entry__c))
+  - N_1870_11_12__c (Lookup(War_History_Entry__c))
+  - N_1871_5_24__c (Lookup(War_History_Entry__c))
+  - N_1871_6_1__c (Lookup(War_History_Entry__c))
+  - N_1871_8_25__c (Lookup(War_History_Entry__c))
+  - N_1871_9_8__c (Lookup(War_History_Entry__c))
+  - N_1871_11_3__c (Lookup(War_History_Entry__c))
+  - N_1872_2_17__c (Lookup(War_History_Entry__c))
+  - N_1872_8_20__c (Lookup(War_History_Entry__c))
+Children:
+  - War_History_Entry__c (MD, from `1870.4.28, 1870.4.29, 1870.6.28, 1870.11.12, 1871.5.24, 1871.6.1, 1871.8.25, 1871.9.8, 1871.11.3, 1872.2.17, 1872.8.20, 1775.4.19, 1783.9.3`)
+
+OBJECT: Battle__c
+Parent: War_History_Entry__c (MD)
+Fields:
+  - Name__c (Text)
+  - Location__c (Number(16,5))
+  - Result__c (Checkbox)
+  - Attacker__c (Lookup(Attacker__c))
+  - Defender__c (Lookup(Defender__c))
+Children:
+  - Attacker__c (LK, from `attacker`)
+  - Defender__c (LK, from `defender`)
+
+OBJECT: OriginalWargoal__c
+Parent: ActiveWar__c (MD)
+Fields:
+  - State_province_id__c (Number(16,5))
+  - Casus_belli__c (Text)
+  - Actor__c (Text)
+  - Receiver__c (Text)
+  - Score__c (Number(16,5))
+  - Change__c (Number(16,5))
+  - Date__c (Text)
+  - Is_fulfilled__c (Checkbox)
+
+OBJECT: WarGoal__c
+Parent: ActiveWar__c (MD)
+Fields:
+  - State_province_id__c (Number(16,5))
+  - Casus_belli__c (Text)
+  - Actor__c (Text)
+  - Receiver__c (Text)
+  - Score__c (Number(16,5))
+  - Change__c (Number(16,5))
+  - Date__c (Text)
+  - Is_fulfilled__c (Checkbox)
+
+OBJECT: PreviousWar__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Name__c (Text)
+  - Original_attacker__c (Text)
+  - Original_defender__c (Text)
+  - Action__c (Text)
+  - History__c (Lookup(History__c))
+  - Original_wargoal__c (Lookup(OriginalWargoal__c))
+Children:
+  - History__c (LK, from `history`)
+  - OriginalWargoal__c (LK, from `original_wargoal`)
+
+OBJECT: Invention__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: GreatNation__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: Outliner__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: NewsCollector__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Date__c (Text)
+  - Tension__c (Number(16,5))
+  - Flags__c (Lookup(Flag__c))
+Children:
+  - NewsScope__c (MD, from `news_scope`)
+  - BuiltNew__c (MD, from `built_news`)
+  - Flag__c (LK, from `flags`)
+
+OBJECT: NewsScope__c
+Parent: NewsCollector__c (MD)
+Fields:
+  - Type__c (Text)
+  - Freshness__c (Number(16,5))
+  - Name__c (Text)
+  - Tags__c (Lookup(Tag__c))
+  - Strings__c (Lookup(String__c))
+  - Dates__c (Lookup(Date__c))
+  - Values__c (Lookup(Value__c))
+Children:
+  - Tag__c (LK, from `tags`)
+  - String__c (LK, from `strings`)
+  - Date__c (LK, from `dates`)
+  - Value__c (LK, from `values`)
+
+OBJECT: Tag__c
+Parent: NewsScope__c (MD)
+Fields:
+  - Value__c (Text)
+
+OBJECT: String__c
+Parent: NewsScope__c (MD)
+Fields:
+  - Value__c (Text)
+
+OBJECT: Date__c
+Parent: NewsScope__c (MD)
+Fields:
+  - Value__c (Text)
+
+OBJECT: BuiltNew__c
+Parent: NewsCollector__c (MD)
+Fields:
+  - Is_read__c (Checkbox)
+  - Date__c (Text)
+  - Style__c (Number(16,5))
+  - Seed__c (Number(16,5))
+  - Title_image__c (Text)
+Children:
+  - Article__c (MD, from `article`)
+
+OBJECT: Article__c
+Parent: BuiltNew__c (MD)
+Fields:
+  - Size__c (Text)
+  - News_scope__c (Lookup(NewsScope__c))
+Children:
+  - NewsScope__c (LK, from `news_scope`)
+
+OBJECT: Value__c
+Parent: NewsScope__c (MD)
+Fields:
+  - Value__c (Number(16,5))
+
+OBJECT: CrisisManager__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Date__c (Text)
+
+OBJECT: Region__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Index__c (Number(16,5))
+  - Phase__c (Number(16,5))
+  - Temperature__c (Number(16,5))
+Children:
+  - Colony__c (MD, from `colony`)
+
+OBJECT: Colony__c
+Parent: Region__c (MD)
+Fields:
+  - Tag__c (Text)
+  - Points__c (Number(16,5))
+  - Invest__c (Number(16,5))
+  - Date__c (Text)
+
+OBJECT: Country__c
+Parent: Save_Game__c (MD)
+Fields:
+  - Tag__c (Text)
+  - Tax_base__c (Number(16,5))
+  - Capital__c (Number(16,5))
+  - Last_election__c (Text)
+  - Wage_reform__c (Text)
+  - Work_hours__c (Text)
+  - Safety_regulations__c (Text)
+  - Unemployment_subsidies__c (Text)
+  - Pensions__c (Text)
+  - Health_care__c (Text)
+  - School_reforms__c (Text)
+  - Slavery__c (Text)
+  - Vote_franschise__c (Text)
+  - Upper_house_composition__c (Text)
+  - Voting_system__c (Text)
+  - Public_meetings__c (Text)
+  - Press_rights__c (Text)
+  - Trade_unions__c (Text)
+  - Political_parties__c (Text)
+  - Land_reform__c (Text)
+  - Admin_reform__c (Text)
+  - Finance_reform__c (Text)
+  - Education_reform__c (Text)
+  - Transport_improv__c (Text)
+  - Pre_indust__c (Text)
+  - Industrial_construction__c (Text)
+  - Foreign_training__c (Text)
+  - Foreign_weapons__c (Text)
+  - Military_constructions__c (Text)
+  - Foreign_officers__c (Text)
+  - Army_schools__c (Text)
+  - Foreign_naval_officers__c (Text)
+  - Naval_schools__c (Text)
+  - Foreign_navies__c (Text)
+  - Diplomatic_points__c (Number(16,5))
+  - Religion__c (Text)
+  - Plurality__c (Number(16,5))
+  - Revanchism__c (Number(16,5))
+  - Overseas_penalty__c (Number(16,5))
+  - Leadership__c (Number(16,5))
+  - Auto_assign_leaders__c (Checkbox)
+  - Auto_create_leaders__c (Checkbox)
+  - Last_mission_cancel__c (Text)
+  - Schools__c (Text)
+  - Prestige__c (Number(16,5))
+  - Money__c (Number(16,5))
+  - Last_bankrupt__c (Text)
+  - Civilized__c (Checkbox)
+  - Badboy__c (Number(16,5))
+  - Next_quarterly_pulse__c (Text)
+  - Next_yearly_pulse__c (Text)
+  - Suppression__c (Number(16,5))
+  - Is_releasable_vassal__c (Checkbox)
+  - Last_reform__c (Text)
+  - Last_lost_war__c (Text)
+  - Ruling_party__c (Number(16,5))
+  - Government__c (Text)
+  - Primary_culture__c (Text)
+  - Nationalvalue__c (Text)
+  - Last_greatness_date__c (Text)
+  - Trade_cap_land__c (Number(16,5))
+  - Trade_cap_naval__c (Number(16,5))
+  - Trade_cap_projects__c (Number(16,5))
+  - Max_tariff__c (Number(16,5))
+  - Value__c (Number(16,5))
+  - Last_send_diplomat__c (Text)
+  - Military_access__c (Checkbox)
+  - Last_war__c (Text)
+  - Truce_until__c (Text)
+  - War_exhaustion__c (Number(16,5))
+  - Influence_value__c (Number(16,5))
+  - Level__c (Number(16,5))
+  - Level_changed_date__c (Text)
+  - Tariffs__c (Number(16,5))
+  - Discredit__c (Text)
+  - Discreditor__c (Text)
+  - Ban_embassy__c (Text)
+  - Ban_embassy_country__c (Text)
+  - Election__c (Text)
+  - Campaign_counter__c (Number(16,5))
+  - Influence_overflow__c (Number(16,5))
+  - Human__c (Checkbox)
+  - Research_points__c (Number(16,5))
+  - Mobilize__c (Checkbox)
+  - Domain_region__c (Text)
+  - Flags__c (Lookup(Flag__c))
+  - Variables__c (Lookup(Variable__c))
+  - Technology__c (Lookup(Technology__c))
+  - Upper_house__c (Lookup(UpperHouse__c))
+  - Rich_tax__c (Lookup(RichTax__c))
+  - Middle_tax__c (Lookup(MiddleTax__c))
+  - Poor_tax__c (Lookup(PoorTax__c))
+  - Illegal_inventions__c (Lookup(IllegalInvention__c))
+  - Government_flag__c (Lookup(GovernmentFlag__c))
+  - Ai_hard_strategy__c (Lookup(AiHardStrategy__c))
+  - Ai__c (Lookup(Ai__c))
+  - Buy_domestic__c (Lookup(BuyDomestic__c))
+  - Trade__c (Lookup(Trade__c))
+  - Domestic_supply_pool__c (Lookup(DomesticSupplyPool__c))
+  - Sold_supply_pool__c (Lookup(SoldSupplyPool__c))
+  - Domestic_demand_pool__c (Lookup(DomesticDemandPool__c))
+  - Actual_sold_domestic__c (Lookup(ActualSoldDomestic__c))
+  - Saved_country_supply__c (Lookup(SavedCountrySupply__c))
+  - Max_bought__c (Lookup(MaxBought__c))
+  - National_focus__c (Lookup(NationalFocu__c))
+  - Expenses__c (Lookup(Expense__c))
+  - Incomes__c (Lookup(Income__c))
+  - Research__c (Lookup(Research__c))
+  - Navy__c (Lookup(Navy__c))
+  - Army__c (Lookup(Army__c))
+  - <Country_Ref__c> (Lookup(Country__c))   // 116 lookup fields, one per source key: RUS__c, FRA__c, PRU__c, AUS__c, USA__c, JAP__c, …
+  - Active_inventions__c (Lookup(ActiveInvention__c))
+  - Possible_inventions__c (Lookup(PossibleInvention__c))
+  - Foreign_investment__c (Lookup(ForeignInvestment__c))
+  - Culture__c (Lookup(Culture__c))
+  - Colonize__c (Lookup(Colonize__c))
+  - Influence__c (Lookup(Influence__c))
+  - Interesting_countries__c (Lookup(InterestingCountrie__c))
+  - Modifier__c (Lookup(Modifier__c))
+  - Movement__c (Lookup(Movement__c))
+  - State__c (Lookup(State__c))
+  - Railroads__c (Lookup(Railroad__c))
+  - Leader__c (Lookup(Leader__c))
+  - Creditor__c (Lookup(Creditor__c))
+Children:
+  - Flag__c (LK, from `flags`)
+  - Variable__c (LK, from `variables`)
+  - Technology__c (LK, from `technology`)
+  - UpperHouse__c (LK, from `upper_house`)
+  - RichTax__c (LK, from `rich_tax`)
+  - MiddleTax__c (LK, from `middle_tax`)
+  - PoorTax__c (LK, from `poor_tax`)
+  - Goods_Vector_Line__c (MD, from `AFG, ALD, ANH, ARG, AST, ATJ, AUS, AWA, BAD, BAL, BAS, BAV, BEL, BER, BHU, BIK, BOL, BRA, BRE, BRZ, BUK, BUN, BUR, CAM, CHI, CHL, CLM, CO...`)
+  - Leader__c (MD, from `leader`)
+  - Army__c (MD, from `army`)
+  - IllegalInvention__c (LK, from `illegal_inventions`)
+  - GovernmentFlag__c (LK, from `government_flag`)
+  - AiHardStrategy__c (LK, from `ai_hard_strategy`)
+  - Ai__c (LK, from `ai`)
+  - BuyDomestic__c (LK, from `buy_domestic`)
+  - Trade__c (LK, from `trade`)
+  - DomesticSupplyPool__c (LK, from `domestic_supply_pool`)
+  - SoldSupplyPool__c (LK, from `sold_supply_pool`)
+  - DomesticDemandPool__c (LK, from `domestic_demand_pool`)
+  - ActualSoldDomestic__c (LK, from `actual_sold_domestic`)
+  - SavedCountrySupply__c (LK, from `saved_country_supply`)
+  - MaxBought__c (LK, from `max_bought`)
+  - NationalFocu__c (LK, from `national_focus`)
+  - Expense__c (LK, from `expenses`)
+  - Income__c (LK, from `incomes`)
+  - Research__c (LK, from `research`)
+  - ActiveParty__c (MD, from `active_party`)
+  - Modifier__c (MD, from `modifier`)
+  - Navy__c (LK, from `navy`)
+  - Country__c (LK, from `RUS, FRA, PRU, AUS, USA, JAP, DEN, SWE, BEL, NET, POR, SPA, ANH, BAD, BAV, BRA, BRE, COB, FRM, HAM, HAN, HES, HEK, HOL, LIP, LUB, MEC, ME...`)
+  - ActiveInvention__c (LK, from `active_inventions`)
+  - PossibleInvention__c (LK, from `possible_inventions`)
+  - ForeignInvestment__c (LK, from `foreign_investment`)
+  - Culture__c (LK, from `culture`)
+  - Movement__c (MD, from `movement`)
+  - State__c (MD, from `state`)
+  - Colonize__c (LK, from `colonize`)
+  - Influence__c (LK, from `influence`)
+  - InterestingCountrie__c (LK, from `interesting_countries`)
+  - Railroad__c (MD, from `railroads`)
+  - Creditor__c (MD, from `creditor`)
+
+OBJECT: Technology_Toggle__c
+Parent: Technology__c (MD)
+Fields:
+  - Technology__c (Text)
+  - Value__c (Number(16,5))
+
+OBJECT: Trade_Good__c
+Parent: Trade__c (MD)
+Fields:
+  - Good__c (Text)
+  - Limit__c (Number(16,5))
+  - Buy__c (Checkbox)
+  - Automate_trade__c (Checkbox)
+
+OBJECT: War_History_Entry__c
+Parent: History__c (MD)
+Fields:
+  - Date__c (Text)
+  - Add_attacker__c (Text)
+  - Add_defender__c (Text)
+  - Rem_defender__c (Text)
+  - Rem_attacker__c (Text)
+  - Battle__c (Lookup(Battle__c))
+Children:
+  - Battle__c (LK, from `battle`)
+
+OBJECT: Market_Line__c
+Parent: World_Market__c (MD)
+Fields:
+  - Kind__c (Text)
+  - Key__c (Text)
+  - Value__c (Number(16,5))
+
