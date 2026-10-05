@@ -7,7 +7,7 @@ Object count: 124 Save-Game Objects & Junctions + 13 Protected Economy Artifacts
 RECONCILIATION SUMMARY
 ------------------------------------------------------------------------
 - Protected Economy Objects (13): Preserved bit-for-bit (SHA256 dd00e83a599db3e4d2028b6166b769a9faccc0e4f41a23fca16283d8f13d7c1b)
-- Renamed Entities: Country_Save_State__c, Province_Save_State__c, State_Save_State__c, Value__c
+- Renamed Entities: Country_Save_State__c, Province_Save_State__c, State_Save_State__c, News_Scope_Value__c
 - Flattened Sub-objects: Ideology__c, Issue__c -> Pop__c custom fields
 - Junction Patterns Added: Save_Game_Country_Ref__c (271-lookup fix), Country_Country_Ref__c (116-lookup fix)
 
@@ -39,6 +39,7 @@ OBJECT: Save_Game__c
     - Anarcho_liberal__c (Lookup(AnarchoLiberal__c))
     - Canals__c (Lookup(Canal__c))
     - Fired_events__c (Lookup(Fired_Events__c))
+    - <Country_Ref__c> (Lookup(Country_Save_State_Save_State__c))   // 271 lookup fields, one per source key: REB__c, ENG__c, RUS__c, FRA__c, PRU__c, GER__c, …
     - Diplomacy__c (Lookup(Diplomacy__c))
     - Combat__c (Lookup(Combat__c))
     - Invention__c (Lookup(Invention__c))
@@ -61,7 +62,8 @@ OBJECT: Save_Game__c
     - Canal__c (LK, from `canals`)
     - Goods_Vector_Line__c (MD, from `id`)
     - Fired_Events__c (LK, from `fired_events`)
-    - Province_Save_State__c (MD, from `1`)
+    - Province_Save_State_Save_State__c (MD, from `1`)
+    - Country_Save_State_Save_State__c (LK, from `REB, ENG, RUS, FRA, PRU, GER, AUS, USA, JAP, ITA, KUK, DEN, FIN, NOR, SCA, SWE, BEL, CAT, FLA, IRE, NET, POR, SCO, SPA, WLL, ANH, BAD, BA...`)
     - RebelFaction__c (MD, from `rebel_faction`)
     - Diplomacy__c (LK, from `diplomacy`)
     - Combat__c (LK, from `combat`)
@@ -77,7 +79,7 @@ OBJECT: Game_Flag__c
   Parent: Save_Game__c
   Fields:
     - Flag_Name__c (Text)
-    - Flag_Value__c (Checkbox)
+    - Flag_News_Scope_Value__c (Checkbox)
 OBJECT: Gameplay_Settings__c
   Parent: Save_Game__c
   Fields:
@@ -87,7 +89,7 @@ OBJECT: Gameplay_Settings__c
 OBJECT: Setgameplayoption__c
   Parent: Gameplay_Settings__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: World_Market__c
   Parent: Save_Game__c
   Fields:
@@ -153,20 +155,20 @@ OBJECT: Overseas_Penalty__c
   Parent: Save_Game__c
   Fields:
     - Key__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Unit_Cost__c
   Parent: Save_Game__c
   Fields:
     - Key__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: BudgetBalance__c
   Parent: Save_Game__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: PlayerMonthlyPopGrowth__c
   Parent: Save_Game__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Fascist__c
   Parent: Save_Game__c
 OBJECT: Socialist__c
@@ -182,12 +184,12 @@ OBJECT: AnarchoLiberal__c
 OBJECT: Canal__c
   Parent: Save_Game__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Goods_Vector_Line__c
   Parent: Save_Game__c
   Fields:
     - Key__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Fired_Events__c
   Parent: Save_Game__c
   Children:
@@ -210,7 +212,7 @@ OBJECT: Province_Save_State__c
     - Life_rating__c (Number(16,5))
     - Last_imigration__c (Text)
     - Last_controller_change__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
     - Building_construction__c (Lookup(Construction__c))
     - Rgo__c (Lookup(RGO__c))
   Children:
@@ -247,26 +249,30 @@ OBJECT: Pop__c
     - Converted__c (Number(16,5))
     - Promoted__c (Number(16,5))
     - Type__c (Number(16,5))
+    - Ideology__c (Lookup(Ideology__c))
+    - Issues__c (Lookup(Issue__c))
   Children:
+    - Ideology__c (LK, from `ideology`)
+    - Issue__c (LK, from `issues`)
     - Pop_Stockpile__c (MD, from `stockpile`)
     - Pop_Need__c (MD, from `need`)
 OBJECT: Pop_Stockpile__c
   Parent: Pop__c
   Fields:
     - Key__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Pop_Need__c
   Parent: Pop__c
   Fields:
     - Key__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Construction__c
   Parent: Province_Save_State__c
   Fields:
     - Start_date__c (Text)
     - Date__c (Text)
     - Location__c (Number(16,5))
-    - Country_Save_State__c (Text)
+    - Country_Save_State_Save_State__c (Text)
     - Building__c (Number(16,5))
   Children:
     - Goods_Vector_Line__c (MD, from `id`)
@@ -351,7 +357,7 @@ OBJECT: Flag__c
     - Liberal_revolution_in_progress__c (Checkbox)
     - Usstatehood_we_have_applied__c (Checkbox)
     - Facundo__c (Checkbox)
-    - Value__c (Text)
+    - News_Scope_Value__c (Text)
 OBJECT: Variable__c
   Parent: Country_Save_State__c
 OBJECT: Technology__c
@@ -379,11 +385,11 @@ OBJECT: RichTax__c
 OBJECT: TaxIncome__c
   Parent: RichTax__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: TaxEff__c
   Parent: RichTax__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: MiddleTax__c
   Parent: Country_Save_State__c
   Fields:
@@ -420,7 +426,7 @@ OBJECT: Leader__c
     - Type__c (Text)
     - Personality__c (Text)
     - Background__c (Text)
-    - Country_Save_State__c (Text)
+    - Country_Save_State_Save_State__c (Text)
     - Picture__c (Text)
     - Prestige__c (Number(16,5))
   Children:
@@ -446,7 +452,7 @@ OBJECT: Army__c
 OBJECT: Path__c
   Parent: Army__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Regiment__c
   Parent: Army__c
   Fields:
@@ -461,7 +467,7 @@ OBJECT: Regiment__c
 OBJECT: IllegalInvention__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: GovernmentFlag__c
   Parent: Country_Save_State__c
   Fields:
@@ -669,11 +675,11 @@ OBJECT: NationalFocu__c
 OBJECT: Expense__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Income__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Research__c
   Parent: Country_Save_State__c
   Fields:
@@ -721,49 +727,49 @@ OBJECT: Ship__c
 OBJECT: ActiveInvention__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: PossibleInvention__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: ConquerProv__c
   Parent: Ai__c
   Fields:
     - Id__c (Number(16,5))
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Threat__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Antagonize__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Befriend__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Protect__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Rival__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: ForeignInvestment__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Culture__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Text)
+    - News_Scope_Value__c (Text)
 OBJECT: Movement__c
   Parent: Country_Save_State__c
   Fields:
@@ -781,12 +787,12 @@ OBJECT: State_Save_State__c
     - Flashpoint__c (Checkbox)
     - Crisis__c (Text)
     - Is_slave__c (Checkbox)
-    - Provinces__c (Lookup(Province_Save_State__c))
+    - Provinces__c (Lookup(Province_Save_State_Save_State__c))
     - State_buildings__c (Lookup(StateBuilding__c))
     - Popproject__c (Lookup(Popproject__c))
   Children:
     - Goods_Vector_Line__c (MD, from `id`)
-    - Province_Save_State__c (LK, from `provinces`)
+    - Province_Save_State_Save_State__c (LK, from `provinces`)
     - StateBuilding__c (LK, from `state_buildings`)
     - Popproject__c (LK, from `popproject`)
 OBJECT: Colonize__c
@@ -852,7 +858,7 @@ OBJECT: Influence__c
 OBJECT: InterestingCountrie__c
   Parent: Country_Save_State__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Railroad__c
   Parent: Country_Save_State__c
   Fields:
@@ -899,19 +905,19 @@ OBJECT: Employment__c
 OBJECT: ProfitHistoryEntry__c
   Parent: StateBuilding__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: BuildingProv__c
   Parent: Ai__c
   Fields:
     - Key__c (Text)
     - Id__c (Number(16,5))
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Popproject__c
   Parent: State_Save_State__c
   Fields:
     - Money__c (Number(16,5))
     - Building__c (Number(16,5))
-    - Province_Save_State__c (Number(16,5))
+    - Province_Save_State_Save_State__c (Number(16,5))
     - Index__c (Number(16,5))
     - Type__c (Number(16,5))
     - Money2__c (Checkbox)
@@ -923,7 +929,7 @@ OBJECT: Popproject__c
 OBJECT: Creditor__c
   Parent: Country_Save_State__c
   Fields:
-    - Country_Save_State__c (Text)
+    - Country_Save_State_Save_State__c (Text)
     - Interest__c (Number(16,5))
     - Debt__c (Number(16,5))
     - Was_paid__c (Checkbox)
@@ -939,23 +945,23 @@ OBJECT: WarWith__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: MilitaryAcces__c
   Parent: Ai__c
   Fields:
     - Id__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: RebelFaction__c
   Parent: Save_Game__c
   Fields:
     - Type__c (Text)
     - Name__c (Text)
-    - Country_Save_State__c (Text)
+    - Country_Save_State_Save_State__c (Text)
     - Independence__c (Text)
     - Culture__c (Text)
     - Religion__c (Text)
     - Government__c (Text)
-    - Province_Save_State__c (Number(16,5))
+    - Province_Save_State_Save_State__c (Number(16,5))
     - Organization__c (Number(16,5))
     - Next_unit__c (Number(16,5))
   Children:
@@ -1023,7 +1029,7 @@ OBJECT: Attacker__c
   Fields:
     - Dice__c (Number(16,5))
     - Losses__c (Number(16,5))
-    - Country_Save_State__c (Text)
+    - Country_Save_State_Save_State__c (Text)
     - Leader__c (Text)
     - Irregular__c (Number(16,5))
     - Accumulated_losses__c (Lookup(AccumulatedLosse__c))
@@ -1037,7 +1043,7 @@ OBJECT: Attacker__c
 OBJECT: AccumulatedLosse__c
   Parent: Attacker__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Front__c
   Parent: Attacker__c
 OBJECT: Back__c
@@ -1047,7 +1053,7 @@ OBJECT: Defender__c
   Fields:
     - Dice__c (Number(16,5))
     - Losses__c (Number(16,5))
-    - Country_Save_State__c (Text)
+    - Country_Save_State_Save_State__c (Text)
     - Leader__c (Text)
     - Irregular__c (Number(16,5))
     - Infantry__c (Number(16,5))
@@ -1137,15 +1143,15 @@ OBJECT: PreviousWar__c
 OBJECT: Invention__c
   Parent: Save_Game__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: GreatNation__c
   Parent: Save_Game__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Outliner__c
   Parent: Save_Game__c
   Fields:
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: NewsCollector__c
   Parent: Save_Game__c
   Fields:
@@ -1174,15 +1180,15 @@ OBJECT: NewsScope__c
 OBJECT: Tag__c
   Parent: NewsScope__c
   Fields:
-    - Value__c (Text)
+    - News_Scope_Value__c (Text)
 OBJECT: String__c
   Parent: NewsScope__c
   Fields:
-    - Value__c (Text)
+    - News_Scope_Value__c (Text)
 OBJECT: Date__c
   Parent: NewsScope__c
   Fields:
-    - Value__c (Text)
+    - News_Scope_Value__c (Text)
 OBJECT: BuiltNew__c
   Parent: NewsCollector__c
   Fields:
@@ -1290,7 +1296,7 @@ OBJECT: Country_Save_State__c
     - Trade_cap_naval__c (Number(16,5))
     - Trade_cap_projects__c (Number(16,5))
     - Max_tariff__c (Number(16,5))
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
     - Last_send_diplomat__c (Text)
     - Military_access__c (Checkbox)
     - Last_war__c (Text)
@@ -1336,6 +1342,7 @@ OBJECT: Country_Save_State__c
     - Research__c (Lookup(Research__c))
     - Navy__c (Lookup(Navy__c))
     - Army__c (Lookup(Army__c))
+    - <Country_Ref__c> (Lookup(Country_Save_State_Save_State__c))   // 116 lookup fields, one per source key: RUS__c, FRA__c, PRU__c, AUS__c, USA__c, JAP__c, …
     - Active_inventions__c (Lookup(ActiveInvention__c))
     - Possible_inventions__c (Lookup(PossibleInvention__c))
     - Foreign_investment__c (Lookup(ForeignInvestment__c))
@@ -1379,6 +1386,7 @@ OBJECT: Country_Save_State__c
     - ActiveParty__c (MD, from `active_party`)
     - Modifier__c (MD, from `modifier`)
     - Navy__c (LK, from `navy`)
+    - Country_Save_State_Save_State__c (LK, from `RUS, FRA, PRU, AUS, USA, JAP, DEN, SWE, BEL, NET, POR, SPA, ANH, BAD, BAV, BRA, BRE, COB, FRM, HAM, HAN, HES, HEK, HOL, LIP, LUB, MEC, ME...`)
     - ActiveInvention__c (LK, from `active_inventions`)
     - PossibleInvention__c (LK, from `possible_inventions`)
     - ForeignInvestment__c (LK, from `foreign_investment`)
@@ -1394,7 +1402,7 @@ OBJECT: Technology_Toggle__c
   Parent: Technology__c
   Fields:
     - Technology__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 OBJECT: Trade_Good__c
   Parent: Trade__c
   Fields:
@@ -1418,13 +1426,13 @@ OBJECT: Market_Line__c
   Fields:
     - Kind__c (Text)
     - Key__c (Text)
-    - Value__c (Number(16,5))
+    - News_Scope_Value__c (Number(16,5))
 
 OBJECT: Save_Game_Country_Ref__c
   Parent: Save_Game__c (MD)
   Fields:
     - Save_Game__c (MasterDetail(Save_Game__c))
-    - Country_Save_State__c (Lookup(Country_Save_State__c))
+    - Country__c (Lookup(Country__c))
     - Reference_Key__c (Text)
     - Reference_Kind__c (Text)
 
@@ -1432,6 +1440,6 @@ OBJECT: Country_Country_Ref__c
   Parent: Country_Save_State__c (MD)
   Fields:
     - Country_Save_State__c (MasterDetail(Country_Save_State__c))
-    - Target_Country_Save_State__c (Lookup(Country_Save_State__c))
+    - Country__c (Lookup(Country__c))
     - Target_Country_Tag__c (Text)
     - Relationship_Type__c (Text)
