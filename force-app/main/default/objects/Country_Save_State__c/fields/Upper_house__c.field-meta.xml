@@ -3,7 +3,7 @@
     <fullName>Upper_house__c</fullName>
     <label>Upper house</label>
     <type>Lookup</type>
-    <referenceTo>Upper_house__c</referenceTo>
+    <referenceTo>UpperHouse__c</referenceTo>
     <relationshipName>Country_Save_State_Upper_house</relationshipName>
     <required>false</required>
 </CustomField>

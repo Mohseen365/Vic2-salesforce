@@ -3,7 +3,7 @@
     <fullName>Casus_belli__c</fullName>
     <label>Casus belli</label>
     <type>Lookup</type>
-    <referenceTo>Casus_belli__c</referenceTo>
+    <referenceTo>CasusBelli__c</referenceTo>
     <relationshipName>Diplomacy_Casus_belli</relationshipName>
     <required>false</required>
 </CustomField>

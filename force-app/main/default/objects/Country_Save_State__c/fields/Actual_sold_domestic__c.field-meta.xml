@@ -3,7 +3,7 @@
     <fullName>Actual_sold_domestic__c</fullName>
     <label>Actual sold domestic</label>
     <type>Lookup</type>
-    <referenceTo>Actual_sold_domestic__c</referenceTo>
+    <referenceTo>ActualSoldDomestic__c</referenceTo>
     <relationshipName>Country_Save_State_Actual_sold_domestic</relationshipName>
     <required>false</required>
 </CustomField>

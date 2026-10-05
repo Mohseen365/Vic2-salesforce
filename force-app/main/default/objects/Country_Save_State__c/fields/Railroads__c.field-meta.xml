@@ -3,7 +3,7 @@
     <fullName>Railroads__c</fullName>
     <label>Railroads</label>
     <type>Lookup</type>
-    <referenceTo>Railroads__c</referenceTo>
+    <referenceTo>Railroad__c</referenceTo>
     <relationshipName>Country_Save_State_Railroads</relationshipName>
     <required>false</required>
 </CustomField>

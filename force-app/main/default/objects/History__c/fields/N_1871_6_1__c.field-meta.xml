@@ -3,7 +3,7 @@
     <fullName>N_1871_6_1__c</fullName>
     <label>N 1871 6 1</label>
     <type>Lookup</type>
-    <referenceTo>N_1871_6_1__c</referenceTo>
+    <referenceTo>War_History_Entry__c</referenceTo>
     <relationshipName>History_N_1871_6_1</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Great_nations__c</fullName>
     <label>Great nations</label>
     <type>Lookup</type>
-    <referenceTo>Great_nations__c</referenceTo>
+    <referenceTo>GreatNation__c</referenceTo>
     <relationshipName>Save_Game_Great_nations</relationshipName>
     <required>false</required>
 </CustomField>

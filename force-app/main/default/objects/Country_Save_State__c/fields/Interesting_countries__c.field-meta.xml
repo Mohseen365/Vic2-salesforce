@@ -3,7 +3,7 @@
     <fullName>Interesting_countries__c</fullName>
     <label>Interesting countries</label>
     <type>Lookup</type>
-    <referenceTo>Interesting_countries__c</referenceTo>
+    <referenceTo>InterestingCountrie__c</referenceTo>
     <relationshipName>Country_Save_State_Interesting_countries</relationshipName>
     <required>false</required>
 </CustomField>

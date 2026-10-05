@@ -3,7 +3,7 @@
     <fullName>News_collector__c</fullName>
     <label>News collector</label>
     <type>Lookup</type>
-    <referenceTo>News_collector__c</referenceTo>
+    <referenceTo>NewsCollector__c</referenceTo>
     <relationshipName>Save_Game_News_collector</relationshipName>
     <required>false</required>
 </CustomField>

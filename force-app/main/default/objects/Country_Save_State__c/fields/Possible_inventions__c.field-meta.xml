@@ -3,7 +3,7 @@
     <fullName>Possible_inventions__c</fullName>
     <label>Possible inventions</label>
     <type>Lookup</type>
-    <referenceTo>Possible_inventions__c</referenceTo>
+    <referenceTo>PossibleInvention__c</referenceTo>
     <relationshipName>Country_Save_State_Possible_inventions</relationshipName>
     <required>false</required>
 </CustomField>

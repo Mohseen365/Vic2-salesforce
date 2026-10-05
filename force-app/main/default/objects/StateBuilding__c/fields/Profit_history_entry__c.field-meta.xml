@@ -3,7 +3,7 @@
     <fullName>Profit_history_entry__c</fullName>
     <label>Profit history entry</label>
     <type>Lookup</type>
-    <referenceTo>Profit_history_entry__c</referenceTo>
+    <referenceTo>ProfitHistoryEntry__c</referenceTo>
     <relationshipName>StateBuilding_Profit_history_entry</relationshipName>
     <required>false</required>
 </CustomField>

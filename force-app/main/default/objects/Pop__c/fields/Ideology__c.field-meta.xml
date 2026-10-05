@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Ideology__c</fullName>
-    <label>Ideology</label>
-    <type>Lookup</type>
-    <referenceTo>Ideology__c</referenceTo>
-    <relationshipName>Pop_Ideology</relationshipName>
-    <required>false</required>
-</CustomField>

@@ -3,7 +3,7 @@
     <fullName>Max_bought__c</fullName>
     <label>Max bought</label>
     <type>Lookup</type>
-    <referenceTo>Max_bought__c</referenceTo>
+    <referenceTo>MaxBought__c</referenceTo>
     <relationshipName>Country_Save_State_Max_bought</relationshipName>
     <required>false</required>
 </CustomField>

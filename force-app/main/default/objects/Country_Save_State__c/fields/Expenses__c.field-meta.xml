@@ -3,7 +3,7 @@
     <fullName>Expenses__c</fullName>
     <label>Expenses</label>
     <type>Lookup</type>
-    <referenceTo>Expenses__c</referenceTo>
+    <referenceTo>Expense__c</referenceTo>
     <relationshipName>Country_Save_State_Expenses</relationshipName>
     <required>false</required>
 </CustomField>

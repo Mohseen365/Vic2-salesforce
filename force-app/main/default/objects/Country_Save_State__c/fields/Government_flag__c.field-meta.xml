@@ -3,7 +3,7 @@
     <fullName>Government_flag__c</fullName>
     <label>Government flag</label>
     <type>Lookup</type>
-    <referenceTo>Government_flag__c</referenceTo>
+    <referenceTo>GovernmentFlag__c</referenceTo>
     <relationshipName>Country_Save_State_Government_flag</relationshipName>
     <required>false</required>
 </CustomField>

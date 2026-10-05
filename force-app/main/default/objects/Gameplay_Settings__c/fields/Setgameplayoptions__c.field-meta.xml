@@ -3,7 +3,7 @@
     <fullName>Setgameplayoptions__c</fullName>
     <label>Setgameplayoptions</label>
     <type>Lookup</type>
-    <referenceTo>Setgameplayoptions__c</referenceTo>
+    <referenceTo>Setgameplayoption__c</referenceTo>
     <relationshipName>Gameplay_Settings_Setgameplayoptions</relationshipName>
     <required>false</required>
 </CustomField>

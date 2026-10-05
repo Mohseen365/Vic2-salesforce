@@ -3,7 +3,7 @@
     <fullName>Tax_eff__c</fullName>
     <label>Tax eff</label>
     <type>Lookup</type>
-    <referenceTo>Tax_eff__c</referenceTo>
+    <referenceTo>TaxEff__c</referenceTo>
     <relationshipName>RichTax_Tax_eff</relationshipName>
     <required>false</required>
 </CustomField>

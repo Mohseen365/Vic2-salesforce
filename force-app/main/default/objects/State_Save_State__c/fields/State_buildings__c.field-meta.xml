@@ -3,7 +3,7 @@
     <fullName>State_buildings__c</fullName>
     <label>State buildings</label>
     <type>Lookup</type>
-    <referenceTo>State_buildings__c</referenceTo>
+    <referenceTo>StateBuilding__c</referenceTo>
     <relationshipName>State_Save_State_State_buildings</relationshipName>
     <required>false</required>
 </CustomField>

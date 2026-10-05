@@ -3,7 +3,7 @@
     <fullName>National_focus__c</fullName>
     <label>National focus</label>
     <type>Lookup</type>
-    <referenceTo>National_focus__c</referenceTo>
+    <referenceTo>NationalFocu__c</referenceTo>
     <relationshipName>Country_Save_State_National_focus</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Sold_supply_pool__c</fullName>
     <label>Sold supply pool</label>
     <type>Lookup</type>
-    <referenceTo>Sold_supply_pool__c</referenceTo>
+    <referenceTo>SoldSupplyPool__c</referenceTo>
     <relationshipName>Country_Save_State_Sold_supply_pool</relationshipName>
     <required>false</required>
 </CustomField>

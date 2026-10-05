@@ -3,7 +3,7 @@
     <fullName>Incomes__c</fullName>
     <label>Incomes</label>
     <type>Lookup</type>
-    <referenceTo>Incomes__c</referenceTo>
+    <referenceTo>Income__c</referenceTo>
     <relationshipName>Country_Save_State_Incomes</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Accumulated_losses__c</fullName>
     <label>Accumulated losses</label>
     <type>Lookup</type>
-    <referenceTo>Accumulated_losses__c</referenceTo>
+    <referenceTo>AccumulatedLosse__c</referenceTo>
     <relationshipName>Defender_Accumulated_losses</relationshipName>
     <required>false</required>
 </CustomField>

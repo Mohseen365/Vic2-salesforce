@@ -3,7 +3,7 @@
     <fullName>Anarcho_liberal__c</fullName>
     <label>Anarcho liberal</label>
     <type>Lookup</type>
-    <referenceTo>Anarcho_liberal__c</referenceTo>
+    <referenceTo>AnarchoLiberal__c</referenceTo>
     <relationshipName>Save_Game_Anarcho_liberal</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Middle_tax__c</fullName>
     <label>Middle tax</label>
     <type>Lookup</type>
-    <referenceTo>Middle_tax__c</referenceTo>
+    <referenceTo>MiddleTax__c</referenceTo>
     <relationshipName>Country_Save_State_Middle_tax</relationshipName>
     <required>false</required>
 </CustomField>

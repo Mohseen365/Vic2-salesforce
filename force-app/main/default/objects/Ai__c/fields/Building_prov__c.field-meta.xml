@@ -3,7 +3,7 @@
     <fullName>Building_prov__c</fullName>
     <label>Building prov</label>
     <type>Lookup</type>
-    <referenceTo>Building_prov__c</referenceTo>
+    <referenceTo>BuildingProv__c</referenceTo>
     <relationshipName>Ai_Building_prov</relationshipName>
     <required>false</required>
 </CustomField>

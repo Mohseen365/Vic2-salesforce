@@ -3,7 +3,7 @@
     <fullName>Building_construction__c</fullName>
     <label>Building construction</label>
     <type>Lookup</type>
-    <referenceTo>Building_construction__c</referenceTo>
+    <referenceTo>Construction__c</referenceTo>
     <relationshipName>Province_Save_State_Building_construction</relationshipName>
     <required>false</required>
 </CustomField>
