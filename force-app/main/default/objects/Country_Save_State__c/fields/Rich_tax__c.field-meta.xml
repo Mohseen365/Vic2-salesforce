@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rich_tax__c</fullName>
+    <label>Rich tax</label>
+    <type>Lookup</type>
+    <referenceTo>Rich_tax__c</referenceTo>
+    <relationshipName>Country_Save_State_Rich_tax</relationshipName>
+    <required>false</required>
+</CustomField>

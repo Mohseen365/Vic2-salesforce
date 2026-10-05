@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Participates_in_botanical_expedition__c</fullName>
+    <label>Participates in botanical expedition</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+</CustomField>

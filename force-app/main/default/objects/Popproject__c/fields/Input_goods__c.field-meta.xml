@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Input_goods__c</fullName>
+    <label>Input goods</label>
+    <type>Lookup</type>
+    <referenceTo>Input_goods__c</referenceTo>
+    <relationshipName>Popproject_Input_goods</relationshipName>
+    <required>false</required>
+</CustomField>

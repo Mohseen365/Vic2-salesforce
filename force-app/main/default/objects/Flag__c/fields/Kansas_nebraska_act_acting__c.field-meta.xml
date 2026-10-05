@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Kansas_nebraska_act_acting__c</fullName>
+    <label>Kansas nebraska act acting</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+</CustomField>

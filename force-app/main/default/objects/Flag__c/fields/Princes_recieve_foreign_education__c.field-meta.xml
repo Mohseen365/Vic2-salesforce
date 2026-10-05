@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Princes_recieve_foreign_education__c</fullName>
+    <label>Princes recieve foreign education</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+</CustomField>

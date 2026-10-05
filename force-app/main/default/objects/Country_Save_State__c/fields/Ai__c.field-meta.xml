@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ai__c</fullName>
+    <label>Ai</label>
+    <type>Lookup</type>
+    <referenceTo>Ai__c</referenceTo>
+    <relationshipName>Country_Save_State_Ai</relationshipName>
+    <required>false</required>
+</CustomField>

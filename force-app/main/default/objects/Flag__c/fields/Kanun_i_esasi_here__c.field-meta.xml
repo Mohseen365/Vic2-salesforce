@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Kanun_i_esasi_here__c</fullName>
+    <label>Kanun i esasi here</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+</CustomField>

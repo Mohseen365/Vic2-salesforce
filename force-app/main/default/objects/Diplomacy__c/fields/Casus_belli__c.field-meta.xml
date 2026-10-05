@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Casus_belli__c</fullName>
+    <label>Casus belli</label>
+    <type>Lookup</type>
+    <referenceTo>Casus_belli__c</referenceTo>
+    <relationshipName>Diplomacy_Casus_belli</relationshipName>
+    <required>false</required>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Befriend__c</fullName>
+    <label>Befriend</label>
+    <type>Lookup</type>
+    <referenceTo>Befriend__c</referenceTo>
+    <relationshipName>Ai_Befriend</relationshipName>
+    <required>false</required>
+</CustomField>

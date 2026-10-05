@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Poor_tax__c</fullName>
+    <label>Poor tax</label>
+    <type>Lookup</type>
+    <referenceTo>Poor_tax__c</referenceTo>
+    <relationshipName>Country_Save_State_Poor_tax</relationshipName>
+    <required>false</required>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Popproject__c</fullName>
+    <label>Popproject</label>
+    <type>Lookup</type>
+    <referenceTo>Popproject__c</referenceTo>
+    <relationshipName>State_Save_State_Popproject</relationshipName>
+    <required>false</required>
+</CustomField>

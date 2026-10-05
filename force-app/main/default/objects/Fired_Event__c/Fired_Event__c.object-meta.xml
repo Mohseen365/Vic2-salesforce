@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Fired Event</label>
+    <pluralLabel>Fired Events</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <nameField>
+        <label>Fired Event Name</label>
+        <type>Text</type>
+    </nameField>
+</CustomObject>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Substate__c</fullName>
+    <label>Substate</label>
+    <type>Lookup</type>
+    <referenceTo>Substate__c</referenceTo>
+    <relationshipName>Diplomacy_Substate</relationshipName>
+    <required>false</required>
+</CustomField>

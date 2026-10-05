@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Worldmarket__c</fullName>
+    <label>Worldmarket</label>
+    <type>Lookup</type>
+    <referenceTo>Worldmarket__c</referenceTo>
+    <relationshipName>Save_Game_Worldmarket</relationshipName>
+    <required>false</required>
+</CustomField>

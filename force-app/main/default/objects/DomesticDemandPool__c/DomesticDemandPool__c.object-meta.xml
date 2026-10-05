@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>DomesticDemandPool</label>
+    <pluralLabel>DomesticDemandPools</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <nameField>
+        <label>DomesticDemandPool Name</label>
+        <type>Text</type>
+    </nameField>
+</CustomObject>

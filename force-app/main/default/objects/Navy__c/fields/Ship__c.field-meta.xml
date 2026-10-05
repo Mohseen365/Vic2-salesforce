@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ship__c</fullName>
+    <label>Ship</label>
+    <type>Lookup</type>
+    <referenceTo>Ship__c</referenceTo>
+    <relationshipName>Navy_Ship</relationshipName>
+    <required>false</required>
+</CustomField>

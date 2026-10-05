@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Communist__c</fullName>
+    <label>Communist</label>
+    <type>Lookup</type>
+    <referenceTo>Communist__c</referenceTo>
+    <relationshipName>Save_Game_Communist</relationshipName>
+    <required>false</required>
+</CustomField>

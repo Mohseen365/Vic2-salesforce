@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Save_Game__c</fullName>
+    <label>Save Game</label>
+    <type>MasterDetail</type>
+    <referenceTo>Save_Game__c</referenceTo>
+    <relationshipName>Country_References</relationshipName>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

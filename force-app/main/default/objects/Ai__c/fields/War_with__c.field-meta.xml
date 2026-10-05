@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>War_with__c</fullName>
+    <label>War with</label>
+    <type>Lookup</type>
+    <referenceTo>War_with__c</referenceTo>
+    <relationshipName>Ai_War_with</relationshipName>
+    <required>false</required>
+</CustomField>

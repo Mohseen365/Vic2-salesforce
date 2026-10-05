@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Building_prov__c</fullName>
+    <label>Building prov</label>
+    <type>Lookup</type>
+    <referenceTo>Building_prov__c</referenceTo>
+    <relationshipName>Ai_Building_prov</relationshipName>
+    <required>false</required>
+</CustomField>
