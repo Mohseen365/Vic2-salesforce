@@ -1,7 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 
-BASE_DIR = "vc2-salesforce-version/force-app/main/default/objects"
+BASE_DIR = "force-app/main/default/objects"
 
 total_objects = 0
 total_fields = 0
@@ -17,10 +17,14 @@ for obj in sorted(object_dirs):
     # Parse object meta
     tree = ET.parse(obj_meta_file)
     root = tree.getroot()
-    label = root.find("{http://soap.sforce.com/2006/04/metadata}label").text
+    label_node = root.find("{http://soap.sforce.com/2006/04/metadata}label")
+    label = label_node.text if label_node is not None else obj
 
     fields_dir = os.path.join(BASE_DIR, obj, "fields")
-    field_files = [f for f in os.listdir(fields_dir) if f.endswith(".field-meta.xml")]
+    if os.path.exists(fields_dir):
+        field_files = [f for f in os.listdir(fields_dir) if f.endswith(".field-meta.xml")]
+    else:
+        field_files = []
 
     print(f"\nObject: {obj} ('{label}') - {len(field_files)} custom fields")
     total_objects += 1

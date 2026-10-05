@@ -2,7 +2,7 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** Phase 6 (Import & Persistence Layer) **VERIFIED AND COMPLETE** — Ingestion service, REST API resource, and batch persistence pipeline live.
+- **Current Status:** Phase 6 & Enhancement Track C **VERIFIED AND COMPLETE** — Ingestion service, REST API resource, batch persistence pipeline live, and permission sets provisioned.
 - **Semantic Contract Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Audit Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
 - **Import Contract Reference:** [`vc2-salesforce-version/IMPORT_CONTRACT.md`](./vc2-salesforce-version/IMPORT_CONTRACT.md)
@@ -91,3 +91,19 @@
 - **Rules for Future Tracks:**
   - Any future track extending non-economy entities must respect the junction patterns (`Save_Game_Country_Ref__c`, `Country_Country_Ref__c`).
   - Do not alter any of the 13 protected economy artifacts or `EconomyCalculationEngine.cls`.
+
+## Track C — Comprehensive Permission Set Provisioning Status
+- **Status:** `COMPLETE — ATTESTED` (Out of original audit scope — Enhancement Track).
+- **Deliverables:**
+  - [`force-app/main/default/permissionsets/Economy_Analyzer_User.permissionset-meta.xml`](./force-app/main/default/permissionsets/Economy_Analyzer_User.permissionset-meta.xml): Read-only permission set for all 139 objects and 997 fields.
+  - [`force-app/main/default/permissionsets/Economy_Analyzer_Admin.permissionset-meta.xml`](./force-app/main/default/permissionsets/Economy_Analyzer_Admin.permissionset-meta.xml): Full read/write/delete permission set for all 139 objects and 997 fields.
+  - [`vc2-salesforce-version/track-c-generate-permission-sets.py`](./vc2-salesforce-version/track-c-generate-permission-sets.py): Deterministic python generator script.
+  - [`vc2-salesforce-version/PERMISSION_SET_MATRIX.md`](./vc2-salesforce-version/PERMISSION_SET_MATRIX.md): 139-row permission matrix.
+  - [`vc2-salesforce-version/track-c-assignment-guide.md`](./vc2-salesforce-version/track-c-assignment-guide.md): Single-System-Admin context explanation and assignment guide.
+  - [`vc2-salesforce-version/track-c-completion-report.md`](./vc2-salesforce-version/track-c-completion-report.md): Final completion report with quoted static verification evidence.
+- **Single-User Operating Context:**
+  - The project currently has exactly one active user (System Administrator), whose profile grants `View All Data` and `Modify All Data`. Permission sets are forward-looking artifacts for codification, future user onboarding, and auditability. No custom profiles were created or modified.
+- **Protected Economy Artifacts Integrity:**
+  - SHA-256 hash unchanged: `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
+- **Rules for Future Tracks:**
+  - Any change to object or field metadata in future tracks (e.g. Track D/E) MUST be accompanied by executing `python3 vc2-salesforce-version/track-c-generate-permission-sets.py`.
