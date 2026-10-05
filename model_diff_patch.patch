@@ -1,7 +1,7 @@
 --- salesforce_model_expanded.txt.pre-track-e	2026-10-05 19:05:39.273593915 +0000
 +++ salesforce_model_expanded.txt	2026-10-05 19:10:54.265590369 +0000
 @@ -6,8 +6,8 @@
- 
+
  RECONCILIATION SUMMARY
  ------------------------------------------------------------------------
 -- Protected Economy Objects (13): Preserved bit-for-bit (SHA256 dd00e83a599db3e4d2028b6166b769a9faccc0e4f41a23fca16283d8f13d7c1b)
@@ -10,7 +10,7 @@
 +- Renamed Entities: Country_Save_State__c, Province_Save_State__c, State_Save_State__c, Value__c
  - Flattened Sub-objects: Ideology__c, Issue__c -> Pop__c custom fields
  - Junction Patterns Added: Save_Game_Country_Ref__c (271-lookup fix), Country_Country_Ref__c (116-lookup fix)
- 
+
 @@ -39,7 +39,6 @@
      - Anarcho_liberal__c (Lookup(AnarchoLiberal__c))
      - Canals__c (Lookup(Canal__c))
@@ -443,7 +443,7 @@
      - Key__c (Text)
 -    - News_Scope_Value__c (Number(16,5))
 +    - Value__c (Number(16,5))
- 
+
  OBJECT: Save_Game_Country_Ref__c
    Parent: Save_Game__c (MD)
    Fields:
@@ -452,7 +452,7 @@
 +    - Country_Save_State__c (Lookup(Country_Save_State__c))
      - Reference_Key__c (Text)
      - Reference_Kind__c (Text)
- 
+
 @@ -1440,6 +1432,6 @@
    Parent: Country_Save_State__c (MD)
    Fields:
