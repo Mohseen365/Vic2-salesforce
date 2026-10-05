@@ -162,6 +162,7 @@
 - **Track C:** Possibility map & roadmap complete (125 capabilities, 16 features); permission sets generated; 58 defects documented.
 - **Track D:** Phase 1 initial audit BLOCKED (remediated under Track E); Phase 1 re-audit PASSED (`track-d-verification-attestation.md`).
 - **Track E:** Data model remediation COMPLETE — 58/58 defects (15 BLOCKING + 43 MAJOR) fixed in `salesforce_model_expanded.txt`; Track D Phase 1 re-run PASSED (`track-e-verification-attestation.md`).
+- **Track E-3:** Evidence Closure Addendum — `vc2-salesforce-version/track-e3-evidence-closure-addendum.md` (B1 CLOSED by raw `git diff` output, 0 lines).
 
 ---
 

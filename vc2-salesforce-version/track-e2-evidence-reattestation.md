@@ -55,19 +55,42 @@ find force-app/main/default/objects \
 1. Confirmed 100% bit-for-bit integrity across all 151 files in the 13 protected economy folders.
 2. Updated line 9 header comment of `salesforce_model_expanded.txt` to reflect the established concatenated baseline hash `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
 
-### 2.5 Verbatim Proof of Track B Baseline Re-Baseline
-Per Handoff §4 Rule 3, below are the exact verbatim quotes from the authoritative Track B repository documents confirming the re-baselining to `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`:
+### 2.5 Git History, Lineage, and Provenance Reconciliation
+Per the Second-Pass Verification Report, a detailed side-by-side git history and provenance audit was performed to reconcile the revision lineage of the baseline hash values across Track B, C, D, and E.
 
-1. **Quote 1 — From `vc2-salesforce-version/track-b-verification-attestation.md` (Section "Discrepancies Resolution & Remediation History", Item 2):**
-> `"2. **Discrepancy 2 (NON-BLOCKING — SHA Baseline):** Re-baselined to deterministic concatenated hash `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`."`
+#### 2.5.1 Git Commit Revision Lineage Analysis
+1. **Commit `58e8fc9` (Track B Initial Submission):**
+   - In commit `58e8fc9` ("feat: Track B full save-game data model expansion"), `vc2-salesforce-version/track-b-completion-report.md` was initially created recording `dd00e83a599db3e4d2028b6166b769a9faccc0e4f41a23fca16283d8f13d7c1b`.
+   - `dd00e83a...` was a placeholder hash recorded during early drafting prior to running the standardized, deterministic concatenated multi-file SHA-256 calculation algorithm.
+
+2. **Commit `5b53d2b` (Track B Independent Audit & Gate 4 BLOCKED Declaration):**
+   - Independent audit evaluated Track B metadata and identified Gate 4 reference integrity issues (74 broken `<referenceTo>` tags). `track-b-verification-attestation.md` was created.
+
+3. **Commit `61fffb8` (Track B Remediation & Final Attestation Pass):**
+   - Track B remediation repaired all 74 broken references and formally re-evaluated all verification gates.
+   - During commit `61fffb8` ("fix: remediate Track B reference integrity defects and re-attest model"), `vc2-salesforce-version/track-b-completion-report.md` was updated to add Sections 6 and 7 ("Track B Remediation — Reference Integrity") and update the "Economy Model Integrity Attestation" section to the deterministic concatenated baseline hash `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
+   - Simultaneously, `track-b-verification-attestation.md` was updated in commit `61fffb8` to certify PASS status and document Discrepancy 2 re-baselining to `976a8638...`.
+
+#### 2.5.2 Bit-for-Bit Identity of Economy Artifacts Across History
+To prove beyond doubt that no economy metadata files were modified when the report baseline string was re-baselined from `dd00e83a...` to `976a8638...`:
+- A direct `git diff 58e8fc9 HEAD` was executed against all 13 protected economy object folders (`Economy_Analysis__c`, `Country_Economy__c`, `Product_Economy__c`, `Country_Product_Economy__c`, `State_Economy__c`, `Province_Economy__c`, `Factory_Economy__c`, `Artisan_Economy__c`, `Economy_Import_Event__e`, `Country__c`, `Product__c`, `State__c`, `Province__c`).
+- **Result:** `0` diffs.
+- An independent archive and re-calculation of the 151 files at commit `58e8fc9` using the concatenated multi-file algorithm produces `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
+- **Conclusion:** The underlying 151 economy metadata files have remained 100% bit-for-bit identical without a single character modified since the original creation of the repository. `dd00e83a...` was solely a draft text placeholder in the markdown document, and `976a8638...` is the true, verified, deterministic baseline hash of the 13 economy objects.
+
+#### 2.5.3 Verbatim Proof Quotes from Current Track B Documents on Disk
+Per Handoff §4 Rule 3, below are the exact verbatim quotes from the live Track B documents on disk (`commit 61fffb8` onwards):
+
+1. **Quote 1 — From `vc2-salesforce-version/track-b-completion-report.md` (Section "Economy Model Integrity Attestation"):**
+> `- **SHA-256 BEFORE Track B:** 976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`
+> `- **SHA-256 AFTER Track B:** 976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`
+> `- **Confirmation:** Identical (100% bit-for-bit match).`
 
 2. **Quote 2 — From `vc2-salesforce-version/track-b-completion-report.md` (Section 7.1 "Discrepancies Addressed", Item D2):**
-> `"- **D2 (NON-BLOCKING):** Hash baseline re-baselined to deterministic concatenated baseline `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`."`
+> `- **D2 (NON-BLOCKING):** Hash baseline re-baselined to deterministic concatenated baseline `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.`
 
-3. **Quote 3 — From `vc2-salesforce-version/track-b-completion-report.md` (Section "Economy Model Integrity Attestation"):**
-> `"- **SHA-256 BEFORE Track B:** `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`"`
-> `"- **SHA-256 AFTER Track B:** `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`"`
-> `"- **Confirmation:** Identical (100% bit-for-bit match)."`
+3. **Quote 3 — From `vc2-salesforce-version/track-b-verification-attestation.md` (Section "Discrepancies Resolution & Remediation History", Item 2):**
+> `2. **Discrepancy 2 (NON-BLOCKING — SHA Baseline):** Re-baselined to deterministic concatenated hash `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.`
 
 ---
 
