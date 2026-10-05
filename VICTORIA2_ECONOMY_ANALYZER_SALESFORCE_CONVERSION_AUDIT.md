@@ -1,9 +1,9 @@
 # Salesforce Native Conversion Audit — Victoria 2 Economy Analyzer
 
-**Audit Author:** Senior Salesforce Enterprise Architect, Modernization & Apex/LWC Specialist  
-**Target Platform:** Salesforce Enterprise / Unlimited Edition (Lightning Web Components, Apex, Custom Objects & Relationships)  
-**Source System:** Victoria 2 Save Game Economy Analyzer (`org.victoria2.tools.vic2sgea`)  
-**Document Status:** Final Architecture & Conversion Blueprint  
+**Audit Author:** Senior Salesforce Enterprise Architect, Modernization & Apex/LWC Specialist
+**Target Platform:** Salesforce Enterprise / Unlimited Edition (Lightning Web Components, Apex, Custom Objects & Relationships)
+**Source System:** Victoria 2 Save Game Economy Analyzer (`org.victoria2.tools.vic2sgea`)
+**Document Status:** Final Architecture & Conversion Blueprint
 
 ---
 
@@ -403,7 +403,7 @@ A raw Victoria 2 save game file is an uncompressed text file ranging from **15 M
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Architectural Recommendation:**  
+**Architectural Recommendation:**
 - For lightweight/preprocessed save games: **Option B** using a `Batchable` parser reading text lines in bounded chunks.
 - For standard production save games (20MB+): **Option A** using an off-heap microservice (Node.js / Java container running the original `eug.parser`) that posts a clean JSON payload directly into Salesforce via the REST API.
 
