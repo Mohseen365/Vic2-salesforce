@@ -3,7 +3,7 @@
     <fullName>Dates__c</fullName>
     <label>Dates</label>
     <type>Lookup</type>
-    <referenceTo>Dates__c</referenceTo>
+    <referenceTo>Date__c</referenceTo>
     <relationshipName>NewsScope_Dates</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Crisis_manager__c</fullName>
     <label>Crisis manager</label>
     <type>Lookup</type>
-    <referenceTo>Crisis_manager__c</referenceTo>
+    <referenceTo>CrisisManager__c</referenceTo>
     <relationshipName>Save_Game_Crisis_manager</relationshipName>
     <required>false</required>
 </CustomField>

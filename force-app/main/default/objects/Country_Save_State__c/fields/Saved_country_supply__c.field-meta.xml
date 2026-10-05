@@ -3,7 +3,7 @@
     <fullName>Saved_country_supply__c</fullName>
     <label>Saved country supply</label>
     <type>Lookup</type>
-    <referenceTo>Saved_country_supply__c</referenceTo>
+    <referenceTo>SavedCountrySupply__c</referenceTo>
     <relationshipName>Country_Save_State_Saved_country_supply</relationshipName>
     <required>false</required>
 </CustomField>

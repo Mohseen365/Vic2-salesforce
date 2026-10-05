@@ -3,7 +3,7 @@
     <fullName>Illegal_inventions__c</fullName>
     <label>Illegal inventions</label>
     <type>Lookup</type>
-    <referenceTo>Illegal_inventions__c</referenceTo>
+    <referenceTo>IllegalInvention__c</referenceTo>
     <relationshipName>Country_Save_State_Illegal_inventions</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Fired_events__c</fullName>
     <label>Fired events</label>
     <type>Lookup</type>
-    <referenceTo>Fired_events__c</referenceTo>
+    <referenceTo>Fired_Events__c</referenceTo>
     <relationshipName>Save_Game_Fired_events</relationshipName>
     <required>false</required>
 </CustomField>

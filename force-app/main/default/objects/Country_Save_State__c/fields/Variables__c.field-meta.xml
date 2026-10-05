@@ -3,7 +3,7 @@
     <fullName>Variables__c</fullName>
     <label>Variables</label>
     <type>Lookup</type>
-    <referenceTo>Variables__c</referenceTo>
+    <referenceTo>Variable__c</referenceTo>
     <relationshipName>Country_Save_State_Variables</relationshipName>
     <required>false</required>
 </CustomField>

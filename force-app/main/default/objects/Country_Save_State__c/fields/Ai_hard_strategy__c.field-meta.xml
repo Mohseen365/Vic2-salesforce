@@ -3,7 +3,7 @@
     <fullName>Ai_hard_strategy__c</fullName>
     <label>Ai hard strategy</label>
     <type>Lookup</type>
-    <referenceTo>Ai_hard_strategy__c</referenceTo>
+    <referenceTo>AiHardStrategy__c</referenceTo>
     <relationshipName>Country_Save_State_Ai_hard_strategy</relationshipName>
     <required>false</required>
 </CustomField>

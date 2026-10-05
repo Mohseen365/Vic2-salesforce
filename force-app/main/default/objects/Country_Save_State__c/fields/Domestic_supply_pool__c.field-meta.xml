@@ -3,7 +3,7 @@
     <fullName>Domestic_supply_pool__c</fullName>
     <label>Domestic supply pool</label>
     <type>Lookup</type>
-    <referenceTo>Domestic_supply_pool__c</referenceTo>
+    <referenceTo>DomesticSupplyPool__c</referenceTo>
     <relationshipName>Country_Save_State_Domestic_supply_pool</relationshipName>
     <required>false</required>
 </CustomField>

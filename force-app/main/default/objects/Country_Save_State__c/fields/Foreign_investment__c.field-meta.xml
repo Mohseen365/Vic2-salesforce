@@ -3,7 +3,7 @@
     <fullName>Foreign_investment__c</fullName>
     <label>Foreign investment</label>
     <type>Lookup</type>
-    <referenceTo>Foreign_investment__c</referenceTo>
+    <referenceTo>ForeignInvestment__c</referenceTo>
     <relationshipName>Country_Save_State_Foreign_investment</relationshipName>
     <required>false</required>
 </CustomField>

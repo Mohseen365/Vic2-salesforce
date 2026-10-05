@@ -3,7 +3,7 @@
     <fullName>Player_monthly_pop_growth__c</fullName>
     <label>Player monthly pop growth</label>
     <type>Lookup</type>
-    <referenceTo>Player_monthly_pop_growth__c</referenceTo>
+    <referenceTo>PlayerMonthlyPopGrowth__c</referenceTo>
     <relationshipName>Save_Game_Player_monthly_pop_growth</relationshipName>
     <required>false</required>
 </CustomField>

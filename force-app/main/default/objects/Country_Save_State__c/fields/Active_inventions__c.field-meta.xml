@@ -3,7 +3,7 @@
     <fullName>Active_inventions__c</fullName>
     <label>Active inventions</label>
     <type>Lookup</type>
-    <referenceTo>Active_inventions__c</referenceTo>
+    <referenceTo>ActiveInvention__c</referenceTo>
     <relationshipName>Country_Save_State_Active_inventions</relationshipName>
     <required>false</required>
 </CustomField>

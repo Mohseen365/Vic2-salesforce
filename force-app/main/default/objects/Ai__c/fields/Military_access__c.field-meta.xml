@@ -3,7 +3,7 @@
     <fullName>Military_access__c</fullName>
     <label>Military access</label>
     <type>Lookup</type>
-    <referenceTo>Military_access__c</referenceTo>
+    <referenceTo>MilitaryAcces__c</referenceTo>
     <relationshipName>Ai_Military_access</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Gameplaysettings__c</fullName>
     <label>Gameplaysettings</label>
     <type>Lookup</type>
-    <referenceTo>Gameplaysettings__c</referenceTo>
+    <referenceTo>Gameplay_Settings__c</referenceTo>
     <relationshipName>Save_Game_Gameplaysettings</relationshipName>
     <required>false</required>
 </CustomField>

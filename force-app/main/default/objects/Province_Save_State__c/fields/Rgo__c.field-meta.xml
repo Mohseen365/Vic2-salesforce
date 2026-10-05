@@ -3,7 +3,7 @@
     <fullName>Rgo__c</fullName>
     <label>Rgo</label>
     <type>Lookup</type>
-    <referenceTo>Rgo__c</referenceTo>
+    <referenceTo>RGO__c</referenceTo>
     <relationshipName>Province_Save_State_Rgo</relationshipName>
     <required>false</required>
 </CustomField>

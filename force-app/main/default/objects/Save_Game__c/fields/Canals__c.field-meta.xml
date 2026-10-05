@@ -3,7 +3,7 @@
     <fullName>Canals__c</fullName>
     <label>Canals</label>
     <type>Lookup</type>
-    <referenceTo>Canals__c</referenceTo>
+    <referenceTo>Canal__c</referenceTo>
     <relationshipName>Save_Game_Canals</relationshipName>
     <required>false</required>
 </CustomField>

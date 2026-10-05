@@ -3,7 +3,7 @@
     <fullName>Strings__c</fullName>
     <label>Strings</label>
     <type>Lookup</type>
-    <referenceTo>Strings__c</referenceTo>
+    <referenceTo>String__c</referenceTo>
     <relationshipName>NewsScope_Strings</relationshipName>
     <required>false</required>
 </CustomField>

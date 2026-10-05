@@ -3,7 +3,7 @@
     <fullName>War_with__c</fullName>
     <label>War with</label>
     <type>Lookup</type>
-    <referenceTo>War_with__c</referenceTo>
+    <referenceTo>WarWith__c</referenceTo>
     <relationshipName>Ai_War_with</relationshipName>
     <required>false</required>
 </CustomField>

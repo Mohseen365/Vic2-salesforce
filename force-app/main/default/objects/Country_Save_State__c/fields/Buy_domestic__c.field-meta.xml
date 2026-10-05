@@ -3,7 +3,7 @@
     <fullName>Buy_domestic__c</fullName>
     <label>Buy domestic</label>
     <type>Lookup</type>
-    <referenceTo>Buy_domestic__c</referenceTo>
+    <referenceTo>BuyDomestic__c</referenceTo>
     <relationshipName>Country_Save_State_Buy_domestic</relationshipName>
     <required>false</required>
 </CustomField>

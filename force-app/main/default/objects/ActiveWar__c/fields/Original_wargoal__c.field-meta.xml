@@ -3,7 +3,7 @@
     <fullName>Original_wargoal__c</fullName>
     <label>Original wargoal</label>
     <type>Lookup</type>
-    <referenceTo>Original_wargoal__c</referenceTo>
+    <referenceTo>OriginalWargoal__c</referenceTo>
     <relationshipName>ActiveWar_Original_wargoal</relationshipName>
     <required>false</required>
 </CustomField>

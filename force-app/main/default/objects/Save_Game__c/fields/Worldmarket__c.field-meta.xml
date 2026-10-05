@@ -3,7 +3,7 @@
     <fullName>Worldmarket__c</fullName>
     <label>Worldmarket</label>
     <type>Lookup</type>
-    <referenceTo>Worldmarket__c</referenceTo>
+    <referenceTo>World_Market__c</referenceTo>
     <relationshipName>Save_Game_Worldmarket</relationshipName>
     <required>false</required>
 </CustomField>

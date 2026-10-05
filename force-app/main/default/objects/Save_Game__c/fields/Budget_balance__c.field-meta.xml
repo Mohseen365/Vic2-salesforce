@@ -3,7 +3,7 @@
     <fullName>Budget_balance__c</fullName>
     <label>Budget balance</label>
     <type>Lookup</type>
-    <referenceTo>Budget_balance__c</referenceTo>
+    <referenceTo>BudgetBalance__c</referenceTo>
     <relationshipName>Save_Game_Budget_balance</relationshipName>
     <required>false</required>
 </CustomField>

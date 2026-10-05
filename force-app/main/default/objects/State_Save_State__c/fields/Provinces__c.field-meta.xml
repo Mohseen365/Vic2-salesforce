@@ -3,7 +3,7 @@
     <fullName>Provinces__c</fullName>
     <label>Provinces</label>
     <type>Lookup</type>
-    <referenceTo>Provinces__c</referenceTo>
+    <referenceTo>Province__c</referenceTo>
     <relationshipName>State_Save_State_Provinces</relationshipName>
     <required>false</required>
 </CustomField>

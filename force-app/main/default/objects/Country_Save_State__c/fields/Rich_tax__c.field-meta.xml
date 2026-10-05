@@ -3,7 +3,7 @@
     <fullName>Rich_tax__c</fullName>
     <label>Rich tax</label>
     <type>Lookup</type>
-    <referenceTo>Rich_tax__c</referenceTo>
+    <referenceTo>RichTax__c</referenceTo>
     <relationshipName>Country_Save_State_Rich_tax</relationshipName>
     <required>false</required>
 </CustomField>

@@ -3,7 +3,7 @@
     <fullName>Tax_income__c</fullName>
     <label>Tax income</label>
     <type>Lookup</type>
-    <referenceTo>Tax_income__c</referenceTo>
+    <referenceTo>TaxIncome__c</referenceTo>
     <relationshipName>MiddleTax_Tax_income</relationshipName>
     <required>false</required>
 </CustomField>

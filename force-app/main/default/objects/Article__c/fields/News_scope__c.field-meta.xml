@@ -3,7 +3,7 @@
     <fullName>News_scope__c</fullName>
     <label>News scope</label>
     <type>Lookup</type>
-    <referenceTo>News_scope__c</referenceTo>
+    <referenceTo>NewsScope__c</referenceTo>
     <relationshipName>Article_News_scope</relationshipName>
     <required>false</required>
 </CustomField>

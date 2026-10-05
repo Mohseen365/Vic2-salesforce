@@ -3,7 +3,7 @@
     <fullName>Tags__c</fullName>
     <label>Tags</label>
     <type>Lookup</type>
-    <referenceTo>Tags__c</referenceTo>
+    <referenceTo>Tag__c</referenceTo>
     <relationshipName>NewsScope_Tags</relationshipName>
     <required>false</required>
 </CustomField>

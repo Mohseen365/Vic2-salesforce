@@ -3,7 +3,7 @@
     <fullName>Values__c</fullName>
     <label>Values</label>
     <type>Lookup</type>
-    <referenceTo>Values__c</referenceTo>
+    <referenceTo>News_Scope_Value__c</referenceTo>
     <relationshipName>NewsScope_Values</relationshipName>
     <required>false</required>
 </CustomField>

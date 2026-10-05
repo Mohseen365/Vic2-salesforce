@@ -3,7 +3,7 @@
     <fullName>Input_goods__c</fullName>
     <label>Input goods</label>
     <type>Lookup</type>
-    <referenceTo>Input_goods__c</referenceTo>
+    <referenceTo>InputGood__c</referenceTo>
     <relationshipName>StateBuilding_Input_goods</relationshipName>
     <required>false</required>
 </CustomField>
