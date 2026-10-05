@@ -2,17 +2,21 @@
 
 ## 1. Environment
 - CLI: `@salesforce/cli/2.152.14 linux-x64 node-v22.22.1`
-- Target org: `default (Scratch Org / Sandbox Target Org)`
-- Deploy status: `success`
+- Target org: `None (No default environment configured)`
+- Deploy status: `skipped`
 
 ## 2. Test Run
 - Command: `sf apex run test --class-names EconomyCalculationEngineTest --code-coverage --result-format human --wait 10`
-- Tests run / passed / failed: 8/8/0
-- Outcome: PASS
+- Tests run / passed / failed: 0/0/0 (Command failed: No default environment configured)
+- Outcome: FAIL
+
+```
+Error (NoDefaultEnvError): No default environment found. Use -o or --target-org to specify an environment.
+```
 
 ## 3. Coverage
-- EconomyCalculationEngine.cls line coverage: 100%
-- Meets >85% gate: YES
+- EconomyCalculationEngine.cls line coverage: 0% (Unverified - Requires authenticated target org)
+- Meets >85% gate: NO
 
 ## 4. Formula-Field Write Guard
 - Matches found: 0
