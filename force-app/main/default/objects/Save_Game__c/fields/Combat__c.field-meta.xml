@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Combat__c</fullName>
+    <label>Combat</label>
+    <type>Lookup</type>
+    <referenceTo>Combat__c</referenceTo>
+    <relationshipName>Save_Game_Combat</relationshipName>
+    <required>false</required>
+</CustomField>

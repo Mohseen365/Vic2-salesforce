@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fired_events__c</fullName>
+    <label>Fired events</label>
+    <type>Lookup</type>
+    <referenceTo>Fired_events__c</referenceTo>
+    <relationshipName>Save_Game_Fired_events</relationshipName>
+    <required>false</required>
+</CustomField>

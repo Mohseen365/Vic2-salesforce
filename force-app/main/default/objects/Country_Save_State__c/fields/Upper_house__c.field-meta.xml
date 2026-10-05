@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Upper_house__c</fullName>
+    <label>Upper house</label>
+    <type>Lookup</type>
+    <referenceTo>Upper_house__c</referenceTo>
+    <relationshipName>Country_Save_State_Upper_house</relationshipName>
+    <required>false</required>
+</CustomField>

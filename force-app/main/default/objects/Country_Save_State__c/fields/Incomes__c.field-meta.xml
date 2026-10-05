@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incomes__c</fullName>
+    <label>Incomes</label>
+    <type>Lookup</type>
+    <referenceTo>Incomes__c</referenceTo>
+    <relationshipName>Country_Save_State_Incomes</relationshipName>
+    <required>false</required>
+</CustomField>

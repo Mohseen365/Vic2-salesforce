@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>N_1871_8_25__c</fullName>
+    <label>N 1871 8 25</label>
+    <type>Lookup</type>
+    <referenceTo>N_1871_8_25__c</referenceTo>
+    <relationshipName>History_N_1871_8_25</relationshipName>
+    <required>false</required>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ban_embassy_country__c</fullName>
+    <label>Ban embassy country</label>
+    <type>Text</type>
+    <length>255</length>
+</CustomField>

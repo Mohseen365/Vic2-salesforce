@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Invention__c</fullName>
+    <label>Invention</label>
+    <type>Lookup</type>
+    <referenceTo>Invention__c</referenceTo>
+    <relationshipName>Save_Game_Invention</relationshipName>
+    <required>false</required>
+</CustomField>

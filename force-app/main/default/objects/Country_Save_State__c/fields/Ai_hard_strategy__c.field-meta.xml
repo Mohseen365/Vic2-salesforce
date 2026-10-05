@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ai_hard_strategy__c</fullName>
+    <label>Ai hard strategy</label>
+    <type>Lookup</type>
+    <referenceTo>Ai_hard_strategy__c</referenceTo>
+    <relationshipName>Country_Save_State_Ai_hard_strategy</relationshipName>
+    <required>false</required>
+</CustomField>

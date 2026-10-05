@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Provinces__c</fullName>
+    <label>Provinces</label>
+    <type>Lookup</type>
+    <referenceTo>Provinces__c</referenceTo>
+    <relationshipName>State_Save_State_Provinces</relationshipName>
+    <required>false</required>
+</CustomField>

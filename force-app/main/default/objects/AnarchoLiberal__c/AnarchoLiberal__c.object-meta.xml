@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>AnarchoLiberal</label>
+    <pluralLabel>AnarchoLiberals</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <nameField>
+        <label>AnarchoLiberal Name</label>
+        <type>Text</type>
+    </nameField>
+</CustomObject>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Military_access__c</fullName>
+    <label>Military access</label>
+    <type>Lookup</type>
+    <referenceTo>Military_access__c</referenceTo>
+    <relationshipName>Ai_Military_access</relationshipName>
+    <required>false</required>
+</CustomField>

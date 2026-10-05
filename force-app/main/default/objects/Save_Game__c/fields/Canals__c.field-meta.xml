@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Canals__c</fullName>
+    <label>Canals</label>
+    <type>Lookup</type>
+    <referenceTo>Canals__c</referenceTo>
+    <relationshipName>Save_Game_Canals</relationshipName>
+    <required>false</required>
+</CustomField>

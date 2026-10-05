@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Victoria_regina__c</fullName>
+    <label>Victoria regina</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+</CustomField>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Foreign_investment__c</fullName>
+    <label>Foreign investment</label>
+    <type>Lookup</type>
+    <referenceTo>Foreign_investment__c</referenceTo>
+    <relationshipName>Country_Save_State_Foreign_investment</relationshipName>
+    <required>false</required>
+</CustomField>

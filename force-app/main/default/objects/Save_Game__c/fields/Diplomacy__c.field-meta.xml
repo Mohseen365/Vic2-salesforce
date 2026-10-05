@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Diplomacy__c</fullName>
+    <label>Diplomacy</label>
+    <type>Lookup</type>
+    <referenceTo>Diplomacy__c</referenceTo>
+    <relationshipName>Save_Game_Diplomacy</relationshipName>
+    <required>false</required>
+</CustomField>

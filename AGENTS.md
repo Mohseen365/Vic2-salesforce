@@ -73,3 +73,16 @@
 - **Run LWC Jest Suite:** `npm run test:lwc`
 - **Run Parity Verification Harness:** `python3 vc2-salesforce-version/e2e/parity/compare.py`
 - **Run Metadata Validator:** `python3 vc2-salesforce-version/scripts/validate_metadata.py`
+
+## Track B — Comprehensive Save-Game Data Model Expansion Status
+- **Status:** Complete (Out of original audit scope — Enhancement Track B).
+- **Deliverables:**
+  - `vc2-salesforce-version/track-b-reconciliation.md`: Reconciliation decisions and governor limits resolutions.
+  - `vc2-salesforce-version/track-b-completion-report.md`: Track B completion report.
+  - `salesforce_model_expanded.txt`: Expanded 136-object model reference text.
+  - `field-inventory.md`: Extended field inventory covering both Economy Model and Track B Full Save-Game Model.
+- **Protected Economy Artifacts Integrity:**
+  - SHA-256 Hash of 13 Protected Economy Artifacts: `dd00e83a599db3e4d2028b6166b769a9faccc0e4f41a23fca16283d8f13d7c1b` (100% bit-for-bit unchanged).
+- **Rules for Future Tracks:**
+  - Any future track extending non-economy entities must respect the junction patterns (`Save_Game_Country_Ref__c`, `Country_Country_Ref__c`).
+  - Do not alter any of the 13 protected economy artifacts or `EconomyCalculationEngine.cls`.

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Gameplaysettings__c</fullName>
+    <label>Gameplaysettings</label>
+    <type>Lookup</type>
+    <referenceTo>Gameplaysettings__c</referenceTo>
+    <relationshipName>Save_Game_Gameplaysettings</relationshipName>
+    <required>false</required>
+</CustomField>

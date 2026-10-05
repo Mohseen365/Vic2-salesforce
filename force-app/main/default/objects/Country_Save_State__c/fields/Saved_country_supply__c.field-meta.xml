@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Saved_country_supply__c</fullName>
+    <label>Saved country supply</label>
+    <type>Lookup</type>
+    <referenceTo>Saved_country_supply__c</referenceTo>
+    <relationshipName>Country_Save_State_Saved_country_supply</relationshipName>
+    <required>false</required>
+</CustomField>

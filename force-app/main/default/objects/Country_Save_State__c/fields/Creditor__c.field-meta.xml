@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Creditor__c</fullName>
+    <label>Creditor</label>
+    <type>Lookup</type>
+    <referenceTo>Creditor__c</referenceTo>
+    <relationshipName>Country_Save_State_Creditor</relationshipName>
+    <required>false</required>
+</CustomField>

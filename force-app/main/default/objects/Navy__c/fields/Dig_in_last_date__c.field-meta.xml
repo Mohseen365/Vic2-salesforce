@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dig_in_last_date__c</fullName>
+    <label>Dig in last date</label>
+    <type>Text</type>
+    <length>255</length>
+</CustomField>
