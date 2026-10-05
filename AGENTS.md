@@ -157,19 +157,28 @@
 
 ---
 
-## Data Model Tracks (B, C, D, E) Status
-- **Track B:** Model expansion complete; 126 save entities & junction objects added.
-- **Track C:** Possibility map & roadmap complete (125 capabilities, 16 features); permission sets generated; 58 defects documented.
-- **Track D:** Phase 1 initial audit BLOCKED (remediated under Track E); Phase 1 re-audit PASSED (`track-d-verification-attestation.md`).
-- **Track E:** Data model remediation COMPLETE — 58/58 defects (15 BLOCKING + 43 MAJOR) fixed in `salesforce_model_expanded.txt`; Track D Phase 1 re-run PASSED (`track-e-verification-attestation.md`).
-- **Track E-3:** Evidence Closure Addendum — `vc2-salesforce-version/track-e3-evidence-closure-addendum.md` (B1 CLOSED by raw `git diff` output, 0 lines).
+## Data Model Tracks (Final Status)
+- Track A: economy migration complete (Phases 0–12)
+- Track B: model expansion complete (136 objects)
+- Track C: possibility map complete (125 caps, 16 features)
+- Track D Phase 1: verification PASSED (Track E-3)
+- Track D Phases 2–7: capability expansion complete (65 Layer 2 caps, 45 Layer 3 metrics, 30 Layer 4 platform caps; 22 features)
+- Track E: remediation complete (58/58 defects)
+- Track E-3: evidence closure complete (B1 CLOSED)
+- Enhancement Track A (multi-save trends): complete
 
 ---
 
 ## Deliverable Artifact Pointers
 - `track-c-data-model-audit.md`, `track-c-possibility-map.md`, `track-c-roadmap.md`, `track-c-risk-register.md`
 - `track-d-verification-attestation.md`
+- `track-d-capability-expansion.md`
+- `track-d-platform-possibilities.md`
+- `track-d-roadmap-extension.md`
+- `track-d-risk-register.md`
+- `track-d-possibility-map.md`
 - `track-e-remediation-report.md`, `track-e-diff-summary.md`, `track-e-verification-attestation.md`
+- `track-e3-evidence-closure-addendum.md`
 
 ---
 
