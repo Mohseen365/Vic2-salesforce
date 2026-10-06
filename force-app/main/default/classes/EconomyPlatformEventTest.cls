@@ -33,6 +33,19 @@ private class EconomyPlatformEventTest {
         EconomyImportService.publishImportEvent(null, 'COMPLETED', null, 0);
         EconomyImportService.publishImportEvent(analysis.Id, null, null, 0);
 
+        // 6. Publish Anomaly Platform Event to execute EconomyAnomalyEventTrigger
+        Economy_Anomaly_Event__e anomalyEvt = new Economy_Anomaly_Event__e(
+            Analysis_Id__c = analysis.Id,
+            Country_Tag__c = 'TUR',
+            Anomaly_Type__c = 'GDP_CRASH',
+            Severity__c = 'CRITICAL',
+            Title__c = 'GDP Collapse',
+            Message__c = 'GDP fell dramatically',
+            Metric_Value__c = 50.0,
+            Threshold_Value__c = 30.0
+        );
+        EventBus.publish(anomalyEvt);
+
         Test.stopTest();
 
         // Verify analysis record remains intact

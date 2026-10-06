@@ -59,7 +59,7 @@ private class DerivedIntelligenceEngineTest {
     }
 
     @isTest
-    static void testComputeMetrics() {
+    static void testComputeMetricsAllMetrics() {
         List<Economy_Analysis__c> analyses = [SELECT Id FROM Economy_Analysis__c ORDER BY Ingame_Date__c ASC];
         Id baseId = analyses[0].Id;
         Id currId = analyses[1].Id;
@@ -68,19 +68,33 @@ private class DerivedIntelligenceEngineTest {
         List<DerivedMetricDTO> metrics = DerivedIntelligenceEngine.computeMetrics(currId, baseId, 'TUR');
         Test.stopTest();
 
-        System.assertNotEquals(0, metrics.size(), 'Expected derived metrics to be computed');
+        System.assertEquals(6, metrics.size(), 'Expected 6 derived metric scorecards');
 
-        DerivedMetricDTO hdi = null;
+        Set<String> expectedMetricIds = new Set<String>{
+            'MET-D-001', 'MET-D-002', 'MET-D-003', 'MET-D-006', 'MET-D-042', 'MET-D-041'
+        };
+
         for (DerivedMetricDTO m : metrics) {
-            if (m.metricId == 'MET-D-001') {
-                hdi = m;
-                break;
-            }
+            System.assert(expectedMetricIds.contains(m.metricId), 'Unexpected metricId: ' + m.metricId);
+            System.assertEquals('TUR', m.countryTag, 'Expected TUR country tag');
+            System.assertNotEquals(null, m.score, 'Score should not be null');
+            System.assertNotEquals(null, m.delta, 'Delta vs baseline should not be null');
+            System.assert(m.components.size() > 0, 'Metric breakdown components should be populated');
         }
-        System.assertNotEquals(null, hdi, 'Expected HDI metric');
-        System.assertEquals('TUR', hdi.countryTag, 'Expected TUR tag');
-        System.assertNotEquals(0.0, hdi.score, 'Expected non-zero HDI score');
-        System.assertEquals('v1.0.0', hdi.formulaVersion, 'Expected version v1.0.0');
+    }
+
+    @isTest
+    static void testComputeMetricsNullAndDefaultTag() {
+        List<Economy_Analysis__c> analyses = [SELECT Id FROM Economy_Analysis__c ORDER BY Ingame_Date__c ASC];
+        Id currId = analyses[1].Id;
+
+        Test.startTest();
+        List<DerivedMetricDTO> emptyMetrics = DerivedIntelligenceEngine.computeMetrics(null, null, null);
+        List<DerivedMetricDTO> defaultTagMetrics = DerivedIntelligenceEngine.computeMetrics(currId, null, null);
+        Test.stopTest();
+
+        System.assertEquals(0, emptyMetrics.size(), 'Null snapshotId should return empty list');
+        System.assertEquals(6, defaultTagMetrics.size(), 'Default tag calculation should return 6 metrics');
     }
 
     @isTest
@@ -91,11 +105,13 @@ private class DerivedIntelligenceEngineTest {
 
         Test.startTest();
         List<Economy_Anomaly_Event__e> events = DerivedIntelligenceEngine.evaluateAndPublishAnomalies(currId, baseId);
+        List<Economy_Anomaly_Event__e> nullEvents = DerivedIntelligenceEngine.evaluateAndPublishAnomalies(null, null);
         Test.stopTest();
 
         System.assertNotEquals(0, events.size(), 'Expected anomaly events due to 50% GDP crash');
         System.assertEquals('GDP_CRASH', events[0].Anomaly_Type__c, 'Expected GDP_CRASH event');
         System.assertEquals('CRITICAL', events[0].Severity__c, 'Expected CRITICAL severity');
+        System.assertEquals(0, nullEvents.size(), 'Null analysis should return empty list');
     }
 
     @isTest
@@ -105,10 +121,14 @@ private class DerivedIntelligenceEngineTest {
 
         Test.startTest();
         List<DerivedMetricDTO> metrics = DerivedIntelligenceController.getDerivedMetrics(currId, null, 'TUR');
+        List<DerivedMetricDTO> nullMetrics = DerivedIntelligenceController.getDerivedMetrics(null, null, null);
         List<Economy_Anomaly_Event__e> events = DerivedIntelligenceController.evaluateAnomalies(currId, null);
+        List<Economy_Anomaly_Event__e> nullEvents = DerivedIntelligenceController.evaluateAnomalies(null, null);
         Test.stopTest();
 
-        System.assertNotEquals(0, metrics.size(), 'Controller should return metrics');
+        System.assertEquals(6, metrics.size(), 'Controller should return 6 metrics');
+        System.assertEquals(0, nullMetrics.size(), 'Controller should return empty list for null snapshotId');
         System.assertNotEquals(null, events, 'Controller should return event list');
+        System.assertEquals(0, nullEvents.size(), 'Controller should return empty list for null snapshotId');
     }
 }
