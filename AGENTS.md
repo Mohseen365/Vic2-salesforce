@@ -2,7 +2,11 @@
 
 ## Project Overview & Current Status
 
-- **Current Status:** Phase 6 & Enhancement Track C **VERIFIED AND COMPLETE** — Ingestion service, REST API resource, batch persistence pipeline live, and permission sets provisioned.
+- **Current Status:** **Phases 0 through 6 Planning, UX Architecture, and Prompt Pipelines are FULLY COMPLETE AND VERIFIED.**
+- **Master Consolidated Planning Document:** [`Victoria 2 Save-Game Salesforce Application — Master Consolidated Planning Document.md`](./Victoria%202%20Save-Game%20Salesforce%20Application%20—%20Master%20Consolidated%20Planning%20Document.md)
+- **UX-UI Command Center Architecture:** [`Victoria 2 Command Center: UX-UI Possibility Map & LWC Component Architecture.md`](./Victoria%202%20Command%20Center:%20UX-UI%20Possibility%20Map%20&%20LWC%20Component%20Architecture.md)
+- **Context Retrieval & Audit Summary:** [`AUDIT_AND_IMPLEMENTATION_SUMMARY.md`](./AUDIT_AND_IMPLEMENTATION_SUMMARY.md)
+- **Phase Execution Index:** [`PHASE_EXECUTION_INDEX.md`](./PHASE_EXECUTION_INDEX.md)
 - **Semantic Contract Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
 - **Audit Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SALESFORCE_GAP_AUDIT.md)
 - **Import Contract Reference:** [`vc2-salesforce-version/IMPORT_CONTRACT.md`](./vc2-salesforce-version/IMPORT_CONTRACT.md)
@@ -10,187 +14,40 @@
 - **Golden Manifest Pointer:** [`vc2-salesforce-version/golden-dataset/manifest.json`](./vc2-salesforce-version/golden-dataset/manifest.json)
 - **Source Save Game:** `egypt.v2` (27,059,272 bytes, SHA-256: `f203943cf601df8771e15bf158b05c7f7f1606283c6ce1a86b2a227f58715154`)
 - **Parity Verification Status:** `PASS` (0 discrepancies across all scopes)
+- **Protected Economy Baseline Hash:** `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38` (100% bit-for-bit match verified)
 
 ---
 
-## Phase 6 Import Pipeline & REST Ingestion Architecture
+## Architecture & Track Status Summary
 
-### REST Endpoint Interface
-- **Endpoint URL:** `POST /services/apexrest/economy/import`
-- **Controller Class:** `EconomyImportRestResource.cls`
-- **Request Body Shape:** `EconomyImportRequestDTO` (contract version `1.0.0` required).
-- **HTTP Status Code Matrix:**
-  - `201 Created`: Synchronous ingestion completed (`COMPLETED`).
-  - `202 Accepted`: Large payload enqueued for async batch processing (`PROCESSING`).
-  - `400 Bad Request`: Validation error, missing required header, or contract version mismatch.
-  - `403 Forbidden`: FLS/CRUD authorization failure.
-  - `500 Internal Server Error`: Unexpected exception during parsing/persistence.
-
-### Orchestration Lifecycle & Status Transitions
-`RECEIVED` → `PROCESSING` → `CALCULATING` → `COMPLETED` (or `FAILED` with diagnostic message)
-1. **RECEIVED:** `Economy_Analysis__c` header created/upserted.
-2. **PROCESSING:** Master data resolved (Country → Product → Province → State) via `Database.upsert` against External IDs.
-3. **CALCULATING:** Child snapshot records persisted, Phase 5 engine invoked for storage trade calculations and country total/rank updates.
-4. **COMPLETED:** Factory and Artisan snapshots persisted (synchronously or asynchronously), final diagnostic warnings saved to `Import_Diagnostic_Message__c`.
-
-### Resolved Architecture Gates
-- **GATE-1 (Modded Commodities / Artisan Types):**
-  - Unknown products auto-provisioned in `Product__c` (`Code__c = code`, `Name = code`, `Base_Price__c = 0.0`).
-  - Unknown artisan types log warning diagnostic and skip individual artisan record without failing transaction.
-- **GATE-2 (State Name Variance):**
-  - Master states use composite external key `State_Code__c = <CountryTag>_<StateName>`.
-- **GATE-3 (Asynchronous Queue Scope for LDV):**
-  - Threshold: `factories.size() > 200` or `artisans.size() > 200`.
-  - Batch Class: `EconomyImportBatch.cls` (scope = 200 records per chunk).
-  - Rationale: Guarantees DML and heap safety for save games containing 700+ factories and 4,400+ artisans.
-
----
-
-## Rules & Guidelines for Subsequent Phases
-
-- Subsequent phases must consume `EconomyAnalysisSelector.cls` and `EconomyAnalysisController.cls` for querying imported snapshot data.
-- Master data auto-provisioning must maintain non-destructive upserts (`Database.upsert` on External ID).
-- Zero LWC or UI components were created in Phase 6.
+- **Track A (Economy Core Migration):** `COMPLETE — ATTESTED`
+- **Track B (Full Save-Game Model Expansion):** `COMPLETE — ATTESTED` (139 custom objects, 997 fields verified)
+- **Track C (Data Model Quality & Permissions):** `COMPLETE — ATTESTED` (`Economy_Analyzer_User` and `Economy_Analyzer_Admin` permission sets provisioned)
+- **Track D (Capabilities, Derived Metrics & Platform Extensions):** `COMPLETE — ATTESTED`
+- **Track E (Remediation & Governance):** `COMPLETE — ATTESTED` (0 defects remaining)
+- **UX/UI Command Center Architecture:** `COMPLETE — ATTESTED` (15 LWC component bundles verified)
+- **Phase 0–6 Execution Pipelines:** `COMPLETE — ATTESTED`
 
 ---
 
 ## Core Documentation Artifacts & Pointers
 
-1. 📜 **Semantic Contract:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
-2. 📋 **Audit Compliance Matrix:** [`vc2-salesforce-version/AUDIT_COMPLIANCE_MATRIX.md`](./vc2-salesforce-version/AUDIT_COMPLIANCE_MATRIX.md)
-3. 📄 **Migration Completion Report:** [`vc2-salesforce-version/MIGRATION_COMPLETION_REPORT.md`](./vc2-salesforce-version/MIGRATION_COMPLETION_REPORT.md)
-4. 📖 **Maintenance Runbook:** [`vc2-salesforce-version/MAINTENANCE_RUNBOOK.md`](./vc2-salesforce-version/MAINTENANCE_RUNBOOK.md)
-5. ⚖️ **Parity Verification Report:** [`vc2-salesforce-version/PARITY_REPORT.md`](./vc2-salesforce-version/PARITY_REPORT.md)
-6. ⚡ **Performance & Governor Limit Report:** [`vc2-salesforce-version/PERFORMANCE_REPORT.md`](./vc2-salesforce-version/PERFORMANCE_REPORT.md)
-7. 🔒 **Security Hardening Report:** [`vc2-salesforce-version/SECURITY_HARDENING_REPORT.md`](./vc2-salesforce-version/SECURITY_HARDENING_REPORT.md)
-8. 📑 **Phase 5 Completion Report:** [`vc2-salesforce-version/phase-5-completion-report.md`](./vc2-salesforce-version/phase-5-completion-report.md)
-9. 📑 **Phase 6 Completion Report:** [`vc2-salesforce-version/phase-6-completion-report.md`](./vc2-salesforce-version/phase-6-completion-report.md)
+1. 📜 **Master Planning Document:** [`Victoria 2 Save-Game Salesforce Application — Master Consolidated Planning Document.md`](./Victoria%202%20Save-Game%20Salesforce%20Application%20—%20Master%20Consolidated%20Planning%20Document.md)
+2. 🎨 **UX-UI Command Center Map:** [`Victoria 2 Command Center: UX-UI Possibility Map & LWC Component Architecture.md`](./Victoria%202%20Command%20Center:%20UX-UI%20Possibility%20Map%20&%20LWC%20Component%20Architecture.md)
+3. 📊 **Audit & Summary Report:** [`AUDIT_AND_IMPLEMENTATION_SUMMARY.md`](./AUDIT_AND_IMPLEMENTATION_SUMMARY.md)
+4. 📑 **Phase Execution Index:** [`PHASE_EXECUTION_INDEX.md`](./PHASE_EXECUTION_INDEX.md)
+5. 📜 **Semantic Contract:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
+6. 📋 **Audit Compliance Matrix:** [`vc2-salesforce-version/AUDIT_COMPLIANCE_MATRIX.md`](./vc2-salesforce-version/AUDIT_COMPLIANCE_MATRIX.md)
+7. 📄 **Migration Completion Report:** [`vc2-salesforce-version/MIGRATION_COMPLETION_REPORT.md`](./vc2-salesforce-version/MIGRATION_COMPLETION_REPORT.md)
+8. 📖 **Maintenance Runbook:** [`vc2-salesforce-version/MAINTENANCE_RUNBOOK.md`](./vc2-salesforce-version/MAINTENANCE_RUNBOOK.md)
+9. ⚖️ **Parity Verification Report:** [`e2e/parity/parity-report.md`](./e2e/parity/parity-report.md)
+10. 🔒 **Security & Governance:** [`SECURITY_HARDENING_REPORT.md`](./SECURITY_HARDENING_REPORT.md)
 
 ---
 
 ## Maintenance & Test Execution Guidelines
 
 - **Run LWC Jest Suite:** `npm run test:lwc`
-- **Run Parity Verification Harness:** `python3 vc2-salesforce-version/e2e/parity/compare.py`
-- **Run Metadata Validator:** `python3 vc2-salesforce-version/scripts/validate_metadata.py`
-
----
-
-## Track B — Comprehensive Save-Game Data Model Expansion Status
-- **Status:** `COMPLETE — ATTESTED` (Track B Remediation completed; reference integrity restored).
-- **Deliverables & Verification Reports:**
-  - [`vc2-salesforce-version/track-b-reconciliation.md`](./vc2-salesforce-version/track-b-reconciliation.md): Reconciliation decisions and governor limits resolutions.
-  - [`vc2-salesforce-version/track-b-completion-report.md`](./vc2-salesforce-version/track-b-completion-report.md): Final completion report (§6 verification evidence & §7 remediation summary).
-  - [`vc2-salesforce-version/track-b-coverage-map.md`](./vc2-salesforce-version/track-b-coverage-map.md): 1:1 coverage map (126 compact objects reconciled).
-  - [`vc2-salesforce-version/track-b-verification-attestation.md`](./vc2-salesforce-version/track-b-verification-attestation.md): Re-issued attestation report (PASS verdict).
-  - [`vc2-salesforce-version/track-b-remediation-log.md`](./vc2-salesforce-version/track-b-remediation-log.md): 74-row log detailing every field remediated or deleted.
-  - `salesforce_model_expanded.txt`: Expanded 139-object model reference text.
-  - `field-inventory.md`: Extended field inventory covering both Economy Model and Track B Full Save-Game Model.
-- **Protected Economy Artifacts Integrity:**
-  - 151 files across 13 protected economy object folders verified bit-for-bit unchanged (`git status` clean). Deterministic SHA-256 baseline: `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`.
-# Track C — Data Model Possibility Map, Roadmap Planning & Permission Set Provisioning
-
-## Status
-- **COMPLETE — AUDITED & PLANNED**  
-  (Planning artifact complete; feature execution is a separate project owner decision)  
-- **COMPLETE — ATTESTED**  
-  (Permission set provisioning, out of original audit scope — Enhancement Track)
-
----
-
-## Delivered Model Summary
-- **139 custom objects** delivered  
-  - 13 protected economy artifacts  
-  - 126 save entities & junction objects  
-- **Rules for Future Tracks:**  
-  - Any future track extending non-economy entities must respect junction patterns  
-    (`Save_Game_Country_Ref__c`, `Country_Country_Ref__c`)  
-  - Do not alter any of the 13 protected economy artifacts or `EconomyCalculationEngine.cls`
-
----
-
-## Planning Deliverables & Artifact Pointers
-- `track-c-data-model-audit.md`: Data Model Quality Audit (58 defects found; 15 BLOCKING defects evaluated; Verdict: 🛑 **BLOCKED** until Phase 0 metadata remediation)  
-- `track-c-asset-inventory.md`: Inventory of 41 Apex classes and 15 LWC bundles with reusability scores and domain extension guidance  
-- `track-c-possibility-map.md`: Master Possibility Map cataloguing 125 capabilities across 12 domains mapped to 16 features  
-- `track-c-roadmap.md`: Prioritised, dependency-ordered roadmap with Value x Effort matrix, ranked build order (Top 5: Save Header, Politics Explorer, Military OOB, Sphere & Focus, Rebel Monitor), dependency graph, and "Do Not Build" list  
-- `track-c-risk-register.md`: Comprehensive risk register covering data model defects, governor limits, ingestion gaps, and security permissions
-
----
-
-## Permission Set Deliverables
-- `Economy_Analyzer_User.permissionset-meta.xml`: Read-only permission set for all 139 objects and 997 fields  
-- `Economy_Analyzer_Admin.permissionset-meta.xml`: Full read/write/delete permission set for all 139 objects and 997 fields  
-- `track-c-generate-permission-sets.py`: Deterministic python generator script  
-- `PERMISSION_SET_MATRIX.md`: 139-row permission matrix  
-- `track-c-assignment-guide.md`: Single-System-Admin context explanation and assignment guide  
-- `track-c-completion-report.md`: Final completion report with quoted static verification evidence
-
----
-
-## Summary Metrics
-- Capabilities catalogued: **125**  
-- Features ranked: **16**  
-- Top 5 recommended build order:  
-  - `FEAT-01` Save Header  
-  - `FEAT-05` Politics Explorer  
-  - `FEAT-06` Military OOB  
-  - `FEAT-08` Sphere & Focus  
-  - `FEAT-12` Rebel Insurgency  
-- Deployment-blocking metadata defects: **15**  
-  (must be fixed in Phase 0 prior to feature development)
-
----
-
-## Protected Economy Artifacts Integrity
-- Track C is a planning-only track. Zero Apex, LWC, metadata, or economy artifacts were created or modified  
-- SHA-256 hash unchanged:  
-  `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`
-
----
-
-## Single-User Operating Context
-- Exactly one active user (System Administrator)  
-- Profile grants `View All Data` and `Modify All Data`  
-- Permission sets are forward-looking artifacts for codification, future user onboarding, and auditability  
-- No custom profiles were created or modified
-
----
-
-## Data Model Tracks (Final Status)
-- Track A: economy migration complete (Phases 0–12)
-- Track B: model expansion complete (136 objects)
-- Track C: possibility map complete (125 caps, 16 features)
-- Track D Phase 1: verification PASSED (Track E-3)
-- Track D Phases 2–7: capability expansion complete (65 Layer 2 caps, 45 Layer 3 metrics, 30 Layer 4 platform caps; 22 features)
-- Track E: remediation complete (58/58 defects)
-- Track E-3: evidence closure complete (B1 CLOSED)
-- Enhancement Track A (multi-save trends): complete
-
----
-
-## Deliverable Artifact Pointers
-- `track-c-data-model-audit.md`, `track-c-possibility-map.md`, `track-c-roadmap.md`, `track-c-risk-register.md`
-- `track-d-verification-attestation.md`
-- `track-d-capability-expansion.md`
-- `track-d-platform-possibilities.md`
-- `track-d-roadmap-extension.md`
-- `track-d-risk-register.md`
-- `track-d-possibility-map.md`
-- `track-e-remediation-report.md`, `track-e-diff-summary.md`, `track-e-verification-attestation.md`
-- `track-e3-evidence-closure-addendum.md`
-
----
-
-## Protected Economy Artifacts Integrity
-- Zero Apex, LWC, or XML metadata files were created or modified in Tracks C, D, or E.
-- SHA-256 hash unchanged over 13 protected economy objects: `976a8638bbbba3e52848e32e34d1144b3ca5a5dc46f723fc9fba8a10d5ef2a38`
-
----
-
-## Rules for Future Tracks
-Any change to object or field metadata in future tracks **MUST** be accompanied by executing:
-
-```bash
-python3 vc2-salesforce-version/track-c-generate-permission-sets.py
-
+- **Run Parity Verification Harness:** `python3 e2e/parity/compare.py`
+- **Run Metadata Validator:** `python3 scripts/validate_metadata.py`
+- **Run Track D Audit Verification:** `python3 scripts/run_track_d_phase1_audit.py`
