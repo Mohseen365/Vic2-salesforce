@@ -8,6 +8,7 @@ export default class WorkspaceTabs extends LightningElement {
         const active = this.activeTabKey || 'economy';
         const tabs = [
             { key: 'overview', label: 'Overview', icon: '🌐' },
+            { key: 'intelligence', label: 'Intelligence', icon: '💡' },
             { key: 'economy', label: 'Economy', icon: '📈' },
             { key: 'pops', label: 'POPs Demographics', icon: '👥' },
             { key: 'politics', label: 'Politics', icon: '🏛️' },
@@ -25,6 +26,10 @@ export default class WorkspaceTabs extends LightningElement {
 
     get isOverviewTab() {
         return this.activeTabKey === 'overview';
+    }
+
+    get isIntelligenceTab() {
+        return this.activeTabKey === 'intelligence';
     }
 
     get isEconomyTab() {

@@ -1,0 +1,66 @@
+.lens-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.lens-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.primary-metric-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #001529;
+    line-height: 1.2;
+}
+
+.secondary-metric-val {
+    font-size: 0.85rem;
+}
+
+.briefing-headline {
+    border-left: 4px solid #0176d3;
+    background-color: #f3f5f8;
+}
+
+.chart-container {
+    background-color: #ffffff;
+    border-radius: 4px;
+}
+
+.lens-svg {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+}
+
+.data-point-group circle {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.data-point-group:hover circle {
+    transform: scale(1.2);
+}
+
+.evidence-drawer {
+    background-color: #f8f9fb;
+}
+
+.evidence-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #514f4d;
+    letter-spacing: 0.5px;
+}
+
+.formula-code {
+    background-color: #272822;
+    color: #f8f8f2;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    overflow-x: auto;
+}

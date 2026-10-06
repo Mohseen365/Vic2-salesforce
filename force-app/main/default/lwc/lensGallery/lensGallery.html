@@ -1,0 +1,53 @@
+<template>
+    <div class="lens-gallery-container" data-testid="lens-gallery">
+        <!-- Gallery Header & Filter Toolbar -->
+        <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-m-bottom_medium slds-p-around_small slds-theme_shade slds-border_bottom">
+            <div class="slds-media slds-media_center">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:insights" size="medium"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title slds-text-heading_medium">
+                        Cross-Domain Intelligence Gallery (`FEAT-17-lite`)
+                    </h2>
+                    <p class="slds-text-body_small slds-text-color_weak">
+                        High-value narrow slice of 5 core cross-domain capabilities
+                    </p>
+                </div>
+            </div>
+
+            <!-- Country Selector Filter -->
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <span class="slds-m-right_small slds-text-body_small slds-text-color_weak">Target Country:</span>
+                <lightning-combobox
+                    name="countryTag"
+                    label="Target Country"
+                    variant="label-hidden"
+                    value={selectedCountryTag}
+                    options={countryOptions}
+                    onchange={handleCountryChange}
+                    class="country-picker"
+                    data-testid="gallery-country-picker">
+                </lightning-combobox>
+            </div>
+        </div>
+
+        <!-- Loading State Spinner -->
+        <template if:true={isLoading}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-spinner alternative-text="Loading cross-domain analytics..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Lens Gallery Grid (2 Columns) -->
+        <template if:false={isLoading}>
+            <div class="slds-grid slds-gutters slds-wrap" data-testid="gallery-grid">
+                <template for:each={lenses} for:item="lens">
+                    <div key={lens.capabilityId} class="slds-col slds-size_1-1 slds-medium-size_1-2">
+                        <c-lens-view lens-data={lens} data-testid="lens-view-item"></c-lens-view>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

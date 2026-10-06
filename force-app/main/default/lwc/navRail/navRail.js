@@ -34,6 +34,13 @@ export default class NavRail extends LightningElement {
                         icon: 'standard:dashboard',
                         badge: null,
                         cssClass: active === 'overview' ? 'nav-item nav-item-active' : 'nav-item'
+                    },
+                    {
+                        key: 'intelligence',
+                        label: 'Intelligence Lenses',
+                        icon: 'standard:insights',
+                        badge: 'FEAT-17',
+                        cssClass: active === 'intelligence' ? 'nav-item nav-item-active' : 'nav-item'
                     }
                 ]
             },

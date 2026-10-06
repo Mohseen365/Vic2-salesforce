@@ -1,0 +1,110 @@
+<template>
+    <article class={cardCssClass} data-testid="lens-view-card">
+        <!-- Lens Header -->
+        <div class="slds-p-around_medium slds-border_bottom slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
+            <div class="slds-media slds-media_center">
+                <div class="slds-media__figure">
+                    <span class={badgeCssClass}>{lensStatus}</span>
+                </div>
+                <div class="slds-media__body">
+                    <h3 class="slds-card__header-title slds-text-heading_small slds-truncate" title={lensTitle}>
+                        {lensTitle}
+                    </h3>
+                    <p class="slds-text-body_small slds-text-color_weak">
+                        {lensCategory} · Capability {lensCapabilityId}
+                    </p>
+                </div>
+            </div>
+            <div class="metric-highlight slds-text-align_right">
+                <div class="primary-metric-val">{primaryMetricFormatted}</div>
+                <div class="secondary-metric-val slds-text-color_weak">{secondaryMetricFormatted}</div>
+            </div>
+        </div>
+
+        <!-- Headline Insight Sentence -->
+        <div class="slds-p-around_medium briefing-headline slds-theme_shade slds-border_left">
+            <p class="slds-text-body_regular">
+                <strong>Insight Summary:</strong> {lensHeadline}
+            </p>
+        </div>
+
+        <!-- Primary SVG Visualization Area -->
+        <div class="slds-p-around_medium chart-container" data-testid="lens-chart-container">
+            <svg class="lens-svg" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid meet">
+                <!-- Background Grid Lines -->
+                <line x1="50" y1="20" x2="480" y2="20" stroke="#e0e5ee" stroke-dasharray="3 3" />
+                <line x1="50" y1="70" x2="480" y2="70" stroke="#e0e5ee" stroke-dasharray="3 3" />
+                <line x1="50" y1="120" x2="480" y2="120" stroke="#e0e5ee" stroke-dasharray="3 3" />
+                <line x1="50" y1="170" x2="480" y2="170" stroke="#001529" stroke-width="1.5" />
+
+                <!-- Axes -->
+                <line x1="50" y1="20" x2="50" y2="170" stroke="#001529" stroke-width="1.5" />
+
+                <!-- Render Scatter / Data Point Bubbles -->
+                <template for:each={renderedPoints} for:item="pt">
+                    <g key={pt.id} class="data-point-group" transform={pt.transform}>
+                        <circle
+                            r={pt.r}
+                            fill={pt.fill}
+                            stroke={pt.stroke}
+                            stroke-width="1.5"
+                            opacity="0.85" />
+                        <text
+                            x="0"
+                            y="-10"
+                            text-anchor="middle"
+                            font-size="10"
+                            font-weight="bold"
+                            fill="#001529">
+                            {pt.label}
+                        </text>
+                    </g>
+                </template>
+            </svg>
+        </div>
+
+        <!-- Evidence Drawer Toggle Bar -->
+        <div class="slds-p-horizontal_medium slds-p-vertical_x-small slds-border_top slds-theme_shade slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+            <span class="slds-text-body_small slds-text-color_weak">
+                🔍 Formula & Provenance Evidence
+            </span>
+            <lightning-button
+                variant="base"
+                label={toggleDrawerLabel}
+                icon-name={toggleDrawerIcon}
+                onclick={handleToggleDrawer}
+                data-testid="toggle-evidence-btn">
+            </lightning-button>
+        </div>
+
+        <!-- Evidence Drawer Content -->
+        <template if:true={isDrawerOpen}>
+            <div class="slds-p-around_medium evidence-drawer slds-border_top" data-testid="evidence-drawer">
+                <div class="slds-m-bottom_small">
+                    <div class="evidence-section-title">Source Objects (≥2 Domains)</div>
+                    <div class="slds-m-top_xx-small">
+                        <template for:each={evidenceSourceObjects} for:item="obj">
+                            <span key={obj} class="slds-badge slds-m-right_xx-small slds-m-bottom_xx-small">{obj}</span>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="slds-m-bottom_small">
+                    <div class="evidence-section-title">Formula Specification</div>
+                    <div class="formula-code slds-p-around_x-small slds-m-top_xx-small">
+                        <code>{evidenceFormula}</code>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="evidence-section-title">Provenance Badges</div>
+                    <div class="slds-m-top_xx-small">
+                        <template for:each={evidenceBadges} for:item="badge">
+                            <span key={badge} class="slds-badge slds-theme_success slds-m-right_xx-small">{badge}</span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </article>
+</template>

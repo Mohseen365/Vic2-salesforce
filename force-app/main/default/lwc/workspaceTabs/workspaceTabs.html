@@ -51,6 +51,13 @@
                 </div>
             </template>
 
+            <!-- 1b. Intelligence Tab -->
+            <template if:true={isIntelligenceTab}>
+                <div data-testid="intelligence-view">
+                    <c-lens-gallery snapshot-id={selectedAnalysisId} data-testid="lens-gallery-component"></c-lens-gallery>
+                </div>
+            </template>
+
             <!-- 2. Economy Tab (Embedded Economy Analyzer Shell) -->
             <template if:true={isEconomyTab}>
                 <div data-testid="economy-view">
