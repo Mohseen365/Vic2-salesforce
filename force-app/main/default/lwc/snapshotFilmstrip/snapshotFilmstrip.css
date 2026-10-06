@@ -1,0 +1,84 @@
+.filmstrip-container {
+    background-color: #16325c;
+    color: #ffffff;
+    border-radius: 6px;
+    position: relative;
+}
+
+.filmstrip-track {
+    position: relative;
+    white-space: nowrap;
+    min-height: 140px;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 32px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #4a6da7;
+    z-index: 1;
+}
+
+.filmstrip-slots {
+    position: relative;
+    z-index: 2;
+    gap: 12px;
+}
+
+.filmstrip-slot {
+    flex: 0 0 160px;
+    cursor: pointer;
+    transition: transform 0.15s ease-in-out;
+}
+
+.filmstrip-slot:hover {
+    transform: translateY(-2px);
+}
+
+.slot-card {
+    background-color: #0e2038;
+    border: 2px solid #2e5288;
+    border-radius: 6px;
+    color: #ffffff;
+}
+
+.filmstrip-slot.selected .slot-card {
+    border-color: #0070d2;
+    background-color: #1b3a66;
+    box-shadow: 0 0 8px rgba(0, 112, 210, 0.6);
+}
+
+.event-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.badge-war {
+    background-color: #c23934;
+    color: #ffffff;
+}
+
+.badge-reform {
+    background-color: #04844b;
+    color: #ffffff;
+}
+
+.badge-crisis {
+    background-color: #ffb75d;
+    color: #081c42;
+}
+
+.slot-date {
+    color: #54ecdd;
+}
+
+.slot-stat {
+    font-size: 11px;
+}

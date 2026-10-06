@@ -1,0 +1,89 @@
+<template>
+    <div class="gallery-container slds-card slds-p-around_medium">
+        <!-- Gallery Header -->
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium">
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <lightning-icon icon-name="standard:portal" size="medium" class="slds-m-right_small"></lightning-icon>
+                <div>
+                    <h2 class="slds-text-heading_medium slds-font-weight_bold">Victoria 2 Campaign Sharing Gallery</h2>
+                    <p class="slds-text-body_small slds-text-color_weak">Public community showcase of player campaign save files & milestone snapshots.</p>
+                </div>
+            </div>
+
+            <template if:true={selectedCampaign}>
+                <button class="slds-button slds-button_neutral" onclick={handleBackToGallery}>
+                    <lightning-icon icon-name="utility:back" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Back to Campaign Gallery
+                </button>
+            </template>
+        </div>
+
+        <!-- View 1: Campaign Gallery Grid -->
+        <template if:false={selectedCampaign}>
+            <div class="slds-grid slds-wrap slds-gutters">
+                <template for:each={campaignCards} for:item="card">
+                    <div key={card.id} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-m-bottom_medium">
+                        <div class="campaign-card slds-card slds-p-around_medium" onclick={handleCardClick} data-id={card.id}>
+                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_x-small">
+                                <span class="country-tag slds-badge slds-theme_brand">{card.countryTag}</span>
+                                <span class="ingame-date slds-text-title_bold">{card.ingameDate}</span>
+                            </div>
+
+                            <h3 class="campaign-title slds-text-heading_small slds-truncate">{card.title}</h3>
+                            <p class="player-name slds-text-body_small slds-text-color_weak slds-m-bottom_small">Player: {card.player}</p>
+
+                            <!-- Key Metrics Grid -->
+                            <div class="stats-grid slds-grid slds-grid_pull-padded-x-small slds-m-bottom_small">
+                                <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2">
+                                    <span class="stat-label">World GDP</span>
+                                    <div class="stat-value">£{card.formattedGdp}</div>
+                                </div>
+                                <div class="slds-col slds-p-horizontal_x-small slds-size_1-of-2">
+                                    <span class="stat-label">Population</span>
+                                    <div class="stat-value">{card.formattedPop}</div>
+                                </div>
+                            </div>
+
+                            <!-- SVG Sparkline Representation -->
+                            <div class="sparkline-container slds-m-top_small">
+                                <span class="stat-label slds-m-bottom_xx-small">GDP Trajectory Sparkline</span>
+                                <svg class="sparkline-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
+                                    <path d={card.sparklineD} fill="none" stroke="#54ecdd" stroke-width="2"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- View 2: Campaign Detail Page View -->
+        <template if:true={selectedCampaign}>
+            <div class="campaign-detail-container slds-card slds-p-around_large">
+                <div class="slds-grid slds-grid_align-spread slds-m-bottom_medium">
+                    <div>
+                        <span class="slds-badge slds-theme_success slds-m-bottom_x-small">{selectedCampaign.countryTag} Campaign</span>
+                        <h2 class="slds-text-heading_large slds-font-weight_bold">{selectedCampaign.title}</h2>
+                        <p class="slds-text-body_medium slds-text-color_weak">Player: {selectedCampaign.player} | Snapshot Date: {selectedCampaign.ingameDate}</p>
+                    </div>
+                    <button class="slds-button slds-button_brand" onclick={handleOpenH2H}>Compare Head-to-Head</button>
+                </div>
+
+                <!-- Generated Narrative Summary -->
+                <div class="narrative-box slds-box slds-m-bottom_large">
+                    <h4 class="slds-text-heading_small slds-font-weight_bold slds-m-bottom_x-small">
+                        <lightning-icon icon-name="utility:news" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                        Campaign AI Narrative Summary
+                    </h4>
+                    <p class="narrative-text">{selectedCampaign.narrativeSummary}</p>
+                </div>
+
+                <!-- Timeline & Core Charts Integration -->
+                <div class="slds-m-bottom_large">
+                    <h4 class="slds-text-heading_small slds-font-weight_bold slds-m-bottom_small">Multi-Save Time Series Trend</h4>
+                    <c-multi-save-trend selected-analysis-ids={selectedCampaignAnalysisIds}></c-multi-save-trend>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

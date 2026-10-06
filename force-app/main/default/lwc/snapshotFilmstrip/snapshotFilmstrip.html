@@ -1,0 +1,52 @@
+<template>
+    <div class="filmstrip-container slds-card slds-p-around_medium">
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_small">
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <lightning-icon icon-name="utility:timeline" size="small" class="slds-m-right_small"></lightning-icon>
+                <h3 class="slds-text-heading_small slds-font-weight_bold">Snapshot Filmstrip Timeline</h3>
+                <span class="slds-badge slds-m-left_small slds-theme_info">
+                    {selectedCount} / 12 Selected (Min 3)
+                </span>
+            </div>
+            <div class="slds-button-group" role="group">
+                <button class="slds-button slds-button_neutral slds-button_first" onclick={handleSelectAll}>Select All (Max 12)</button>
+                <button class="slds-button slds-button_neutral slds-button_last" onclick={handleClearSelection}>Reset</button>
+            </div>
+        </div>
+
+        <!-- Timeline Filmstrip Track -->
+        <div class="filmstrip-track slds-scrollable_x slds-p-vertical_small">
+            <div class="timeline-line"></div>
+
+            <template if:true={hasSnapshots}>
+                <div class="filmstrip-slots slds-grid slds-grid_vertical-align-start">
+                    <template for:each={processedSnapshots} for:item="snap">
+                        <div key={snap.id} class={snap.slotClass} onclick={handleSlotClick} data-id={snap.id}>
+                            <!-- Event Tick Marker -->
+                            <template if:true={snap.hasEvent}>
+                                <div class={snap.badgeClass} title={snap.eventDescription}>
+                                    {snap.eventType}
+                                </div>
+                            </template>
+
+                            <div class="slot-card slds-box slds-box_x-small slds-text-align_center">
+                                <div class="slot-date slds-text-title_bold">{snap.formattedDate}</div>
+                                <div class="slot-name slds-text-body_small slds-truncate" title={snap.saveFileName}>{snap.saveFileName}</div>
+                                <div class="slot-stat slds-text-color_weak slds-m-top_xx-small">GDP: £{snap.formattedGdp}</div>
+                                <div class="slot-checkbox slds-m-top_x-small">
+                                    <input type="checkbox" checked={snap.isSelected} readonly tabindex="-1" />
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <template if:false={hasSnapshots}>
+                <div class="slds-text-align_center slds-p-around_medium slds-text-color_weak">
+                    No save game snapshots loaded in filmstrip timeline.
+                </div>
+            </template>
+        </div>
+    </div>
+</template>
