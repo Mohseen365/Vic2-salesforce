@@ -1,0 +1,214 @@
+<template>
+    <div class="campaign-advisor-container slds-card slds-p-around_small" data-testid="campaign-advisor-container">
+
+        <!-- Panel Header & Pinned Context Banner -->
+        <div class="panel-header slds-m-bottom_small">
+            <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
+                <div class="slds-media slds-media_center">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:bot" size="small" class="advisor-icon"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title slds-truncate">CAMPAIGN ADVISOR</h2>
+                    </div>
+                </div>
+                <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Close Panel" onclick={handleClosePanel} data-testid="close-panel-btn">
+                    <lightning-icon icon-name="utility:close" size="x-small"></lightning-icon>
+                </button>
+            </div>
+
+            <!-- Pinned Context Banner -->
+            <div class="pinned-context-banner slds-p-around_xx-small slds-m-top_x-small" data-testid="pinned-context-banner">
+                <span class="pinned-label">📌 {countryName} ({countryTag})</span>
+                <span class="pinned-separator">·</span>
+                <span class="pinned-date">{snapshotDate}</span>
+                <span class="pinned-separator">·</span>
+                <span class="pinned-save">{saveFileName}</span>
+            </div>
+        </div>
+
+        <!-- Quick Prompt Chips -->
+        <div class="quick-prompts-section slds-m-bottom_small" data-testid="quick-prompts-section">
+            <div class="slds-text-title_caps slds-m-bottom_xx-small prompt-header-label">
+                Suggested ({activeTabName} Tab)
+            </div>
+            <div class="prompt-chips-container slds-grid slds-wrap">
+                <template for:each={activeQuickPrompts} for:item="chip">
+                    <button
+                        key={chip.id}
+                        class="prompt-chip-btn slds-button slds-button_neutral slds-m-around_xx-small"
+                        data-prompt={chip.prompt}
+                        onclick={handleQuickPromptClick}
+                        data-testid="quick-prompt-chip">
+                        {chip.label}
+                    </button>
+                </template>
+            </div>
+        </div>
+
+        <!-- Chat / Input Query Box -->
+        <div class="query-input-section slds-m-bottom_small" data-testid="query-input-section">
+            <div class="slds-form-element">
+                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                    <input
+                        type="text"
+                        class="slds-input advisor-input"
+                        placeholder="Ask Campaign Advisor..."
+                        value={userQuery}
+                        onchange={handleQueryChange}
+                        onkeyup={handleKeyUp}
+                        data-testid="advisor-query-input" />
+                    <button
+                        class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                        onclick={handleSubmitQuery}
+                        title="Submit Query"
+                        data-testid="submit-query-btn">
+                        <lightning-icon icon-name="utility:send" size="x-small"></lightning-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="loading-spinner-wrapper slds-p-around_medium slds-text-align_center" data-testid="loading-wrapper">
+                <lightning-spinner alternative-text="Querying Campaign Advisor..." size="small"></lightning-spinner>
+                <p class="slds-text-body_small slds-m-top_small">Fetching grounded facts from Apex actions...</p>
+            </div>
+        </template>
+
+        <!-- Response Content Area -->
+        <template if:false={isLoading}>
+            <template if:true={advisorResponse}>
+
+                <!-- Verification Warning Badge (RSK-25) -->
+                <template if:false={advisorResponse.isVerified}>
+                    <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_x-small" role="alert" data-testid="hallucination-alert">
+                        <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small">
+                            <lightning-icon icon-name="utility:warning" size="x-small" variant="warning"></lightning-icon>
+                        </span>
+                        <h2>Anti-Hallucination Post-Processor (RSK-25): Ungrounded response was cleansed.</h2>
+                    </div>
+                </template>
+
+                <!-- Fact vs. Interpretation Blocks -->
+                <div class="response-card slds-p-around_small slds-m-bottom_small" data-testid="response-card">
+
+                    <!-- FACTS Block -->
+                    <div class="facts-block slds-m-bottom_small" data-testid="facts-block">
+                        <div class="block-header slds-grid slds-grid_vertical-align-center slds-m-bottom_xx-small">
+                            <lightning-icon icon-name="utility:check" size="x-small" class="fact-icon slds-m-right_xx-small"></lightning-icon>
+                            <span class="block-title slds-text-title_bold">FACTS (from your save)</span>
+                            <button
+                                class="slds-button slds-button_icon slds-button_icon-border-filled slds-m-left_auto"
+                                title="Inspect Source Provenance"
+                                onclick={handleOpenProvenanceModal}
+                                data-testid="inspect-source-btn">
+                                <span class="inspect-src-label">ⓘ src</span>
+                            </button>
+                        </div>
+                        <ul class="facts-list">
+                            <template for:each={advisorResponse.facts} for:item="fact">
+                                <li key={fact.label} class="fact-item slds-m-vertical_xx-small">
+                                    <span class="fact-label">{fact.label}: </span>
+                                    <span class="fact-chip-badge" data-testid="fact-chip">
+                                        {fact.chipValue}
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+
+                    <!-- INTERPRETATION Block -->
+                    <div class="interpretation-block" data-testid="interpretation-block">
+                        <div class="block-header slds-m-bottom_xx-small">
+                            <span class="block-title slds-text-title_bold">STRATEGIC INTERPRETATION</span>
+                        </div>
+                        <p class="interpretation-text slds-text-body_regular">
+                            {advisorResponse.interpretationText}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Show Data Payload Expander Button -->
+                <div class="payload-expander-container slds-m-bottom_small">
+                    <button
+                        class="slds-button slds-button_neutral slds-button_full-width"
+                        onclick={handleTogglePayload}
+                        data-testid="toggle-payload-btn">
+                        {payloadButtonLabel}
+                    </button>
+                    <template if:true={showPayload}>
+                        <pre class="payload-json-box slds-p-around_small slds-m-top_xx-small" data-testid="payload-json-box">{advisorResponse.rawActionPayloadJson}</pre>
+                    </template>
+                </div>
+
+                <!-- Thumbs Up / Down Feedback Logging -->
+                <div class="feedback-logging-bar slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-p-around_xx-small" data-testid="feedback-logging-bar">
+                    <span class="feedback-prompt-label slds-text-body_small">Was this advice helpful?</span>
+                    <div class="feedback-buttons">
+                        <button
+                            class={thumbsUpClass}
+                            title="Helpful"
+                            onclick={handleThumbsUp}
+                            data-testid="thumbs-up-btn">
+                            <lightning-icon icon-name="utility:like" size="x-small"></lightning-icon>
+                        </button>
+                        <button
+                            class={thumbsDownClass}
+                            title="Not Helpful"
+                            onclick={handleThumbsDown}
+                            data-testid="thumbs-down-btn">
+                            <lightning-icon icon-name="utility:dislike" size="x-small"></lightning-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <template if:true={feedbackSubmitted}>
+                    <p class="slds-text-body_small slds-text-color_success slds-m-top_xx-small" data-testid="feedback-thanks">
+                        ✓ Feedback logged successfully.
+                    </p>
+                </template>
+
+            </template>
+        </template>
+
+        <!-- Provenance / Source Details Modal -->
+        <template if:true={showProvenanceModal}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" data-testid="provenance-modal">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={handleCloseProvenanceModal}>
+                            <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                        </button>
+                        <h2 class="slds-modal__title slds-hyphenate">Data Provenance Details</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <div class="provenance-detail-row slds-m-bottom_x-small">
+                            <strong>Analysis Save Id: </strong><span>{provenanceData.saveId}</span>
+                        </div>
+                        <div class="provenance-detail-row slds-m-bottom_x-small">
+                            <strong>Snapshot Date: </strong><span>{provenanceData.snapshotDate}</span>
+                        </div>
+                        <div class="provenance-detail-row slds-m-bottom_x-small">
+                            <strong>Country Tag: </strong><span>{provenanceData.countryTag}</span>
+                        </div>
+                        <div class="provenance-detail-row">
+                            <strong>Source Fields:</strong>
+                            <ul class="slds-list_dotted slds-m-left_medium">
+                                <template for:each={provenanceData.sourceFields} for:item="sf">
+                                    <li key={sf}>{sf}</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_brand" onclick={handleCloseProvenanceModal}>Close</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+
+    </div>
+</template>

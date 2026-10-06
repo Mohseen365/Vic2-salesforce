@@ -51,11 +51,32 @@
                 </template>
             </div>
 
-            <!-- Right Controls: Snapshot Scrubber & Baseline Comparison & Alert Drawer Hub -->
+            <!-- Right Controls: Snapshot Scrubber & Baseline Comparison & Alert Drawer Hub & Campaign Advisor -->
             <div class="slds-col slds-grid slds-grid_vertical-align-center slds-wrap slds-m-bottom_x-small">
                 <!-- Real-Time Anomaly Event Hub Drawer (FEAT-19) -->
                 <div class="alert-drawer-wrapper slds-m-right_small" data-testid="alert-drawer-wrapper">
                     <c-alert-drawer data-testid="alert-drawer-component"></c-alert-drawer>
+                </div>
+
+                <!-- Campaign Advisor Side Panel Drawer (FEAT-20) -->
+                <div class="advisor-drawer-wrapper slds-m-right_small" data-testid="advisor-drawer-wrapper">
+                    <button
+                        class="slds-button slds-button_brand advisor-toggle-btn"
+                        title="Campaign Advisor AI"
+                        onclick={toggleAdvisorDrawer}
+                        data-testid="advisor-toggle-btn">
+                        🤖 Advisor
+                    </button>
+                    <template if:true={isAdvisorOpen}>
+                        <div class="advisor-drawer-overlay" data-testid="advisor-drawer-overlay">
+                            <c-campaign-advisor
+                                snapshot-id={selectedAnalysisId}
+                                country-tag={selectedCountryTag}
+                                onclosepanel={closeAdvisorDrawer}
+                                data-testid="campaign-advisor-component">
+                            </c-campaign-advisor>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Snapshot Scrubber -->

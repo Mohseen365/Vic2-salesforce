@@ -1,4 +1,4 @@
-import { LightningElement, api, wire } from 'lwc';
+import { LightningElement, api, wire, track } from 'lwc';
 import getRecentAnalyses from '@salesforce/apex/EconomyAnalysisController.getRecentAnalyses';
 import getCountrySummaries from '@salesforce/apex/EconomyAnalysisController.getCountrySummaries';
 import getAnalysisSummary from '@salesforce/apex/EconomyAnalysisController.getAnalysisSummary';
@@ -16,6 +16,8 @@ export default class GlobalContextBar extends LightningElement {
     observerMode = false;
     baselineType = 'previous';
     baselineRef = null;
+
+    @track isAdvisorOpen = false;
 
     unsubscribeStore = null;
 
@@ -171,6 +173,14 @@ export default class GlobalContextBar extends LightningElement {
         } else {
             this.observerMode = false;
         }
+    }
+
+    toggleAdvisorDrawer() {
+        this.isAdvisorOpen = !this.isAdvisorOpen;
+    }
+
+    closeAdvisorDrawer() {
+        this.isAdvisorOpen = false;
     }
 
     handleSaveChange(event) {
