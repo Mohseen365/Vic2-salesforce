@@ -1,0 +1,9 @@
+.lens-gallery-container {
+    background-color: #fafbfc;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.country-picker {
+    width: 220px;
+}
