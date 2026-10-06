@@ -1,0 +1,64 @@
+.nav-rail-panel {
+    background-color: #ffffff;
+    border-right: 1px solid #c9c7c5;
+    height: 100%;
+    transition: width 0.2s ease;
+}
+
+.nav-rail-expanded {
+    width: 210px;
+}
+
+.nav-rail-collapsed {
+    width: 52px;
+}
+
+.nav-title {
+    font-size: 0.7rem;
+    color: #514f4d;
+    font-weight: 700;
+}
+
+.group-header {
+    font-size: 0.65rem;
+    color: #706e6b;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.nav-items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    border-radius: 0.25rem;
+    margin-bottom: 2px;
+}
+
+.nav-link {
+    color: #2b2826;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: background-color 0.15s ease;
+}
+
+.nav-link:hover {
+    background-color: #f3f3f3;
+    text-decoration: none;
+}
+
+.nav-item-active .nav-link {
+    background-color: #0176d3;
+    color: #ffffff;
+}
+
+.nav-item-active .nav-icon {
+    --slds-c-icon-color-foreground-default: #ffffff;
+}
+
+.nav-badge {
+    font-size: 0.65rem;
+    padding: 1px 5px;
+}

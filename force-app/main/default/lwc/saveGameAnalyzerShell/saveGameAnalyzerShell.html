@@ -1,0 +1,67 @@
+<template>
+    <div class="master-shell-container slds-p-around_medium" data-testid="master-shell-container">
+        <!-- Master Application Header -->
+        <div class="slds-page-header slds-m-bottom_medium master-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:dashboard" size="large"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title slds-truncate" title="Victoria 2 Save-Game Command Center">
+                                Victoria 2 Command Center
+                            </h1>
+                            <p class="slds-page-header__name-meta">
+                                Enterprise Salesforce Save-Game Workspace & Analysis Shell
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Context Bar (Header Controls & KPI Ribbon) -->
+        <c-global-context-bar
+            selected-analysis-id={selectedAnalysisId}
+            oncontextchange={handleContextChange}
+            data-testid="global-context-bar-component">
+        </c-global-context-bar>
+
+        <!-- Main Workspace Area (Nav Rail + Workspace Tabs) -->
+        <div class="workspace-body-grid slds-grid slds-m-bottom_medium" data-testid="workspace-body">
+            <!-- Left Rail Navigation -->
+            <div class="nav-rail-column">
+                <c-nav-rail
+                    active-domain={activeTabKey}
+                    onnavselect={handleNavSelect}
+                    oncollapsetoggle={handleNavCollapseToggle}
+                    data-testid="nav-rail-component">
+                </c-nav-rail>
+            </div>
+
+            <!-- Workspace Tabs & Views -->
+            <div class="workspace-tabs-column slds-col">
+                <c-workspace-tabs
+                    active-tab-key={activeTabKey}
+                    selected-analysis-id={selectedAnalysisId}
+                    ontabselect={handleTabSelect}
+                    data-testid="workspace-tabs-component">
+                </c-workspace-tabs>
+            </div>
+        </div>
+
+        <!-- Status Footer Bar -->
+        <footer class="status-footer-bar slds-card slds-p-around_x-small slds-grid slds-grid_align-spread slds-grid_vertical-align-center" data-testid="status-footer">
+            <div class="footer-left slds-text-body_small slds-text-color_weak">
+                <span>Import Status: </span>
+                <span class="status-dot-active">●</span>
+                <span class="slds-m-right_medium"> Parser Version: v1.0.0</span>
+                <span>Rollup Schema: v1.0.0</span>
+            </div>
+            <div class="footer-right slds-text-body_small slds-text-color_weak">
+                <span>Last Refresh: {lastRefreshTime}</span>
+            </div>
+        </footer>
+    </div>
+</template>

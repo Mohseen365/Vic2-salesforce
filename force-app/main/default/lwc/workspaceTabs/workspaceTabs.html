@@ -1,0 +1,128 @@
+<template>
+    <div class="workspace-tabs-container" data-testid="workspace-tabs">
+        <!-- Tab Bar Header -->
+        <div class="tabs-header-bar slds-grid slds-grid_vertical-align-center slds-border_bottom slds-p-horizontal_small slds-m-bottom_small">
+            <ul class="slds-sub-tabs slds-grid" role="tablist">
+                <template for:each={tabList} for:item="tab">
+                    <li key={tab.key} class={tab.tabClass} role="presentation">
+                        <a
+                            href="javascript:void(0);"
+                            role="tab"
+                            tabindex={tab.tabIndex}
+                            data-key={tab.key}
+                            onclick={handleTabClick}
+                            class="slds-sub-tabs__item__link"
+                            title={tab.label}>
+                            <span class="slds-truncate">{tab.icon} {tab.label}</span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+        <!-- Active View Content Area -->
+        <div class="tab-content-area slds-p-horizontal_small" data-testid="tab-content">
+            <!-- 1. Overview Tab -->
+            <template if:true={isOverviewTab}>
+                <div class="overview-dashboard slds-grid slds-gutters slds-wrap" data-testid="overview-view">
+                    <!-- Morning Briefing Card -->
+                    <div class="slds-col slds-size_1-1 slds-m-bottom_medium">
+                        <article class="slds-card slds-p-around_medium">
+                            <div class="slds-media slds-media_center slds-m-bottom_small">
+                                <div class="slds-media__figure">
+                                    <lightning-icon icon-name="standard:dashboard" size="medium"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2 class="slds-card__header-title slds-text-heading_small">
+                                        Command Briefing — Campaign Overview
+                                    </h2>
+                                    <p class="slds-text-body_small slds-text-color_weak">
+                                        Victoria 2 Command Center Situation Summary
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="briefing-box slds-p-around_small slds-theme_shade slds-border_left slds-m-bottom_small">
+                                <p class="slds-text-body_regular">
+                                    <strong>Situation Report:</strong> Total GDP and industrial productivity remain stable across key regions. Active monitoring enabled for tax revenues and market supply balance.
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </template>
+
+            <!-- 2. Economy Tab (Embedded Economy Analyzer Shell) -->
+            <template if:true={isEconomyTab}>
+                <div data-testid="economy-view">
+                    <c-economy-analyzer-shell data-testid="economy-analyzer-shell-component"></c-economy-analyzer-shell>
+                </div>
+            </template>
+
+            <!-- 3. POPs Demographics Tab -->
+            <template if:true={isPopsTab}>
+                <div data-testid="pops-view">
+                    <article class="slds-card slds-p-around_large slds-text-align_center">
+                        <lightning-icon icon-name="standard:groups" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                        <h2 class="slds-text-heading_medium slds-m-bottom_small">POP Demographics & Ideology</h2>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_medium">
+                            Population strata distribution, literacy rates, militancy, consciousness, and workforce breakdown.
+                        </p>
+                        <span class="slds-badge slds-theme_info">Feature FEAT-04 / FEAT-12 Preview</span>
+                    </article>
+                </div>
+            </template>
+
+            <!-- 4. Politics Tab -->
+            <template if:true={isPoliticsTab}>
+                <div data-testid="politics-view">
+                    <article class="slds-card slds-p-around_large slds-text-align_center">
+                        <lightning-icon icon-name="standard:endorsement" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                        <h2 class="slds-text-heading_medium slds-m-bottom_small">Politics & Reforms Engine</h2>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_medium">
+                            Upper house parliament distribution, voting rights, social/political reform ladders, and party stances.
+                        </p>
+                        <span class="slds-badge slds-theme_info">Feature FEAT-05 Preview</span>
+                    </article>
+                </div>
+            </template>
+
+            <!-- 5. Military Tab -->
+            <template if:true={isMilitaryTab}>
+                <div data-testid="military-view">
+                    <article class="slds-card slds-p-around_large slds-text-align_center">
+                        <lightning-icon icon-name="standard:shield" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                        <h2 class="slds-text-heading_medium slds-m-bottom_small">Military OOB & War Room</h2>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_medium">
+                            Army and navy order of battle, brigade readiness, active war scores, battle history, and casualty counters.
+                        </p>
+                        <span class="slds-badge slds-theme_info">Feature FEAT-06 / FEAT-10 Preview</span>
+                    </article>
+                </div>
+            </template>
+
+            <!-- 6. Diplomacy Tab -->
+            <template if:true={isDiplomacyTab}>
+                <div data-testid="diplomacy-view">
+                    <article class="slds-card slds-p-around_large slds-text-align_center">
+                        <lightning-icon icon-name="standard:hierarchy" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                        <h2 class="slds-text-heading_medium slds-m-bottom_small">Diplomacy & Sphere Network</h2>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_medium">
+                            Great Power influence allocation, sphere of influence matrix, alliances, guarantees, and active crises.
+                        </p>
+                        <span class="slds-badge slds-theme_info">Feature FEAT-08 / FEAT-09 Preview</span>
+                    </article>
+                </div>
+            </template>
+
+            <!-- 7. Compare Tab -->
+            <template if:true={isCompareTab}>
+                <div data-testid="compare-view">
+                    <c-analysis-compare
+                        initial-base-analysis-id={selectedAnalysisId}
+                        data-testid="analysis-compare-component">
+                    </c-analysis-compare>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,66 @@
+.global-context-bar {
+    background-color: #f3f3f3;
+    border: 1px solid #c9c7c5;
+    border-radius: 0.25rem;
+}
+
+.save-combobox,
+.country-combobox,
+.snapshot-combobox,
+.baseline-combobox {
+    min-width: 150px;
+}
+
+.control-label {
+    font-size: 0.7rem;
+    color: #514f4d;
+    font-weight: 700;
+}
+
+.flag-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 24px;
+    background-color: #0176d3;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.status-chip {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-published {
+    background-color: #e1f5fe;
+    color: #0288d1;
+    border: 1px solid #b3e5fc;
+}
+
+.status-processing {
+    background-color: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #ffe082;
+}
+
+.status-failed {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.kpi-ribbon-row {
+    border-top: 1px solid #e5e5e5;
+    padding-top: 0.75rem;
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>SaveContext</masterLabel>
+    <isExposed>true</isExposed>
+    <description>Lightning Message Channel for sharing active save game analysis context across workspace components.</description>
+    <lightningMessageFields>
+        <fieldName>saveId</fieldName>
+        <description>The active save campaign ID or file key</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>snapshotId</fieldName>
+        <description>The active Economy_Analysis__c record ID</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>snapshotDate</fieldName>
+        <description>In-game date string (e.g. 1864-03-01)</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>countryTag</fieldName>
+        <description>Selected country tag (e.g. EGY, GBR)</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>observerMode</fieldName>
+        <description>Boolean indicating whether selected country is non-player nation</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>baselineType</fieldName>
+        <description>Baseline comparison mode (e.g. previous, initial, pinned)</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>baselineRef</fieldName>
+        <description>Reference ID or date string for baseline comparison</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>rollupSchemaVersion</fieldName>
+        <description>Data rollup schema version string</description>
+    </lightningMessageFields>
+</LightningMessageChannel>

@@ -1,0 +1,39 @@
+.workspace-tabs-container {
+    width: 100%;
+}
+
+.tabs-header-bar {
+    background-color: #fafafa;
+    border-bottom: 1px solid #dddbda;
+}
+
+.slds-sub-tabs__item {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.slds-sub-tabs__item:hover {
+    background-color: #f3f3f3;
+}
+
+.slds-sub-tabs__item.slds-active {
+    border-bottom-color: #0176d3;
+    font-weight: 700;
+    background-color: #ffffff;
+}
+
+.slds-sub-tabs__item__link {
+    color: #2b2826;
+    text-decoration: none;
+}
+
+.slds-sub-tabs__item__link:hover {
+    text-decoration: none;
+}
+
+.briefing-box {
+    border-left: 4px solid #0176d3;
+    background-color: #f3f3f3;
+}
