@@ -11,8 +11,10 @@ private class EconomyImportIntegrationTest {
         req.analysis.sourceFileName = 'egypt.v2';
         req.analysis.playerCountryTag = 'EGY';
         req.analysis.contractVersion = '1.0.0';
+        req.analysis.rollupSchemaVersion = '1.0.0';
+        req.analysis.expectedPopChecksum = 136981816L;
 
-        // 5 Countries
+        // 5 Countries matching golden dataset values
         EconomyImportRequestDTO.CountryDTO tur = new EconomyImportRequestDTO.CountryDTO();
         tur.tag = 'TUR'; tur.name = 'TUR'; tur.population = 47481816; tur.corePopulation = 13252500; tur.colonyPopulation = 34229316; tur.goldIncome = 1299.0;
         req.countries.add(tur);
@@ -92,9 +94,14 @@ private class EconomyImportIntegrationTest {
         // Verify Snapshots created and calculated
         List<Country_Economy__c> countrySnapshots = [SELECT Id, Country_Tag__c, GDP__c, GDP_Rank__c FROM Country_Economy__c WHERE Economy_Analysis__c = :res.analysisId];
         System.assertEquals(5, countrySnapshots.size());
+
+        // Parity tolerance assertion against legacy engine outputs (1e-6 precision)
         for (Country_Economy__c ce : countrySnapshots) {
             System.assertNotEquals(null, ce.GDP__c);
             System.assertNotEquals(null, ce.GDP_Rank__c);
+            if (ce.Country_Tag__c == 'TUR') {
+                System.assertEquals(1000.0, ce.GDP__c, 1e-6, 'TUR calculated GDP should match expected total within 1e-6 tolerance');
+            }
         }
 
         List<Factory_Economy__c> factorySnapshots = [SELECT Id, Unique_Snapshot_Key__c FROM Factory_Economy__c WHERE Economy_Analysis__c = :res.analysisId];
@@ -142,7 +149,7 @@ private class EconomyImportIntegrationTest {
         List<Import_Run__c> runs = [
             SELECT Id, Status__c, Checksum_Status__c, Calculated_Pop_Checksum__c, Total_Pop_Checksum__c
             FROM Import_Run__c
-            WHERE Save_Identifier__c = 'checksum_test.v2_run_1'
+            WHERE Save_Identifier__c = 'checksum_test.v2_FULL_chunk_1'
         ];
         System.assertEquals(1, runs.size());
         System.assertEquals('FAILED', runs[0].Status__c);
@@ -183,5 +190,41 @@ private class EconomyImportIntegrationTest {
         System.assertEquals('COUNTRIES', runRec.Entity_Type__c);
         System.assertEquals(1, runRec.Chunk_Sequence__c);
         System.assertEquals(3, runRec.Total_Chunks__c);
+    }
+
+    @isTest
+    static void testImportRunServiceAndPurge() {
+        EconomyImportRequestDTO req = new EconomyImportRequestDTO();
+        req.analysis = new EconomyImportRequestDTO.AnalysisDTO();
+        req.analysis.saveFileName = 'purge_test.v2';
+
+        EconomyImportRequestDTO.CountryDTO egy = new EconomyImportRequestDTO.CountryDTO();
+        egy.tag = 'EGY'; egy.name = 'Egypt'; egy.population = 2500000;
+        req.countries.add(egy);
+
+        Test.startTest();
+        EconomyImportResponseDTO res = EconomyImportService.processImport(req);
+
+        System.assertNotEquals(null, res.analysisId);
+        List<Country_Economy__c> countriesBefore = [SELECT Id FROM Country_Economy__c WHERE Economy_Analysis__c = :res.analysisId];
+        System.assertEquals(1, countriesBefore.size());
+
+        // Test purge records
+        ImportRunService.purgeAnalysisRecords(res.analysisId);
+        List<Country_Economy__c> countriesAfter = [SELECT Id FROM Country_Economy__c WHERE Economy_Analysis__c = :res.analysisId];
+        System.assertEquals(0, countriesAfter.size());
+
+        // Test state transitions
+        ImportRunService.transitionStatus(res.importRunId, ImportRunService.STATUS_PROCESSING, 'Diagnostic', 2500000L, 'MATCHED');
+        Import_Run__c updatedRun = [SELECT Status__c, Diagnostic_Message__c FROM Import_Run__c WHERE Id = :res.importRunId];
+        System.assertEquals('PROCESSING', updatedRun.Status__c);
+        System.assertEquals('Diagnostic', updatedRun.Diagnostic_Message__c);
+
+        // Test schema version stamping
+        ImportReconciliationService.stampRollupSchemaVersion(res.importRunId, '1.1.0');
+        Import_Run__c stampedRun = [SELECT Rollup_Schema_Version__c FROM Import_Run__c WHERE Id = :res.importRunId];
+        System.assertEquals('1.1.0', stampedRun.Rollup_Schema_Version__c);
+
+        Test.stopTest();
     }
 }

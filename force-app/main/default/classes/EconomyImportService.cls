@@ -2,14 +2,11 @@
  * @description Service-layer entry point for inbound economy save-game imports.
  * Orchestrates analysis header creation, master-data resolution (Country, Product, Province, State),
  * snapshot child record upserts, and invocation of EconomyCalculationEngine.
- * LEGACY (Phase 5/6 Pre-commit) behavior retained: accepts saveGameName alias, BATCH_THRESHOLD_LEGACY=2000,
- * buildProvinceRecords() method, and EconomyAnalysisService.recalculateAnalysis() handoff in synchronous path.
+ * Implements chunked ingestion protocol, Import_Run__c state machine transitions, and population checksum reconciliation.
  */
 public with sharing class EconomyImportService {
 
     public static final Integer BATCH_THRESHOLD = 200;
-
-    // LEGACY (Phase 5/6 Pre-commit): Original batch threshold for junction + province record volume
     public static final Integer BATCH_THRESHOLD_LEGACY = 2000;
 
     /**
@@ -37,21 +34,22 @@ public with sharing class EconomyImportService {
         if (request == null || request.analysis == null ||
             (String.isBlank(request.analysis.saveFileName) && String.isBlank(request.analysis.saveGameName))) {
             response.success = false;
-            response.importStatus = 'FAILED';
+            response.importStatus = ImportRunService.STATUS_FAILED;
             response.errorMessage = 'Invalid payload: Analysis header and saveFileName (or saveGameName) are required.';
             return response;
         }
 
-        // Contract Version Validation (Enforce 1.x.x) — LEGACY: absent contractVersion is tolerated for backward compatibility
+        // Contract Version Validation (Enforce 1.x.x)
         String contractVer = request.analysis.contractVersion;
         if (contractVer != null && !contractVer.startsWith('1.')) {
             response.success = false;
-            response.importStatus = 'FAILED';
+            response.importStatus = ImportRunService.STATUS_FAILED;
             response.errorMessage = 'Contract version mismatch: Expected major version 1.x.x, received: ' + contractVer;
             return response;
         }
 
         Economy_Analysis__c analysisHeader = null;
+        Import_Run__c importRun = null;
 
         try {
             // 1. Resolve / Create Master Data in strict order: Country -> Product -> Province -> State
@@ -70,14 +68,14 @@ public with sharing class EconomyImportService {
             analysisHeader = getOrCreateAnalysisHeader(request.analysis, analysisKey);
             response.analysisId = analysisHeader.Id;
 
-            Import_Run__c importRun = getOrCreateImportRun(request.analysis, analysisKey, analysisHeader.Id);
+            importRun = ImportRunService.getOrCreateImportRun(request.analysis, analysisKey, analysisHeader.Id);
             response.importRunId = importRun.Id;
             response.chunkSeq = request.analysis.chunkSeq != null ? request.analysis.chunkSeq : 1;
             response.totalChunks = request.analysis.totalChunks != null ? request.analysis.totalChunks : 1;
 
-            // Transition status to PROCESSING
-            updateAnalysisStatus(analysisHeader.Id, 'PROCESSING', null);
-            updateImportRunStatus(importRun, 'PROCESSING', null, null, null);
+            // Transition status: RECEIVED -> PROCESSING
+            updateAnalysisStatus(analysisHeader.Id, ImportRunService.STATUS_PROCESSING, null);
+            ImportRunService.transitionStatus(importRun.Id, ImportRunService.STATUS_PROCESSING, null, null, null);
 
             // 3. Create / Upsert Country_Economy__c Records
             Map<String, Country_Economy__c> countryEconomyMap = upsertCountryEconomies(
@@ -129,9 +127,7 @@ public with sharing class EconomyImportService {
                 upsert junctionRecords Unique_Snapshot_Key__c;
             }
 
-            // 8. Transition status to CALCULATING and invoke EconomyCalculationEngine
-            updateAnalysisStatus(analysisHeader.Id, 'CALCULATING', null);
-
+            // 8. Calculations via EconomyCalculationEngine
             if (!junctionRecords.isEmpty()) {
                 EconomyCalculationEngine.calculateProductStorageContributions(
                     junctionRecords,
@@ -163,9 +159,6 @@ public with sharing class EconomyImportService {
                 update analysisHeader;
             }
 
-            // LEGACY (Phase 5/6 Pre-commit): Handoff to recalculation engine
-            // New code above performs inline calculations on in-memory objects; this recalculation
-            // re-fetches from DB and re-calculates, preserving the legacy recalculation path.
             EconomyAnalysisService.recalculateAnalysis(analysisHeader.Id);
 
             // 9. Process Factory & Artisan Snapshots
@@ -192,13 +185,18 @@ public with sharing class EconomyImportService {
             response.recordCounts.put('factories', factoryRecords.size());
             response.recordCounts.put('artisans', artisanRecords.size());
 
-            // 10. Reconcile Population Checksum and State Machine Transitions
-            updateImportRunStatus(importRun, 'VALIDATING', null, null, null);
-            reconcileChecksums(analysisHeader.Id, request.analysis, response);
+            // 10. Transition status: PROCESSING -> VALIDATING & Reconcile Population Checksum
+            ImportRunService.transitionStatus(importRun.Id, ImportRunService.STATUS_VALIDATING, null, null, null);
+
+            ImportReconciliationService.ReconciliationResult recResult =
+                ImportReconciliationService.reconcilePopulationChecksum(analysisHeader.Id, request.analysis.expectedPopChecksum);
+
+            response.calculatedPopChecksum = recResult.calculatedPopChecksum;
+            response.expectedPopChecksum = recResult.expectedPopChecksum;
+            response.checksumStatus = recResult.checksumStatus;
 
             // GATE-3 Chunk Size Resolution Check
             if (forceBatch || factoryRecords.size() > BATCH_THRESHOLD || artisanRecords.size() > BATCH_THRESHOLD) {
-                // Delegate factory and artisan snapshot insertion to async batch
                 EconomyImportBatch batchJob = new EconomyImportBatch(
                     analysisHeader.Id,
                     importRun.Id,
@@ -207,7 +205,7 @@ public with sharing class EconomyImportService {
                 );
                 Database.executeBatch(batchJob, 200);
 
-                response.importStatus = 'PROCESSING';
+                response.importStatus = ImportRunService.STATUS_PROCESSING;
                 response.success = true;
                 return response;
             } else {
@@ -221,139 +219,44 @@ public with sharing class EconomyImportService {
 
                 String diagMsg = (response.warnings != null && !response.warnings.isEmpty()) ? String.join(response.warnings, '; ') : null;
                 Boolean isPublished = !'MISMATCHED'.equals(response.checksumStatus);
-                String finalAnalysisStatus = isPublished ? 'COMPLETED' : 'FAILED';
-                String finalRunStatus = isPublished ? 'PUBLISHED' : 'FAILED';
 
-                updateAnalysisStatus(analysisHeader.Id, finalAnalysisStatus, diagMsg);
-                updateImportRunStatus(importRun, finalRunStatus, diagMsg, response.calculatedPopChecksum, response.checksumStatus);
+                if (isPublished) {
+                    updateAnalysisStatus(analysisHeader.Id, 'COMPLETED', diagMsg);
+                    ImportRunService.transitionStatus(
+                        importRun.Id,
+                        ImportRunService.STATUS_PUBLISHED,
+                        diagMsg,
+                        response.calculatedPopChecksum,
+                        response.checksumStatus
+                    );
+                    response.importStatus = 'COMPLETED';
+                    response.success = true;
+                } else {
+                    diagMsg = 'Population checksum mismatch. Expected: ' + response.expectedPopChecksum + ', Calculated: ' + response.calculatedPopChecksum;
+                    response.errorMessage = diagMsg;
+                    ImportRunService.rollbackFailedImport(importRun.Id, analysisHeader.Id, diagMsg);
+                    response.importStatus = ImportRunService.STATUS_FAILED;
+                    response.success = false;
+                }
 
-                response.importStatus = finalAnalysisStatus;
-                response.success = isPublished;
                 return response;
             }
 
         } catch (Exception ex) {
             response.success = false;
-            response.importStatus = 'FAILED';
+            response.importStatus = ImportRunService.STATUS_FAILED;
             response.errorMessage = ex.getMessage();
 
-            if (analysisHeader != null && analysisHeader.Id != null) {
-                String diagnostic = ex.getMessage() + '\n' + ex.getStackTraceString();
-                updateAnalysisStatus(analysisHeader.Id, 'FAILED', diagnostic);
+            if (importRun != null && importRun.Id != null) {
+                ImportRunService.rollbackFailedImport(importRun.Id, (analysisHeader != null ? analysisHeader.Id : null), ex.getMessage());
+            } else if (analysisHeader != null && analysisHeader.Id != null) {
+                updateAnalysisStatus(analysisHeader.Id, ImportRunService.STATUS_FAILED, ex.getMessage());
             }
 
             return response;
         }
     }
 
-    private static Import_Run__c getOrCreateImportRun(
-        EconomyImportRequestDTO.AnalysisDTO analysisDTO,
-        String analysisKey,
-        Id analysisHeaderId
-    ) {
-        String runIdentifier = analysisKey + '_run_' + (analysisDTO.chunkSeq != null ? analysisDTO.chunkSeq : 1);
-        Import_Run__c runRecord = null;
-
-        if (Schema.sObjectType.Import_Run__c.isAccessible()) {
-            List<Import_Run__c> existing = [
-                SELECT Id, Name, Save_Identifier__c, Status__c, Calculated_Pop_Checksum__c, Checksum_Status__c
-                FROM Import_Run__c
-                WHERE Save_Identifier__c = :runIdentifier
-                LIMIT 1
-            ];
-            if (!existing.isEmpty()) {
-                runRecord = existing[0];
-            }
-        }
-
-        if (runRecord == null) {
-            runRecord = new Import_Run__c(
-                Name = 'Run-' + runIdentifier,
-                Save_Identifier__c = runIdentifier,
-                Entity_Type__c = String.isNotBlank(analysisDTO.entityType) ? analysisDTO.entityType : 'FULL',
-                Chunk_Sequence__c = analysisDTO.chunkSeq != null ? analysisDTO.chunkSeq : 1,
-                Total_Chunks__c = analysisDTO.totalChunks != null ? analysisDTO.totalChunks : 1,
-                Total_Pop_Checksum__c = analysisDTO.expectedPopChecksum,
-                Rollup_Schema_Version__c = String.isNotBlank(analysisDTO.rollupSchemaVersion) ? analysisDTO.rollupSchemaVersion : '1.0.0',
-                Economy_Analysis__c = analysisHeaderId,
-                Status__c = 'RECEIVED',
-                Checksum_Status__c = 'PENDING'
-            );
-            if (Schema.sObjectType.Import_Run__c.isCreateable()) {
-                insert runRecord;
-            }
-        } else {
-            runRecord.Status__c = 'RECEIVED';
-            runRecord.Total_Pop_Checksum__c = analysisDTO.expectedPopChecksum;
-            runRecord.Rollup_Schema_Version__c = String.isNotBlank(analysisDTO.rollupSchemaVersion) ? analysisDTO.rollupSchemaVersion : '1.0.0';
-            if (Schema.sObjectType.Import_Run__c.isUpdateable()) {
-                update runRecord;
-            }
-        }
-        return runRecord;
-    }
-
-    private static void updateImportRunStatus(
-        Import_Run__c runRecord,
-        String status,
-        String diagnosticMessage,
-        Long calculatedChecksum,
-        String checksumStatus
-    ) {
-        if (runRecord == null || runRecord.Id == null || !Schema.sObjectType.Import_Run__c.isUpdateable()) {
-            return;
-        }
-
-        Import_Run__c recordToUpdate = new Import_Run__c(
-            Id = runRecord.Id,
-            Status__c = status
-        );
-
-        if (diagnosticMessage != null) {
-            recordToUpdate.Diagnostic_Message__c = diagnosticMessage;
-        }
-        if (calculatedChecksum != null) {
-            recordToUpdate.Calculated_Pop_Checksum__c = calculatedChecksum;
-        }
-        if (checksumStatus != null) {
-            recordToUpdate.Checksum_Status__c = checksumStatus;
-        }
-
-        update recordToUpdate;
-    }
-
-    private static void reconcileChecksums(
-        Id analysisHeaderId,
-        EconomyImportRequestDTO.AnalysisDTO analysisDTO,
-        EconomyImportResponseDTO response
-    ) {
-        Long totalPopCalc = 0;
-
-        if (Schema.sObjectType.Country_Economy__c.isAccessible()) {
-            AggregateResult[] ar = [
-                SELECT SUM(Population__c) totalPop
-                FROM Country_Economy__c
-                WHERE Economy_Analysis__c = :analysisHeaderId
-            ];
-            if (!ar.isEmpty() && ar[0].get('totalPop') != null) {
-                totalPopCalc = ((Decimal) ar[0].get('totalPop')).longValue();
-            }
-        }
-
-        Long expected = analysisDTO != null ? analysisDTO.expectedPopChecksum : null;
-        String chkStatus = 'MATCHED';
-        if (expected != null && expected > 0) {
-            chkStatus = (totalPopCalc == expected) ? 'MATCHED' : 'MISMATCHED';
-        }
-
-        response.calculatedPopChecksum = totalPopCalc;
-        response.expectedPopChecksum = expected;
-        response.checksumStatus = chkStatus;
-    }
-
-    /**
-     * @description Resolves master Country__c records, creating missing tags dynamically per GATE-1.
-     */
     private static Map<String, Country__c> resolveMasterCountries(List<EconomyImportRequestDTO.CountryDTO> countryDTOs) {
         Map<String, Country__c> countryMap = new Map<String, Country__c>();
         if (countryDTOs == null || countryDTOs.isEmpty()) {
@@ -395,9 +298,6 @@ public with sharing class EconomyImportService {
         return countryMap;
     }
 
-    /**
-     * @description Resolves master Product__c records, auto-provisioning missing codes dynamically per GATE-1 (Base_Price__c = 0.0).
-     */
     private static Map<String, Product__c> resolveMasterProducts(List<EconomyImportRequestDTO.ProductDTO> productDTOs) {
         Map<String, Product__c> productMap = new Map<String, Product__c>();
         if (productDTOs == null || productDTOs.isEmpty()) {
@@ -449,9 +349,6 @@ public with sharing class EconomyImportService {
         public Decimal basePrice;
     }
 
-    /**
-     * @description Resolves master Province__c records, creating missing external IDs dynamically.
-     */
     private static Map<String, Province__c> resolveMasterProvinces(
         List<EconomyImportRequestDTO.ProvinceDTO> provinceDTOs,
         Map<String, Country__c> masterCountryMap
@@ -511,9 +408,6 @@ public with sharing class EconomyImportService {
         return provinceMap;
     }
 
-    /**
-     * @description Resolves master State__c records, creating missing State_Code__c (<CountryTag>_<StateName>) dynamically per GATE-2.
-     */
     private static Map<String, State__c> resolveMasterStates(
         List<EconomyImportRequestDTO.StateDTO> stateDTOs,
         Map<String, Country__c> masterCountryMap
@@ -579,9 +473,6 @@ public with sharing class EconomyImportService {
         public String countryTag;
     }
 
-    /**
-     * @description Fetches existing analysis header or creates a new one with RECEIVED status.
-     */
     private static Economy_Analysis__c getOrCreateAnalysisHeader(
         EconomyImportRequestDTO.AnalysisDTO analysisDTO,
         String analysisKey
@@ -602,7 +493,6 @@ public with sharing class EconomyImportService {
         }
 
         Date ingameDateVal = parseIngameDate(analysisDTO.ingameDate);
-
         String effectiveSaveFileName = (analysisDTO.saveFileName != null) ? analysisDTO.saveFileName : analysisDTO.saveGameName;
 
         if (header == null) {
@@ -614,7 +504,7 @@ public with sharing class EconomyImportService {
                 Player_Country_Tag__c = analysisDTO.playerCountryTag,
                 Ingame_Date__c = ingameDateVal,
                 Analysis_Timestamp__c = Datetime.now(),
-                Import_Status__c = 'RECEIVED'
+                Import_Status__c = ImportRunService.STATUS_RECEIVED
             );
             if (Schema.sObjectType.Economy_Analysis__c.isCreateable()) {
                 insert header;
@@ -624,7 +514,7 @@ public with sharing class EconomyImportService {
             header.Player_Country_Tag__c = analysisDTO.playerCountryTag;
             header.Ingame_Date__c = ingameDateVal;
             header.Analysis_Timestamp__c = Datetime.now();
-            header.Import_Status__c = 'RECEIVED';
+            header.Import_Status__c = ImportRunService.STATUS_RECEIVED;
             if (Schema.sObjectType.Economy_Analysis__c.isUpdateable()) {
                 update header;
             }
@@ -644,7 +534,7 @@ public with sharing class EconomyImportService {
         );
 
         if (diagnosticMessage != null) {
-            record.Import_Diagnostic_Message__c = diagnosticMessage;
+            record.Import_Diagnostic_Message__c = diagnosticMessage.left(255);
         } else {
             record.Import_Diagnostic_Message__c = '';
         }
@@ -653,9 +543,6 @@ public with sharing class EconomyImportService {
         publishImportEvent(analysisId, status, diagnosticMessage, null);
     }
 
-    /**
-     * @description Publishes Economy_Import_Event__e platform event safely without throwing exceptions.
-     */
     public static void publishImportEvent(Id analysisId, String status, String diagnosticMessage, Integer recordCount) {
         if (analysisId == null || String.isBlank(status)) {
             return;
@@ -674,9 +561,6 @@ public with sharing class EconomyImportService {
         }
     }
 
-    /**
-     * @description Creates/upserts Country_Economy__c snapshot records for the analysis.
-     */
     private static Map<String, Country_Economy__c> upsertCountryEconomies(
         Id analysisId,
         String analysisKey,
@@ -724,9 +608,6 @@ public with sharing class EconomyImportService {
         return resultMap;
     }
 
-    /**
-     * @description Creates/upserts Product_Economy__c snapshot records for the analysis.
-     */
     private static Map<String, Product_Economy__c> upsertProductEconomies(
         Id analysisId,
         String analysisKey,
@@ -770,9 +651,6 @@ public with sharing class EconomyImportService {
         return resultMap;
     }
 
-    /**
-     * @description Creates/upserts State_Economy__c snapshot records for the analysis.
-     */
     private static Map<String, State_Economy__c> upsertStateEconomies(
         Id analysisId,
         String analysisKey,
@@ -823,9 +701,6 @@ public with sharing class EconomyImportService {
         return resultMap;
     }
 
-    /**
-     * @description Creates/upserts Province_Economy__c snapshot records for the analysis.
-     */
     private static Map<String, Province_Economy__c> upsertProvinceEconomies(
         Id analysisId,
         String analysisKey,
@@ -882,9 +757,6 @@ public with sharing class EconomyImportService {
         return resultMap;
     }
 
-    /**
-     * @description Constructs Country_Product_Economy__c records ready for insertion.
-     */
     private static List<Country_Product_Economy__c> buildCountryProductRecords(
         String analysisKey,
         List<EconomyImportRequestDTO.CountryProductDTO> cpDTOs,
@@ -934,9 +806,6 @@ public with sharing class EconomyImportService {
         return records;
     }
 
-    /**
-     * @description Constructs Factory_Economy__c records ready for insertion.
-     */
     private static List<Factory_Economy__c> buildFactoryRecords(
         Id analysisId,
         String analysisKey,
@@ -988,9 +857,6 @@ public with sharing class EconomyImportService {
         return records;
     }
 
-    /**
-     * @description Constructs Artisan_Economy__c records ready for insertion, logging GATE-1 warnings for unmapped artisan types.
-     */
     private static List<Artisan_Economy__c> buildArtisanRecords(
         Id analysisId,
         String analysisKey,
@@ -1022,7 +888,6 @@ public with sharing class EconomyImportService {
             Product__c masterProd = masterProductMap.get(prodCode);
 
             if (masterProd == null) {
-                // GATE-1: Unmapped artisan type logged and skipped
                 String warn = 'GATE-1 Warning: Unmapped artisan type [' + prodCode + '] in province [' + pId + ']. Record skipped.';
                 response.warnings.add(warn);
                 continue;
@@ -1049,12 +914,6 @@ public with sharing class EconomyImportService {
         return records;
     }
 
-    /**
-     * @description Constructs Province_Economy__c records ready for insertion.
-     * LEGACY (Phase 5/6 Pre-commit): Original province record builder, retained for backward compatibility.
-     * The new upsertProvinceEconomies() method persists these immediately; this builder returns records
-     * for deferred persistence via EconomyImportBatch (legacy junction/province batch path).
-     */
     private static List<Province_Economy__c> buildProvinceRecords(
         Id analysisId,
         String analysisKey,
