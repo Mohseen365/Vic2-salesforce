@@ -8,6 +8,7 @@
 public with sharing class EconomyImportBatch implements Database.Batchable<sObject>, Database.Stateful {
 
     private Id analysisId;
+    private Id importRunId;
 
     // NEW (GATE-3): Factory and Artisan snapshot records
     private List<Factory_Economy__c> factoryRecords;
@@ -25,7 +26,17 @@ public with sharing class EconomyImportBatch implements Database.Batchable<sObje
         List<Factory_Economy__c> factoryRecords,
         List<Artisan_Economy__c> artisanRecords
     ) {
+        this(analysisId, null, factoryRecords, artisanRecords);
+    }
+
+    public EconomyImportBatch(
+        Id analysisId,
+        Id importRunId,
+        List<Factory_Economy__c> factoryRecords,
+        List<Artisan_Economy__c> artisanRecords
+    ) {
         this.analysisId = analysisId;
+        this.importRunId = importRunId;
         this.factoryRecords = (factoryRecords != null) ? factoryRecords : new List<Factory_Economy__c>();
         this.artisanRecords = (artisanRecords != null) ? artisanRecords : new List<Artisan_Economy__c>();
         this.junctionRecords = new List<Country_Product_Economy__c>();
@@ -135,6 +146,13 @@ public with sharing class EconomyImportBatch implements Database.Batchable<sObje
                         Import_Status__c = 'COMPLETED'
                     );
                 }
+                if (this.importRunId != null && Schema.sObjectType.Import_Run__c.isUpdateable()) {
+                    update new Import_Run__c(
+                        Id = this.importRunId,
+                        Status__c = 'PUBLISHED',
+                        Checksum_Status__c = 'MATCHED'
+                    );
+                }
                 EconomyImportService.publishImportEvent(this.analysisId, 'COMPLETED', null, null);
             } catch (Exception ex) {
                 if (Schema.sObjectType.Economy_Analysis__c.isUpdateable()) {
@@ -144,6 +162,13 @@ public with sharing class EconomyImportBatch implements Database.Batchable<sObje
                         Import_Status__c = 'FAILED',
                         Import_Diagnostic_Message__c = diag
                     );
+                    if (this.importRunId != null && Schema.sObjectType.Import_Run__c.isUpdateable()) {
+                        update new Import_Run__c(
+                            Id = this.importRunId,
+                            Status__c = 'FAILED',
+                            Diagnostic_Message__c = diag
+                        );
+                    }
                     EconomyImportService.publishImportEvent(this.analysisId, 'FAILED', diag, null);
                 }
             }
