@@ -1,0 +1,39 @@
+.alert-drawer-container {
+    position: relative;
+    display: inline-block;
+}
+
+.unread-badge {
+    border-radius: 12px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+}
+
+.alert-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 380px;
+    z-index: 9999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+.alert-card {
+    border-left-width: 4px !important;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.border-critical {
+    border-left-color: #ea001e !important;
+}
+
+.border-warning {
+    border-left-color: #dd7a01 !important;
+}
+
+.border-info {
+    border-left-color: #0176d3 !important;
+}

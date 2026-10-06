@@ -51,8 +51,13 @@
                 </template>
             </div>
 
-            <!-- Right Controls: Snapshot Scrubber & Baseline Comparison -->
+            <!-- Right Controls: Snapshot Scrubber & Baseline Comparison & Alert Drawer Hub -->
             <div class="slds-col slds-grid slds-grid_vertical-align-center slds-wrap slds-m-bottom_x-small">
+                <!-- Real-Time Anomaly Event Hub Drawer (FEAT-19) -->
+                <div class="alert-drawer-wrapper slds-m-right_small" data-testid="alert-drawer-wrapper">
+                    <c-alert-drawer data-testid="alert-drawer-component"></c-alert-drawer>
+                </div>
+
                 <!-- Snapshot Scrubber -->
                 <div class="scrubber-container slds-m-right_small">
                     <span class="control-label slds-text-title_caps slds-m-right_xx-small">Snapshot:</span>

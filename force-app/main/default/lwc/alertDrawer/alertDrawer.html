@@ -1,0 +1,94 @@
+<template>
+    <div class="alert-drawer-container" data-testid="alert-drawer">
+        <!-- Floating Bell Trigger / Indicator -->
+        <div class="drawer-trigger-bar slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+            <button
+                class="slds-button slds-button_neutral slds-grid slds-grid_vertical-align-center"
+                onclick={toggleDrawer}
+                data-testid="alert-drawer-toggle">
+                <lightning-icon icon-name="utility:notification" size="small" class="slds-m-right_xx-small"></lightning-icon>
+                <span>Real-Time Anomaly Hub</span>
+                <template if:true={hasUnread}>
+                    <span class="unread-badge slds-badge slds-theme_error slds-m-left_xx-small">
+                        {unreadCount}
+                    </span>
+                </template>
+            </button>
+        </div>
+
+        <!-- Slide-out Notification Panel -->
+        <template if:true={isOpen}>
+            <section class="alert-panel slds-popover slds-popover_large slds-p-around_medium" role="dialog" data-testid="alert-panel">
+                <!-- Panel Header -->
+                <header class="slds-popover__header slds-p-bottom_small slds-border_bottom slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <div class="slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="utility:warning" size="medium" variant="warning"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-text-heading_small">Real-Time Anomaly & Event Hub</h2>
+                            <p class="slds-text-body_small slds-text-color_weak">Streaming via Platform Events</p>
+                        </div>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-button_icon-small" onclick={closeDrawer} title="Close Drawer">
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+
+                <!-- Filter Pills -->
+                <div class="filter-bar slds-p-vertical_small slds-grid slds-grid_vertical-align-center slds-wrap">
+                    <template for:each={filterOptions} for:item="f">
+                        <button
+                            key={f.key}
+                            data-key={f.key}
+                            onclick={handleFilterChange}
+                            class={f.btnClass}>
+                            {f.label} ({f.count})
+                        </button>
+                    </template>
+                    <button class="slds-button slds-button_link-destructive slds-col_bump-left slds-text-body_small" onclick={clearAllAlerts}>
+                        Clear All
+                    </button>
+                </div>
+
+                <!-- Alert Stream List -->
+                <div class="alert-stream slds-scrollable_y" style="max-height: 360px;">
+                    <template if:true={hasFilteredAlerts}>
+                        <template for:each={filteredAlerts} for:item="alert">
+                            <div key={alert.id} class={alert.cardClass} data-testid="alert-item">
+                                <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
+                                    <span class={alert.severityBadgeClass}>{alert.severity}</span>
+                                    <span class="slds-text-color_weak slds-text-body_small">{alert.timeAgo}</span>
+                                </div>
+                                <h4 class="slds-text-title_bold slds-m-bottom_xx-small">{alert.title}</h4>
+                                <p class="slds-text-body_small slds-m-bottom_small">{alert.message}</p>
+                                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                    <button
+                                        class="slds-button slds-button_brand slds-button_x-small"
+                                        data-tag={alert.countryTag}
+                                        data-tab={alert.targetTab}
+                                        onclick={handleInvestigate}>
+                                        Investigate &rarr;
+                                    </button>
+                                    <button
+                                        class="slds-button slds-button_icon slds-button_icon-x-small"
+                                        data-id={alert.id}
+                                        onclick={dismissAlert}
+                                        title="Dismiss">
+                                        <lightning-icon icon-name="utility:clear" size="x-small"></lightning-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+
+                    <template if:false={hasFilteredAlerts}>
+                        <div class="slds-p-around_large slds-text-align_center slds-text-color_weak">
+                            <p>No active anomaly alerts matching filter criteria.</p>
+                        </div>
+                    </template>
+                </div>
+            </section>
+        </template>
+    </div>
+</template>
