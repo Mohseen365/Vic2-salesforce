@@ -1,0 +1,113 @@
+<template>
+    <div class="compare-suite-card slds-card slds-p-around_medium">
+        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium">
+            <div class="slds-grid slds-grid_vertical-align-center">
+                <lightning-icon icon-name="utility:compare" size="medium" class="slds-m-right_small"></lightning-icon>
+                <div>
+                    <h2 class="slds-text-heading_medium slds-font-weight_bold">Multi-Save Comparison Suite</h2>
+                    <p class="slds-text-body_small slds-text-color_weak">Compare up to 12 campaign save-game snapshots across timeline, variance, and trend modes.</p>
+                </div>
+            </div>
+
+            <!-- View Mode Selector -->
+            <div class="slds-button-group" role="group">
+                <button class={trendBtnClass} onclick={handleModeSelect} data-mode="TREND">
+                    <lightning-icon icon-name="utility:line_chart" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Overlay Trend
+                </button>
+                <button class={compareBtnClass} onclick={handleModeSelect} data-mode="SPLIT">
+                    <lightning-icon icon-name="utility:table" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Split-Screen A|B
+                </button>
+                <button class={bumpBtnClass} onclick={handleModeSelect} data-mode="BUMP">
+                    <lightning-icon icon-name="utility:metrics" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                    Delta & Bump Chart
+                </button>
+            </div>
+        </div>
+
+        <!-- Filmstrip Header -->
+        <div class="slds-m-bottom_large">
+            <c-snapshot-filmstrip onsnapshotselect={handleSnapshotSelect}></c-snapshot-filmstrip>
+        </div>
+
+        <!-- Content Area Based On Selected Mode -->
+        <div class="compare-content">
+            <!-- Mode 1: Overlay Trend Chart (Reuses c-multi-save-trend) -->
+            <template if:true={isTrendMode}>
+                <c-multi-save-trend selected-analysis-ids={selectedAnalysisIds}></c-multi-save-trend>
+            </template>
+
+            <!-- Mode 2: Split-Screen A|B Mode (Reuses c-analysis-compare) -->
+            <template if:true={isSplitMode}>
+                <div class="split-controls slds-card slds-p-around_small slds-m-bottom_medium">
+                    <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-combobox
+                                name="baseSnapshot"
+                                label="Snapshot A (Base)"
+                                value={baseSnapshotId}
+                                options={snapshotOptions}
+                                onchange={handleBaseChange}>
+                            </lightning-combobox>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-combobox
+                                name="compareSnapshot"
+                                label="Snapshot B (Compare)"
+                                value={compareSnapshotId}
+                                options={snapshotOptions}
+                                onchange={handleCompareChange}>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                </div>
+                <template if:true={canCompareAB}>
+                    <c-analysis-compare base-analysis-id={baseSnapshotId} compare-analysis-id={compareSnapshotId}></c-analysis-compare>
+                </template>
+                <template if:false={canCompareAB}>
+                    <div class="slds-text-align_center slds-p-around_large slds-text-color_weak">
+                        Please select two distinct snapshots above to activate Split-Screen A|B comparison.
+                    </div>
+                </template>
+            </template>
+
+            <!-- Mode 3: Delta & Bump Charts -->
+            <template if:true={isBumpMode}>
+                <div class="bump-container slds-card slds-p-around_medium">
+                    <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                        <h3 class="slds-text-heading_small slds-font-weight_bold">Rankings & Top Movers Across Selected Snapshots</h3>
+                        <span class="slds-badge slds-theme_success">Active Snapshot Count: {selectedAnalysisIds.length}</span>
+                    </div>
+
+                    <div class="slds-scrollable_x">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate" title="Metric / Entity">Entity / Metric</div></th>
+                                    <th scope="col"><div class="slds-truncate" title="Initial Value">Baseline</div></th>
+                                    <th scope="col"><div class="slds-truncate" title="Latest Value">Latest</div></th>
+                                    <th scope="col"><div class="slds-truncate" title="Net Delta">Net Delta</div></th>
+                                    <th scope="col"><div class="slds-truncate" title="Growth %">Growth %</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={bumpTableData} for:item="row">
+                                    <tr key={row.key}>
+                                        <td class="slds-font-weight_bold">{row.entityName}</td>
+                                        <td>{row.formattedBase}</td>
+                                        <td>{row.formattedLatest}</td>
+                                        <td class={row.deltaClass}>{row.formattedDelta}</td>
+                                        <td>
+                                            <span class={row.badgeClass}>{row.formattedPercent}%</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

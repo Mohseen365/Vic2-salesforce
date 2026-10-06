@@ -1,0 +1,42 @@
+.compare-suite-card {
+    background-color: #0b192c;
+    color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #1e3a60;
+}
+
+.split-controls {
+    background-color: #162a45;
+    border: 1px solid #284a77;
+    border-radius: 6px;
+}
+
+.bump-container {
+    background-color: #122238;
+    border: 1px solid #213f66;
+    border-radius: 6px;
+}
+
+.text-positive {
+    color: #4bca81;
+    font-weight: bold;
+}
+
+.text-negative {
+    color: #ea001e;
+    font-weight: bold;
+}
+
+.badge-positive {
+    background-color: #04844b;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.badge-negative {
+    background-color: #c23934;
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
