@@ -29,9 +29,18 @@ public class EconomyImportRequestDTO {
         public String playerCountryTag;
         public String contractVersion;
         public String saveGameName;
+        public Integer chunkSeq;
+        public Integer totalChunks;
+        public String entityType;
+        public String rollupSchemaVersion;
+        public Long expectedPopChecksum;
 
         public AnalysisDTO() {
             this.contractVersion = '1.0.0';
+            this.chunkSeq = 1;
+            this.totalChunks = 1;
+            this.entityType = 'FULL';
+            this.rollupSchemaVersion = '1.0.0';
         }
     }
 

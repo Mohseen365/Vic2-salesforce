@@ -3,7 +3,13 @@
  */
 public with sharing class EconomyImportResponseDTO {
     @AuraEnabled public String analysisId { get; set; }
+    @AuraEnabled public String importRunId { get; set; }
     @AuraEnabled public String importStatus { get; set; }
+    @AuraEnabled public Integer chunkSeq { get; set; }
+    @AuraEnabled public Integer totalChunks { get; set; }
+    @AuraEnabled public String checksumStatus { get; set; }
+    @AuraEnabled public Long calculatedPopChecksum { get; set; }
+    @AuraEnabled public Long expectedPopChecksum { get; set; }
     @AuraEnabled public Map<String, Integer> recordCounts { get; set; }
     @AuraEnabled public String errorMessage { get; set; }
     @AuraEnabled public List<String> warnings { get; set; }

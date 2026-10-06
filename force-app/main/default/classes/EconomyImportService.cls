@@ -65,13 +65,19 @@ public with sharing class EconomyImportService {
             response.recordCounts.put('provinces', request.provinces != null ? request.provinces.size() : 0);
             response.recordCounts.put('states', request.states != null ? request.states.size() : 0);
 
-            // 2. Create / Upsert Economy_Analysis__c Header
+            // 2. Create / Upsert Economy_Analysis__c Header & Import_Run__c
             String analysisKey = (request.analysis.saveFileName != null) ? request.analysis.saveFileName : request.analysis.saveGameName;
             analysisHeader = getOrCreateAnalysisHeader(request.analysis, analysisKey);
             response.analysisId = analysisHeader.Id;
 
+            Import_Run__c importRun = getOrCreateImportRun(request.analysis, analysisKey, analysisHeader.Id);
+            response.importRunId = importRun.Id;
+            response.chunkSeq = request.analysis.chunkSeq != null ? request.analysis.chunkSeq : 1;
+            response.totalChunks = request.analysis.totalChunks != null ? request.analysis.totalChunks : 1;
+
             // Transition status to PROCESSING
             updateAnalysisStatus(analysisHeader.Id, 'PROCESSING', null);
+            updateImportRunStatus(importRun, 'PROCESSING', null, null, null);
 
             // 3. Create / Upsert Country_Economy__c Records
             Map<String, Country_Economy__c> countryEconomyMap = upsertCountryEconomies(
@@ -186,11 +192,16 @@ public with sharing class EconomyImportService {
             response.recordCounts.put('factories', factoryRecords.size());
             response.recordCounts.put('artisans', artisanRecords.size());
 
+            // 10. Reconcile Population Checksum and State Machine Transitions
+            updateImportRunStatus(importRun, 'VALIDATING', null, null, null);
+            reconcileChecksums(analysisHeader.Id, request.analysis, response);
+
             // GATE-3 Chunk Size Resolution Check
             if (forceBatch || factoryRecords.size() > BATCH_THRESHOLD || artisanRecords.size() > BATCH_THRESHOLD) {
                 // Delegate factory and artisan snapshot insertion to async batch
                 EconomyImportBatch batchJob = new EconomyImportBatch(
                     analysisHeader.Id,
+                    importRun.Id,
                     factoryRecords,
                     artisanRecords
                 );
@@ -209,10 +220,15 @@ public with sharing class EconomyImportService {
                 }
 
                 String diagMsg = (response.warnings != null && !response.warnings.isEmpty()) ? String.join(response.warnings, '; ') : null;
-                updateAnalysisStatus(analysisHeader.Id, 'COMPLETED', diagMsg);
+                Boolean isPublished = !'MISMATCHED'.equals(response.checksumStatus);
+                String finalAnalysisStatus = isPublished ? 'COMPLETED' : 'FAILED';
+                String finalRunStatus = isPublished ? 'PUBLISHED' : 'FAILED';
 
-                response.importStatus = 'COMPLETED';
-                response.success = true;
+                updateAnalysisStatus(analysisHeader.Id, finalAnalysisStatus, diagMsg);
+                updateImportRunStatus(importRun, finalRunStatus, diagMsg, response.calculatedPopChecksum, response.checksumStatus);
+
+                response.importStatus = finalAnalysisStatus;
+                response.success = isPublished;
                 return response;
             }
 
@@ -228,6 +244,111 @@ public with sharing class EconomyImportService {
 
             return response;
         }
+    }
+
+    private static Import_Run__c getOrCreateImportRun(
+        EconomyImportRequestDTO.AnalysisDTO analysisDTO,
+        String analysisKey,
+        Id analysisHeaderId
+    ) {
+        String runIdentifier = analysisKey + '_run_' + (analysisDTO.chunkSeq != null ? analysisDTO.chunkSeq : 1);
+        Import_Run__c runRecord = null;
+
+        if (Schema.sObjectType.Import_Run__c.isAccessible()) {
+            List<Import_Run__c> existing = [
+                SELECT Id, Name, Save_Identifier__c, Status__c, Calculated_Pop_Checksum__c, Checksum_Status__c
+                FROM Import_Run__c
+                WHERE Save_Identifier__c = :runIdentifier
+                LIMIT 1
+            ];
+            if (!existing.isEmpty()) {
+                runRecord = existing[0];
+            }
+        }
+
+        if (runRecord == null) {
+            runRecord = new Import_Run__c(
+                Name = 'Run-' + runIdentifier,
+                Save_Identifier__c = runIdentifier,
+                Entity_Type__c = String.isNotBlank(analysisDTO.entityType) ? analysisDTO.entityType : 'FULL',
+                Chunk_Sequence__c = analysisDTO.chunkSeq != null ? analysisDTO.chunkSeq : 1,
+                Total_Chunks__c = analysisDTO.totalChunks != null ? analysisDTO.totalChunks : 1,
+                Total_Pop_Checksum__c = analysisDTO.expectedPopChecksum,
+                Rollup_Schema_Version__c = String.isNotBlank(analysisDTO.rollupSchemaVersion) ? analysisDTO.rollupSchemaVersion : '1.0.0',
+                Economy_Analysis__c = analysisHeaderId,
+                Status__c = 'RECEIVED',
+                Checksum_Status__c = 'PENDING'
+            );
+            if (Schema.sObjectType.Import_Run__c.isCreateable()) {
+                insert runRecord;
+            }
+        } else {
+            runRecord.Status__c = 'RECEIVED';
+            runRecord.Total_Pop_Checksum__c = analysisDTO.expectedPopChecksum;
+            runRecord.Rollup_Schema_Version__c = String.isNotBlank(analysisDTO.rollupSchemaVersion) ? analysisDTO.rollupSchemaVersion : '1.0.0';
+            if (Schema.sObjectType.Import_Run__c.isUpdateable()) {
+                update runRecord;
+            }
+        }
+        return runRecord;
+    }
+
+    private static void updateImportRunStatus(
+        Import_Run__c runRecord,
+        String status,
+        String diagnosticMessage,
+        Long calculatedChecksum,
+        String checksumStatus
+    ) {
+        if (runRecord == null || runRecord.Id == null || !Schema.sObjectType.Import_Run__c.isUpdateable()) {
+            return;
+        }
+
+        Import_Run__c recordToUpdate = new Import_Run__c(
+            Id = runRecord.Id,
+            Status__c = status
+        );
+
+        if (diagnosticMessage != null) {
+            recordToUpdate.Diagnostic_Message__c = diagnosticMessage;
+        }
+        if (calculatedChecksum != null) {
+            recordToUpdate.Calculated_Pop_Checksum__c = calculatedChecksum;
+        }
+        if (checksumStatus != null) {
+            recordToUpdate.Checksum_Status__c = checksumStatus;
+        }
+
+        update recordToUpdate;
+    }
+
+    private static void reconcileChecksums(
+        Id analysisHeaderId,
+        EconomyImportRequestDTO.AnalysisDTO analysisDTO,
+        EconomyImportResponseDTO response
+    ) {
+        Long totalPopCalc = 0;
+
+        if (Schema.sObjectType.Country_Economy__c.isAccessible()) {
+            AggregateResult[] ar = [
+                SELECT SUM(Population__c) totalPop
+                FROM Country_Economy__c
+                WHERE Economy_Analysis__c = :analysisHeaderId
+            ];
+            if (!ar.isEmpty() && ar[0].get('totalPop') != null) {
+                totalPopCalc = ((Decimal) ar[0].get('totalPop')).longValue();
+            }
+        }
+
+        Long expected = analysisDTO != null ? analysisDTO.expectedPopChecksum : null;
+        String chkStatus = 'MATCHED';
+        if (expected != null && expected > 0) {
+            chkStatus = (totalPopCalc == expected) ? 'MATCHED' : 'MISMATCHED';
+        }
+
+        response.calculatedPopChecksum = totalPopCalc;
+        response.expectedPopChecksum = expected;
+        response.checksumStatus = chkStatus;
     }
 
     /**

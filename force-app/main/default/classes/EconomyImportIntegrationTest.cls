@@ -104,5 +104,84 @@ private class EconomyImportIntegrationTest {
         List<Artisan_Economy__c> artisanSnapshots = [SELECT Id, Unique_Snapshot_Key__c FROM Artisan_Economy__c WHERE Economy_Analysis__c = :res.analysisId];
         System.assertEquals(1, artisanSnapshots.size());
         System.assertEquals('egypt.v2_1720_grain', artisanSnapshots[0].Unique_Snapshot_Key__c);
+
+        // Verify Import_Run__c tracking and checksum reconciliation
+        List<Import_Run__c> runs = [
+            SELECT Id, Status__c, Checksum_Status__c, Calculated_Pop_Checksum__c, Rollup_Schema_Version__c, Economy_Analysis__c
+            FROM Import_Run__c
+            WHERE Economy_Analysis__c = :res.analysisId
+        ];
+        System.assertEquals(1, runs.size(), 'Import_Run__c record should be created.');
+        System.assertEquals('PUBLISHED', runs[0].Status__c, 'Import_Run__c status should be PUBLISHED.');
+        System.assertEquals('MATCHED', runs[0].Checksum_Status__c, 'Checksum status should be MATCHED.');
+        System.assertEquals('1.0.0', runs[0].Rollup_Schema_Version__c, 'Rollup schema version should be 1.0.0.');
+        System.assertEquals(136981816L, runs[0].Calculated_Pop_Checksum__c, 'Total population checksum should match sum of country populations.');
+    }
+
+    @isTest
+    static void testPopChecksumMismatchValidation() {
+        EconomyImportRequestDTO req = new EconomyImportRequestDTO();
+        req.analysis = new EconomyImportRequestDTO.AnalysisDTO();
+        req.analysis.saveFileName = 'checksum_test.v2';
+        req.analysis.ingameDate = '1836-01-01';
+        req.analysis.expectedPopChecksum = 999999999L; // Intentionally wrong expected total
+
+        EconomyImportRequestDTO.CountryDTO egy = new EconomyImportRequestDTO.CountryDTO();
+        egy.tag = 'EGY'; egy.name = 'Egypt'; egy.population = 2500000;
+        req.countries.add(egy);
+
+        Test.startTest();
+        EconomyImportResponseDTO res = EconomyImportService.processImport(req);
+        Test.stopTest();
+
+        System.assertNotEquals(null, res);
+        System.assertEquals(false, res.success);
+        System.assertEquals('FAILED', res.importStatus);
+        System.assertEquals('MISMATCHED', res.checksumStatus);
+
+        List<Import_Run__c> runs = [
+            SELECT Id, Status__c, Checksum_Status__c, Calculated_Pop_Checksum__c, Total_Pop_Checksum__c
+            FROM Import_Run__c
+            WHERE Save_Identifier__c = 'checksum_test.v2_run_1'
+        ];
+        System.assertEquals(1, runs.size());
+        System.assertEquals('FAILED', runs[0].Status__c);
+        System.assertEquals('MISMATCHED', runs[0].Checksum_Status__c);
+        System.assertEquals(2500000L, runs[0].Calculated_Pop_Checksum__c);
+        System.assertEquals(999999999L, runs[0].Total_Pop_Checksum__c);
+    }
+
+    @isTest
+    static void testChunkedIngestionParams() {
+        EconomyImportRequestDTO req = new EconomyImportRequestDTO();
+        req.analysis = new EconomyImportRequestDTO.AnalysisDTO();
+        req.analysis.saveFileName = 'chunked_save.v2';
+        req.analysis.chunkSeq = 1;
+        req.analysis.totalChunks = 3;
+        req.analysis.entityType = 'COUNTRIES';
+        req.analysis.expectedPopChecksum = 5000000L;
+
+        EconomyImportRequestDTO.CountryDTO egy = new EconomyImportRequestDTO.CountryDTO();
+        egy.tag = 'EGY'; egy.name = 'Egypt'; egy.population = 5000000;
+        req.countries.add(egy);
+
+        Test.startTest();
+        EconomyImportResponseDTO res = EconomyImportService.processImport(req);
+        Test.stopTest();
+
+        System.assertEquals(true, res.success);
+        System.assertEquals(1, res.chunkSeq);
+        System.assertEquals(3, res.totalChunks);
+        System.assertEquals(5000000L, res.calculatedPopChecksum);
+        System.assertEquals('MATCHED', res.checksumStatus);
+
+        Import_Run__c runRec = [
+            SELECT Entity_Type__c, Chunk_Sequence__c, Total_Chunks__c
+            FROM Import_Run__c
+            WHERE Id = :res.importRunId
+        ];
+        System.assertEquals('COUNTRIES', runRec.Entity_Type__c);
+        System.assertEquals(1, runRec.Chunk_Sequence__c);
+        System.assertEquals(3, runRec.Total_Chunks__c);
     }
 }
