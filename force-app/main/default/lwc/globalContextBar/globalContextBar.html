@@ -1,0 +1,99 @@
+<template>
+    <div class="global-context-bar slds-card slds-p-around_small slds-m-bottom_medium" data-testid="global-context-bar">
+        <!-- Control Strip Row -->
+        <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread slds-wrap slds-gutter_small slds-m-bottom_small">
+
+            <!-- Left Controls: Save Selector & Import Status -->
+            <div class="slds-col slds-grid slds-grid_vertical-align-center slds-m-right_medium slds-m-bottom_x-small">
+                <lightning-icon icon-name="standard:record" size="small" class="slds-m-right_x-small"></lightning-icon>
+                <div class="save-selector-container">
+                    <lightning-combobox
+                        name="saveSelector"
+                        label="Save File"
+                        variant="label-hidden"
+                        value={selectedAnalysisId}
+                        placeholder="Select Save Analysis..."
+                        options={saveOptions}
+                        onchange={handleSaveChange}
+                        class="save-combobox"
+                        data-testid="save-selector">
+                    </lightning-combobox>
+                </div>
+                <template if:true={statusChipText}>
+                    <span class={statusChipClass} title="Import Run Status" data-testid="status-chip">
+                        {statusChipText}
+                    </span>
+                </template>
+            </div>
+
+            <!-- Center Controls: Country Switcher & Observer Mode Badge -->
+            <div class="slds-col slds-grid slds-grid_vertical-align-center slds-m-right_medium slds-m-bottom_x-small">
+                <span class="flag-badge slds-m-right_x-small" title={countryName}>
+                    {countryTag}
+                </span>
+                <div class="country-switcher-container">
+                    <lightning-combobox
+                        name="countrySwitcher"
+                        label="Country"
+                        variant="label-hidden"
+                        value={selectedCountryTag}
+                        placeholder="Select Country..."
+                        options={countryOptions}
+                        onchange={handleCountryChange}
+                        class="country-combobox"
+                        data-testid="country-switcher">
+                    </lightning-combobox>
+                </div>
+                <template if:true={observerMode}>
+                    <span class="slds-badge slds-theme_warning slds-m-left_x-small" title="Viewing non-player country" data-testid="observer-badge">
+                        👁 Observer Mode
+                    </span>
+                </template>
+            </div>
+
+            <!-- Right Controls: Snapshot Scrubber & Baseline Comparison -->
+            <div class="slds-col slds-grid slds-grid_vertical-align-center slds-wrap slds-m-bottom_x-small">
+                <!-- Snapshot Scrubber -->
+                <div class="scrubber-container slds-m-right_small">
+                    <span class="control-label slds-text-title_caps slds-m-right_xx-small">Snapshot:</span>
+                    <lightning-combobox
+                        name="snapshotScrubber"
+                        label="Snapshot"
+                        variant="label-hidden"
+                        value={selectedAnalysisId}
+                        placeholder="Snapshot Date..."
+                        options={snapshotOptions}
+                        onchange={handleSnapshotChange}
+                        class="snapshot-combobox"
+                        data-testid="snapshot-scrubber">
+                    </lightning-combobox>
+                </div>
+
+                <!-- Compare Baseline Selector -->
+                <div class="baseline-container">
+                    <span class="control-label slds-text-title_caps slds-m-right_xx-small">Baseline:</span>
+                    <lightning-combobox
+                        name="baselineSelector"
+                        label="Compare Baseline"
+                        variant="label-hidden"
+                        value={baselineType}
+                        options={baselineOptions}
+                        onchange={handleBaselineChange}
+                        class="baseline-combobox"
+                        data-testid="baseline-selector">
+                    </lightning-combobox>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- KPI Ribbon Row -->
+        <div class="kpi-ribbon-row" data-testid="kpi-ribbon-wrapper">
+            <c-kpi-ribbon
+                analysis-id={selectedAnalysisId}
+                summary-data={summaryData}
+                data-testid="kpi-ribbon-component">
+            </c-kpi-ribbon>
+        </div>
+    </div>
+</template>

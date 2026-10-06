@@ -1,0 +1,80 @@
+.kpi-tile-card {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.kpi-tile-card:hover {
+    border-color: #0176d3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.kpi-value {
+    font-weight: 700;
+    color: #080707;
+    line-height: 1.2;
+}
+
+.kpi-delta {
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.delta-positive {
+    color: #2e844a;
+}
+
+.delta-negative {
+    color: #ea001e;
+}
+
+.delta-neutral {
+    color: #747474;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-critical {
+    background-color: #ea001e;
+}
+
+.status-warning {
+    background-color: #fe9339;
+}
+
+.status-positive {
+    background-color: #2e844a;
+}
+
+.sparkline-svg {
+    width: 80px;
+    height: 24px;
+    overflow: visible;
+}
+
+.sparkline-line-positive {
+    stroke: #2e844a;
+}
+
+.sparkline-line-negative {
+    stroke: #ea001e;
+}
+
+.sparkline-line-neutral {
+    stroke: #0176d3;
+}

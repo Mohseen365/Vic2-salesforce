@@ -1,0 +1,52 @@
+<template>
+    <div class={containerCssClass} data-testid="nav-rail-container">
+        <!-- Rail Header & Collapse Toggle -->
+        <div class="nav-rail-header slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-around_x-small">
+            <template if:true={isExpanded}>
+                <span class="nav-title slds-text-title_caps slds-truncate">Navigation</span>
+            </template>
+            <lightning-button-icon
+                icon-name={toggleIconName}
+                variant="bare"
+                size="medium"
+                title={toggleTitle}
+                onclick={handleToggleCollapse}
+                class="collapse-toggle-btn"
+                data-testid="nav-collapse-toggle">
+            </lightning-button-icon>
+        </div>
+
+        <!-- Navigation Groups -->
+        <div class="nav-rail-body">
+            <template for:each={navGroups} for:item="group">
+                <div key={group.title} class="nav-group slds-m-bottom_small">
+                    <template if:true={isExpanded}>
+                        <div class="group-header slds-text-title_caps slds-p-horizontal_x-small slds-m-bottom_xx-small">
+                            {group.title}
+                        </div>
+                    </template>
+                    <ul class="nav-items-list">
+                        <template for:each={group.items} for:item="item">
+                            <li key={item.key} class={item.cssClass}>
+                                <a
+                                    href="javascript:void(0);"
+                                    data-key={item.key}
+                                    title={item.label}
+                                    onclick={handleItemClick}
+                                    class="nav-link slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+                                    <lightning-icon icon-name={item.icon} size="small" class="nav-icon slds-m-right_x-small"></lightning-icon>
+                                    <template if:true={isExpanded}>
+                                        <span class="nav-label slds-truncate">{item.label}</span>
+                                        <template if:true={item.badge}>
+                                            <span class="nav-badge slds-badge slds-m-left_auto">{item.badge}</span>
+                                        </template>
+                                    </template>
+                                </a>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

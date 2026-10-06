@@ -1,0 +1,36 @@
+.master-shell-container {
+    background-color: #f3f3f3;
+    min-height: 100vh;
+}
+
+.master-page-header {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.workspace-body-grid {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+    min-height: 600px;
+}
+
+.nav-rail-column {
+    flex-shrink: 0;
+}
+
+.workspace-tabs-column {
+    overflow-x: auto;
+}
+
+.status-footer-bar {
+    background-color: #ffffff;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}
+
+.status-dot-active {
+    color: #2e844a;
+    font-weight: bold;
+}

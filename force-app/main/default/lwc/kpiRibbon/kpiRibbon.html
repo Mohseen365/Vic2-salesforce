@@ -1,0 +1,20 @@
+<template>
+    <div class="kpi-ribbon-container slds-grid slds-gutters_x-small slds-wrap" data-testid="kpi-ribbon-container">
+        <template for:each={tiles} for:item="tile">
+            <div key={tile.metricKey} class="slds-col slds-size_1-2 slds-medium-size_1-3 slds-large-size_1-6 slds-m-bottom_x-small">
+                <c-kpi-tile
+                    metric-key={tile.metricKey}
+                    label={tile.label}
+                    value={tile.value}
+                    delta-percent={tile.deltaPercent}
+                    delta-text={tile.deltaText}
+                    sparkline-data={tile.sparklineData}
+                    status={tile.status}
+                    icon-name={tile.iconName}
+                    ontileselect={handleTileSelect}
+                    data-testid={tile.testId}>
+                </c-kpi-tile>
+            </div>
+        </template>
+    </div>
+</template>
