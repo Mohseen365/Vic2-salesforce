@@ -4,7 +4,7 @@
 
 - **Current Status:** **Phases 0 through 6 Planning, UX Architecture, and Prompt Pipelines are FULLY COMPLETE AND VERIFIED.**
 - **Master Consolidated Planning Document:** [`Victoria 2 Save-Game Salesforce Application — Master Consolidated Planning Document.md`](./Victoria%202%20Save-Game%20Salesforce%20Application%20—%20Master%20Consolidated%20Planning%20Document.md)
-- **UX-UI Command Center Architecture:** [`Victoria 2 Command Center: UX-UI Possibility Map & LWC Component Architecture.md`](./Victoria%202%20Command%20Center:%20UX-UI%20Possibility%20Map%20&%20LWC%20Component%20Architecture.md)
+- **UX-UI Command Center Architecture:** [`Victoria 2 Command Center UX_UI Possibility Map and LWC Component Architecture.md`](./Victoria%202%20Command%20Center%20UX_UI%20Possibility%20Map%20and%20LWC%20Component%20Architecture.md)
 - **Context Retrieval & Audit Summary:** [`AUDIT_AND_IMPLEMENTATION_SUMMARY.md`](./AUDIT_AND_IMPLEMENTATION_SUMMARY.md)
 - **Phase Execution Index:** [`PHASE_EXECUTION_INDEX.md`](./PHASE_EXECUTION_INDEX.md)
 - **Semantic Contract Reference:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
@@ -33,7 +33,7 @@
 ## Core Documentation Artifacts & Pointers
 
 1. 📜 **Master Planning Document:** [`Victoria 2 Save-Game Salesforce Application — Master Consolidated Planning Document.md`](./Victoria%202%20Save-Game%20Salesforce%20Application%20—%20Master%20Consolidated%20Planning%20Document.md)
-2. 🎨 **UX-UI Command Center Map:** [`Victoria 2 Command Center: UX-UI Possibility Map & LWC Component Architecture.md`](./Victoria%202%20Command%20Center:%20UX-UI%20Possibility%20Map%20&%20LWC%20Component%20Architecture.md)
+2. 🎨 **UX-UI Command Center Map:** [`Victoria 2 Command Center UX_UI Possibility Map and LWC Component Architecture.md`](./Victoria%202%20Command%20Center%20UX_UI%20Possibility%20Map%20and%20LWC%20Component%20Architecture.md)
 3. 📊 **Audit & Summary Report:** [`AUDIT_AND_IMPLEMENTATION_SUMMARY.md`](./AUDIT_AND_IMPLEMENTATION_SUMMARY.md)
 4. 📑 **Phase Execution Index:** [`PHASE_EXECUTION_INDEX.md`](./PHASE_EXECUTION_INDEX.md)
 5. 📜 **Semantic Contract:** [`vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md`](./vc2-salesforce-version/SAVE_GAME_ANALYZER_SEMANTIC_CONTRACT.md)
