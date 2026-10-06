@@ -1,0 +1,133 @@
+.campaign-advisor-container {
+    background-color: #1b2332;
+    color: #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 1px solid #2d3748;
+}
+
+.advisor-icon {
+    --sfdc-brand-primary: #3182ce;
+}
+
+.pinned-context-banner {
+    background-color: #2d3748;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #cbd5e0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.pinned-label {
+    color: #f6ad55;
+}
+
+.pinned-separator {
+    color: #718096;
+}
+
+.prompt-header-label {
+    color: #a0aec0;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+}
+
+.prompt-chip-btn {
+    border-radius: 16px;
+    font-size: 0.725rem;
+    padding: 2px 10px;
+    background-color: #2d3748;
+    color: #e2e8f0;
+    border: 1px solid #4a5568;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.prompt-chip-btn:hover {
+    background-color: #4a5568;
+    color: #ffffff;
+}
+
+.advisor-input {
+    background-color: #2d3748;
+    color: #ffffff;
+    border: 1px solid #4a5568;
+    border-radius: 4px;
+}
+
+.advisor-input::placeholder {
+    color: #a0aec0;
+}
+
+.response-card {
+    background-color: #2d3748;
+    border-radius: 6px;
+    border-left: 4px solid #3182ce;
+}
+
+.block-title {
+    color: #63b3ed;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.inspect-src-label {
+    font-size: 0.7rem;
+    color: #a0aec0;
+    padding: 0 4px;
+}
+
+.facts-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.fact-item {
+    font-size: 0.8rem;
+    color: #e2e8f0;
+}
+
+.fact-label {
+    font-weight: 500;
+}
+
+.fact-chip-badge {
+    display: inline-block;
+    background-color: #1a202c;
+    color: #f6ad55;
+    border: 1px solid #dd6b20;
+    border-radius: 12px;
+    padding: 1px 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.interpretation-text {
+    font-size: 0.825rem;
+    color: #e2e8f0;
+    line-height: 1.4;
+}
+
+.payload-json-box {
+    background-color: #1a202c;
+    color: #68d391;
+    font-family: monospace;
+    font-size: 0.725rem;
+    border-radius: 4px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.feedback-logging-bar {
+    border-top: 1px solid #2d3748;
+}
+
+.provenance-detail-row {
+    font-size: 0.85rem;
+    color: #2d3748;
+}
