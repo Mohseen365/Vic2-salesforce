@@ -109,6 +109,13 @@ public with sharing class EconomyAnalysisService {
             );
             EconomyImportService.publishImportEvent(analysis.Id, 'COMPLETED', null, null);
         }
+
+        // Evaluate and publish Layer 4 real-time anomaly alerts
+        try {
+            DerivedIntelligenceEngine.evaluateAndPublishAnomalies(analysisId, null);
+        } catch (Exception ex) {
+            System.debug(LoggingLevel.WARN, 'Anomaly evaluation warning: ' + ex.getMessage());
+        }
     }
 
     /**

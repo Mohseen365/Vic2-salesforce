@@ -1,0 +1,92 @@
+<template>
+    <article class="slds-card score-card" data-testid="score-card">
+        <!-- Header -->
+        <div class="slds-card__header slds-grid slds-grid_vertical-align-center slds-p-horizontal_small slds-p-top_small">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                    <h3 class="slds-card__header-title slds-truncate slds-text-heading_small" title={metric.metricName}>
+                        {metric.metricName}
+                    </h3>
+                    <p class="slds-text-body_small slds-text-color_weak">
+                        {metric.category} &bull; {metric.countryName} ({metric.countryTag})
+                    </p>
+                </div>
+            </header>
+            <div class="slds-no-flex">
+                <span class={statusBadgeClass}>{metric.status}</span>
+            </div>
+        </div>
+
+        <!-- Body / Score Display -->
+        <div class="slds-card__body slds-p-around_small">
+            <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-spread">
+                <!-- Gauge Ring / Score -->
+                <div class="gauge-container slds-p-around_x-small">
+                    <svg viewBox="0 0 36 36" class="gauge-svg">
+                        <path
+                            class="gauge-bg"
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <path
+                            class={gaugeArcClass}
+                            stroke-dasharray={strokeDashArray}
+                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <text x="18" y="20.35" class="gauge-text">{metric.formattedScore}</text>
+                    </svg>
+                </div>
+
+                <!-- Delta & Headline -->
+                <div class="delta-box slds-text-align_right">
+                    <div class="slds-text-heading_medium score-value">
+                        {metric.formattedScore}
+                        <span class="score-unit">/100</span>
+                    </div>
+                    <div class={deltaClass}>
+                        {deltaIcon} {metric.deltaFormatted} vs baseline
+                    </div>
+                </div>
+            </div>
+
+            <!-- Component Breakdown Bars -->
+            <div class="breakdown-section slds-m-top_small">
+                <p class="slds-text-title_caps slds-m-bottom_xx-small text-muted">Component Breakdown</p>
+                <template for:each={metric.components} for:item="comp">
+                    <div key={comp.name} class="comp-row slds-m-bottom_xx-small">
+                        <div class="slds-grid slds-grid_align-spread slds-text-body_small">
+                            <span>{comp.name}</span>
+                            <span class="slds-text-color_weak">{comp.formattedValue}</span>
+                        </div>
+                        <div class="slds-progress-bar slds-progress-bar_x-small" role="progressbar">
+                            <span class="slds-progress-bar__value" style={comp.progressStyle}></span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Footer / Trust Drawer Toggle -->
+        <footer class="slds-card__footer slds-p-around_x-small slds-border_top">
+            <button
+                class="slds-button slds-button_reset slds-text-link slds-text-body_small"
+                onclick={toggleTrustDrawer}
+                data-testid="trust-drawer-toggle">
+                {drawerButtonLabel}
+            </button>
+
+            <!-- Trust Drawer Content -->
+            <template if:true={isDrawerOpen}>
+                <div class="trust-drawer slds-p-around_small slds-m-top_x-small slds-theme_shade slds-radius_small" data-testid="trust-drawer">
+                    <p class="slds-text-title_caps slds-m-bottom_xx-small">Formula & Provenance (v1.0.0)</p>
+                    <p class="slds-text-body_small slds-m-bottom_xx-small">
+                        <strong>Formula:</strong> <code>{metric.formulaDescription}</code>
+                    </p>
+                    <p class="slds-text-body_small slds-m-bottom_xx-small">
+                        <strong>Source Fields:</strong> {formattedSourceFields}
+                    </p>
+                    <span class="slds-badge slds-theme_success slds-m-top_xx-small">Pure Apex Engine</span>
+                </div>
+            </template>
+        </footer>
+    </article>
+</template>

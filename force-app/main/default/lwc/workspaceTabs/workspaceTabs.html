@@ -54,6 +54,26 @@
             <!-- 1b. Intelligence Tab -->
             <template if:true={isIntelligenceTab}>
                 <div data-testid="intelligence-view">
+                    <!-- Layer 3 Derived Intelligence Scorecards Suite -->
+                    <div class="slds-m-bottom_large" data-testid="derived-metrics-suite">
+                        <div class="slds-m-bottom_small">
+                            <h2 class="slds-text-heading_small slds-m-bottom_xx-small">
+                                Layer 3 Derived Intelligence Suite (FEAT-18)
+                            </h2>
+                            <p class="slds-text-body_small slds-text-color_weak">
+                                Composite indices, risk scores, and formula provenance trust drawers
+                            </p>
+                        </div>
+                        <div class="slds-grid slds-gutters slds-wrap">
+                            <template for:each={derivedMetrics} for:item="m">
+                                <div key={m.metricId} class="slds-col slds-size_1-1 slds-medium-size_1-2 slds-large-size_1-4 slds-m-bottom_medium">
+                                    <c-score-card metric={m} data-testid="score-card-component"></c-score-card>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Layer 2 Cross-Domain Lenses -->
                     <c-lens-gallery snapshot-id={selectedAnalysisId} data-testid="lens-gallery-component"></c-lens-gallery>
                 </div>
             </template>
